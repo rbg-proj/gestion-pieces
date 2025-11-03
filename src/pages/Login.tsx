@@ -66,7 +66,7 @@ const Login: React.FC = () => {
               </div>
             </div>
 
-            <h2 className="text-center text-3xl font-extrabold text-gray-900 mb-2">Perfect TechSolutions</h2>
+            <h2 className="text-center text-3xl font-extrabold text-gray-900 mb-2">Rehoboth Business Group</h2>
             <p className="text-center text-sm text-gray-600 mb-6">
               Connectez-vous pour continuer...
             </p>
