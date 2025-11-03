@@ -58,7 +58,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
           <div className="flex items-center justify-between h-16 px-4 border-b">
             <div className="flex items-center">
               <ShoppingBag className="h-8 w-8 text-primary-500" />
-              <span className="ml-2 text-xl font-semibold text-gray-800">PTS - POS</span>
+              <span className="ml-2 text-xl font-semibold text-gray-800">RBG - POS</span>
             </div>
             <button 
               onClick={toggleSidebar} 
