@@ -35,13 +35,24 @@ export async function loginWithSupabase(
       .from('profiles')
       .select('name, role, phone, avatar')
       .eq('id', authUser.id)
-      .single();
+      .maybeSingle();
 
-    if (profileError) {
-      return {
-        user: null,
-        error: 'Erreur lors de la récupération du profil: ' + profileError.message
-      };
+    // If profile doesn't exist, create one with default values
+    if (!profile && !profileError) {
+      const defaultName = authUser.user_metadata?.name || email.split('@')[0];
+      const defaultRole = authUser.user_metadata?.role || 'employee';
+
+      const { error: createError } = await supabase
+        .from('profiles')
+        .insert({
+          id: authUser.id,
+          name: defaultName,
+          role: defaultRole
+        });
+
+      if (createError) {
+        console.error('Error creating profile:', createError);
+      }
     }
 
     const user: User = {
@@ -68,7 +79,7 @@ export async function getProfile(userId: string) {
     .from('profiles')
     .select('name, role, phone, avatar')
     .eq('id', userId)
-    .single();
+    .maybeSingle();
 
   if (error) throw error;
   return data;
