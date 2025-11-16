@@ -24,7 +24,7 @@ const Dashboard: React.FC = () => {
   const formatCurrency = (amount: number) =>
     new Intl.NumberFormat('fr-FR', {
       style: 'currency',
-      currency: 'CDF',
+      currency: 'USD',
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     }).format(amount);
