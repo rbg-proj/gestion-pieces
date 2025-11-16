@@ -281,7 +281,7 @@ const Products: React.FC = () => {
             {filteredProducts.length === 0 && (
               <tr>
                 <td colSpan={6} className="text-center p-4 text-gray-500">
-                  Aucun article trouvé
+                  Aucun article enregistré. Veuillez ajouter un article pour l'afficher.
                 </td>
               </tr>
             )}
