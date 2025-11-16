@@ -310,8 +310,6 @@ const handleCustomerLookup = async () => {
             />
           </div>
         </div>
-
-
         {/*Nouvelle grille produits*/}
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
   {paginatedProducts.map(product => (
@@ -323,7 +321,7 @@ const handleCustomerLookup = async () => {
     >
       <h3 className="font-medium text-gray-900 truncate">{product.name}</h3>
       <p className="text-lg font-bold text-primary-600">
-        {Number(product.selling_price ?? 0).toFixed(0)} Fc
+        {Number(product.selling_price ?? 0).toFixed(0)} $
       </p>
       <p
   className={`text-sm font-medium flex items-center gap-1 ${
