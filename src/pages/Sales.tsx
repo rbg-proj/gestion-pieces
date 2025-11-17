@@ -391,9 +391,34 @@ const handleCustomerLookup = async () => {
               <div key={item.id} className="flex items-center justify-between p-2 border-b">
                 <div className="flex-1">
                   <h6 className="font-medium">{item.name}</h6>
-                  <p className="text-sm text-gray-500">
+                 {/* <p className="text-sm text-gray-500">
                      {Number(item.price ?? 0).toFixed(2)} $ par pièce
-                  </p>
+                  </p>> */}
+                  
+                 {/* Zone de saisie - prix unitaire modifiable*/}
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-500">Prix:</span>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={item.price}
+                  onChange={(e) => {
+                  const newPrice = parseFloat(e.target.value);
+                  if (!isNaN(newPrice) && newPrice >= 0) {
+                    setCart(prevCart =>
+                      prevCart.map(i =>
+                        i.id === item.id ? { ...i, price: newPrice } : i
+                      )
+                    );
+                  }
+                }}
+                className="w-20 text-center border border-gray-300 rounded px-1 py-0.5 text-sm"
+              />
+              <span>$</span>
+            </div>
+
+                  
                 </div>
                 <div className="flex items-center space-x-2">
                   <button onClick={() => updateQuantity(item.id, -1)} className="p-1 rounded-full hover:bg-gray-100">
