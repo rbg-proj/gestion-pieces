@@ -67,7 +67,7 @@ const Sales: React.FC = () => {
   const [customerNotFound, setCustomerNotFound] = useState(false);
 
   //Pagination
-  const itemsPerPage = 10;
+  const itemsPerPage = 8;
   const [currentPage, setCurrentPage] = useState(1);
 
   const filteredProducts = products.filter(product =>
