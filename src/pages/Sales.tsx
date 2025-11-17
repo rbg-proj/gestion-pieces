@@ -22,7 +22,7 @@ import { initOfflineDB } from "@/lib/offlineDB";
 
 // Fonction utilitaire (hors composant)
 function generateInvoiceNumber(id: string | number, prefix = 'FAC') {
-  if (!id) return ''; 
+  if (!id) return ''; // Ou null selon ton cas
   return `${prefix}-${String(new Date().getFullYear()).slice(2)}${String(new Date().getMonth() + 1).padStart(2, '0')}-${String(id).slice(0, 6).toUpperCase()}`;
 }
 
@@ -310,6 +310,8 @@ const handleCustomerLookup = async () => {
             />
           </div>
         </div>
+
+
         {/*Nouvelle grille produits*/}
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
   {paginatedProducts.map(product => (
@@ -321,7 +323,7 @@ const handleCustomerLookup = async () => {
     >
       <h3 className="font-medium text-gray-900 truncate">{product.name}</h3>
       <p className="text-lg font-bold text-primary-600">
-        {Number(product.selling_price ?? 0).toFixed(0)} $
+        {Number(product.selling_price ?? 0).toFixed(0)} Fc
       </p>
       <p
   className={`text-sm font-medium flex items-center gap-1 ${
@@ -426,15 +428,15 @@ const handleCustomerLookup = async () => {
         <div className="border-t pt-4 space-y-2">
           <div className="flex justify-between text-sm">
             <span>Subtotal</span>
-            <span>$ {Number(subtotal ?? 0).toFixed(2)}</span>
+            <span>Fc {Number(subtotal ?? 0).toFixed(2)}</span>
           </div>
           <div className="flex justify-between text-sm">
             <span>Tax (0%)</span>
-            <span>$ {Number(tax ?? 0).toFixed(2)}</span>
+            <span>Fc {Number(tax ?? 0).toFixed(2)}</span>
           </div>
           <div className="flex justify-between font-bold text-lg">
             <span>Total</span>
-            <span>$ {Number(total ?? 0).toFixed(2)}</span>
+            <span>Fc {Number(total ?? 0).toFixed(2)}</span>
           </div>
         </div>
       

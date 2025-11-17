@@ -176,7 +176,7 @@ const Products: React.FC = () => {
   }
 
   const formatPrice = (price: number) =>
-    new Intl.NumberFormat('us-USD', { style: 'currency', currency: '$' }).format(price);
+    new Intl.NumberFormat('fr-CD', { style: 'currency', currency: 'CDF' }).format(price);
 
   return (
     <div className="space-y-6">
@@ -247,7 +247,7 @@ const Products: React.FC = () => {
                 <td className="px-4 py-2 text-right">{formatPrice(product.purchase_price)}</td>
                 <td className="px-4 py-2 text-right">{formatPrice(product.selling_price)}</td>
                 <td className="px-4 py-2 text-right">
-                  {product.stock < 2 && <AlertTriangle size={16} className="text-red-500 inline mr-1" />}
+                  {product.stock < 10 && <AlertTriangle size={16} className="text-red-500 inline mr-1" />}
                   {product.stock}
                 </td>
                 <td className="px-4 py-2 text-right">
@@ -281,7 +281,7 @@ const Products: React.FC = () => {
             {filteredProducts.length === 0 && (
               <tr>
                 <td colSpan={6} className="text-center p-4 text-gray-500">
-                  Aucun article enregistré. Veuillez ajouter un article pour l'afficher.
+                  Aucun article trouvé
                 </td>
               </tr>
             )}
