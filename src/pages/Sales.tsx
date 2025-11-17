@@ -339,7 +339,7 @@ const handleCustomerLookup = async () => {
       <AlertCircle size={16} />
       Stock épuisé
     </>
-  ) : getDisplayedStock(product) <= 10 ? (
+  ) : getDisplayedStock(product) <= 5 ? (
     <>
       <AlertTriangle size={16} />
       Stock faible : {getDisplayedStock(product)}
