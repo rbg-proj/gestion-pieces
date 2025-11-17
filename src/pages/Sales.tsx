@@ -392,7 +392,7 @@ const handleCustomerLookup = async () => {
                 <div className="flex-1">
                   <h6 className="font-medium">{item.name}</h6>
                   <p className="text-sm text-gray-500">
-                    Fc {Number(item.price ?? 0).toFixed(0)} l'unité
+                     {Number(item.price ?? 0).toFixed(0)} $ par pièce
                   </p>
                 </div>
                 <div className="flex items-center space-x-2">
@@ -428,15 +428,15 @@ const handleCustomerLookup = async () => {
         <div className="border-t pt-4 space-y-2">
           <div className="flex justify-between text-sm">
             <span>Subtotal</span>
-            <span>Fc {Number(subtotal ?? 0).toFixed(2)}</span>
+            <span>$ {Number(subtotal ?? 0).toFixed(2)}</span>
           </div>
           <div className="flex justify-between text-sm">
             <span>Tax (0%)</span>
-            <span>Fc {Number(tax ?? 0).toFixed(2)}</span>
+            <span>$ {Number(tax ?? 0).toFixed(2)}</span>
           </div>
           <div className="flex justify-between font-bold text-lg">
             <span>Total</span>
-            <span>Fc {Number(total ?? 0).toFixed(2)}</span>
+            <span>$ {Number(total ?? 0).toFixed(2)}</span>
           </div>
         </div>
       
