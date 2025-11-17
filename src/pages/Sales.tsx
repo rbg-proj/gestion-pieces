@@ -323,13 +323,13 @@ const handleCustomerLookup = async () => {
     >
       <h3 className="font-medium text-gray-900 truncate">{product.name}</h3>
       <p className="text-lg font-bold text-primary-600">
-        {Number(product.selling_price ?? 0).toFixed(0)} Fc
+        {Number(product.selling_price ?? 0).toFixed(0)} $
       </p>
       <p
   className={`text-sm font-medium flex items-center gap-1 ${
     getDisplayedStock(product) === 0
       ? 'text-red-600'
-      : getDisplayedStock(product) <= 10
+      : getDisplayedStock(product) <= 5
       ? 'text-orange-500'
       : 'text-black'
   }`}
