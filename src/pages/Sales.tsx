@@ -67,7 +67,7 @@ const Sales: React.FC = () => {
   const [customerNotFound, setCustomerNotFound] = useState(false);
 
   //Pagination
-  const itemsPerPage = 8;
+  const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
 
   const filteredProducts = products.filter(product =>
@@ -323,7 +323,7 @@ const handleCustomerLookup = async () => {
     >
       <h3 className="font-medium text-gray-900 truncate">{product.name}</h3>
       <p className="text-lg font-bold text-primary-600">
-        {Number(product.selling_price ?? 0).toFixed(0)} $
+        {Number(product.selling_price ?? 0).toFixed(2)} $
       </p>
       <p
   className={`text-sm font-medium flex items-center gap-1 ${
@@ -392,7 +392,7 @@ const handleCustomerLookup = async () => {
                 <div className="flex-1">
                   <h6 className="font-medium">{item.name}</h6>
                   <p className="text-sm text-gray-500">
-                     {Number(item.price ?? 0).toFixed(0)} $ par pièce
+                     {Number(item.price ?? 0).toFixed(2)} $ par pièce
                   </p>
                 </div>
                 <div className="flex items-center space-x-2">

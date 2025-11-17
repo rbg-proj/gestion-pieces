@@ -24,7 +24,7 @@ interface SalesChartProps {
 const formatCurrency = (value: number) => {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
-    currency: 'CDF',
+    currency: 'USD',
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(value);
@@ -112,7 +112,7 @@ const SalesChart: React.FC<SalesChartProps> = ({ data, type = 'area' }) => {
   return (
     <div className="bg-white rounded-lg shadow-sm p-5 h-full animate-slide-up">
       <h3 className="text-lg font-medium text-gray-900">Vue des ventes</h3>
-      <p className="text-sm text-gray-500 mb-4">Tendances Revenue/Commande Journ.</p>
+      <p className="text-sm text-gray-500 mb-4">7 derniers jours</p>
       <div className="h-64 mt-2">
         <ResponsiveContainer width="100%" height="100%">
           {renderChart()}
