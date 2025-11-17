@@ -176,7 +176,7 @@ const Products: React.FC = () => {
   }
 
   const formatPrice = (price: number) =>
-    new Intl.NumberFormat('fr-CD', { style: 'currency', currency: 'CDF' }).format(price);
+    new Intl.NumberFormat('us-USD', { style: 'currency', currency: '$' }).format(price);
 
   return (
     <div className="space-y-6">
