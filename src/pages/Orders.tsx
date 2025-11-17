@@ -259,7 +259,7 @@ const filteredOrders = orders
             >
               <TableCell>{order.date.toLocaleDateString()} </TableCell>
               <TableCell>{order.customer}</TableCell>
-              <TableCell>{order.total.toLocaleString("fr-FR")} Fc</TableCell>
+              <TableCell>{order.total.toLocaleString("fr-FR")} $</TableCell>
               <TableCell>{order.items}</TableCell>
               <TableCell>
                 <Badge variant={order.status === "Payé" ? "success" : "secondary"}>
