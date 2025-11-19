@@ -52,8 +52,8 @@ const Receipt = forwardRef<HTMLDivElement, ReceiptProps>(
               <div key={index} className="flex justify-between">
                 <span className="w-1/6">{item.quantity}</span>
                 <span className="w-2/6">{item.name.toUpperCase()}</span>
-                <span className="w-1/4 text-right">{price.toFixed(0)} usd</span>
-                <span className="w-1/4 text-right">{lineTotal.toFixed(0)} usd</span>
+                <span className="w-1/4 text-right">{price.toFixed(0)} $</span>
+                <span className="w-1/4 text-right">{lineTotal.toFixed(0)} $</span>
               </div>
             );
           })}
@@ -62,9 +62,9 @@ const Receipt = forwardRef<HTMLDivElement, ReceiptProps>(
         <hr className="my-2" />
 
         <div className="text-xs space-y-1 text-right">
-          <p>Total HT : {totalHT.toFixed(0)} usd</p>
-          <p>TVA (0%) : {taxAmount.toFixed(2)} usd</p>
-          <p className="font-bold">Total TTC : {total.toLocaleString('fr-FR')} usd</p>
+          <p>Total HT : {totalHT.toFixed(0)} $</p>
+          <p>TVA (0%) : {taxAmount.toFixed(2)} $</p>
+          <p className="font-bold">Total TTC : {total.toLocaleString('fr-FR')} $</p>
         </div>
        
         <p className="text-center text-xs mt-4">Merci pour votre achat !</p>
