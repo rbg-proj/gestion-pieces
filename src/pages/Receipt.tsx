@@ -23,18 +23,17 @@ const Receipt = forwardRef<HTMLDivElement, ReceiptProps>(
         className="p-4 max-w-[80mm] bg-white text-black text-sm border border-gray-300"
       >
         <div className="text-center mb-2">
-          <h1 className="font-bold text-base">Rehoboth Business Group</h1>
+          <h1 className="font-bold text-base">REHOBOTH BUSINESS GROUP</h1>
           <p className="text-xs">RCCM 18-A-01715 - ID.NAT 01-93-N40495R</p>
-          <p className="text-xs">45 Blvd Lumumba, Kinshasa-Masina</p>
+          <p className="text-xs">45 BLVD LUMUMBA, MASINA, KINSHASA</p>
           <p className="text-xs">Date : {date}</p>
           <p className="text-xs">N° Facture : {invoiceNumber}</p>
         </div>
 
         <div className="mb-2 text-xs">
-          <p><strong>Client :</strong> {customerName || 'Client anonyme'} *** 
-          Agent : {userName}
-          </p>
+          <p><strong>Client :</strong> {customerName || 'Client anonyme'}  </p> 
           <p><strong>Mode de paiement :</strong> {paymentMethod}</p>
+          <p> Agent : {userName} </p>
         </div>
 
         <hr className="my-2" />
