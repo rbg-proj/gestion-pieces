@@ -211,7 +211,7 @@ const filteredOrders = orders
 <div className="space-y-2">
         <p className="text-sm font-medium">Nombre Total de ventes : {filteredOrders.length}</p>
         <p className="text-sm font-medium">
-          Montant Total des ventes : {totalVente.toLocaleString("fr-FR")} Fc
+          Montant Total des ventes : {totalVente.toLocaleString("fr-FR")} $
         </p>
      </div>
     </div>
