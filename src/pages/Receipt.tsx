@@ -42,8 +42,8 @@ const Receipt = forwardRef<HTMLDivElement, ReceiptProps>(
           <div className="flex justify-between font-bold border-b border-gray-400 pb-1 mb-1">
             <span className="w-1/6">Qté</span>
             <span className="w-2/6">Désignation</span>
-            <span className="w-1/4 text-right">P.U</span>
-            <span className="w-1/4 text-right">P.T</span>
+            <span className="w-1/4 text-right">Prix Unit.</span>
+            <span className="w-1/4 text-right">Prix Tot.</span>
           </div>
           {cart.map((item, index) => {
             const price = Number(item.price);
