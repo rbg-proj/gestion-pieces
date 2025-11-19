@@ -33,7 +33,7 @@ const Receipt = forwardRef<HTMLDivElement, ReceiptProps>(
         <div className="mb-2 text-xs">
           <p><strong>Client :</strong> {customerName || 'Client anonyme'}  </p> 
           <p><strong>Mode de paiement :</strong> {paymentMethod}</p>
-          <p> Agent : {userName} </p>
+          <p> <strong>Agent :</strong> {userName} </p>
         </div>
 
         <hr className="my-2" />
