@@ -594,7 +594,7 @@ const handleCustomerLookup = async () => {
 
         
       </div>
-  {/* Fin Bas de Section Panier */}
+ 
   
   
 {showReceiptModal && (
