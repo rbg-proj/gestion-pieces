@@ -37,7 +37,7 @@ const MAX_PIE_CHART_ITEMS = 10;
 const formatCurrency = (amount: number) => {
   return new Intl.NumberFormat('fr-CD', {
     style: 'currency',
-    currency: 'CDF',
+    currency: 'USD',
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(amount);
