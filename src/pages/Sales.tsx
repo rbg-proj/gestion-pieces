@@ -29,7 +29,7 @@ function generateInvoiceNumber(id: string | number, prefix = 'Fac') {
 interface Product {
   id: string;
   name: string;
-  selling_price: number; // assumed stored in USD
+  selling_price: number; // enregistré en USD
   stock: number;
   barcode: string;
 }
@@ -37,7 +37,7 @@ interface Product {
 interface CartItem {
   id: string;
   name: string;
-  price: number; // stored in CDF for UI and converted to USD on save
+  price: number; // stocké en CDF pour UI et converti au USD lors de l'enregistrement
   quantity: number;
 }
 
