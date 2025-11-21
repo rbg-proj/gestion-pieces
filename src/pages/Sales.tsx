@@ -477,7 +477,7 @@ const Sales: React.FC = () => {
                 }}
                 className="w-28 text-center border border-gray-300 rounded px-1 py-0.5 text-sm"
               />
-              <span>CDF</span>
+              <span>Fc</span>
             </div>
 
                   
@@ -514,15 +514,15 @@ const Sales: React.FC = () => {
         <div className="border-t pt-4 space-y-2">
           <div className="flex justify-between text-sm">
             <span>Subtotal</span>
-            <span>{Number(subtotal ?? 0).toFixed(0)} CDF</span>
+            <span>{Number(subtotal ?? 0).toFixed(0)} Fc</span>
           </div>
           <div className="flex justify-between text-sm">
             <span>Tax (0%)</span>
-            <span>{Number(tax ?? 0).toFixed(0)} CDF</span>
+            <span>{Number(tax ?? 0).toFixed(0)} Fc</span>
           </div>
           <div className="flex justify-between font-bold text-lg">
             <span>Total</span>
-            <span>{Number(total ?? 0).toFixed(0)} CDF</span>
+            <span>{Number(total ?? 0).toFixed(0)} Fc</span>
           </div>
         </div>
 
