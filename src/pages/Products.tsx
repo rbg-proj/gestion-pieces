@@ -199,7 +199,7 @@ const Products: React.FC = () => {
   }
 
   const formatPrice = (price: number) =>
-    new Intl.NumberFormat('fr-CD', { style: 'currency', currency: 'CDF' }).format(price);
+    new Intl.NumberFormat('fr-CD', { style: 'currency', currency: 'USD' }).format(price);
 
   const startDisplay = filteredProducts.length === 0 ? 0 : indexOfFirstItem + 1;
   const endDisplay = Math.min(indexOfLastItem, filteredProducts.length);
