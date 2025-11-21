@@ -412,7 +412,7 @@ const handleCustomerLookup = async () => {
                   
                  {/* Zone de saisie - prix unitaire modifiable*/}
               <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-500">Prix :</span>
+                <span className="text-sm text-gray-500">Prix:</span>
                 <input
                   type="number"
                   min="0"
