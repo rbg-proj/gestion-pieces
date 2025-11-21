@@ -294,7 +294,7 @@ const Products: React.FC = () => {
 
       {/* HEADER + EXPORT BUTTONS */}
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Tous vos Articles</h1>
+        <h1 className="text-2xl font-bold">Tous nos Articles</h1>
 
         <div className="flex gap-3">
           <button
