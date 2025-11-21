@@ -357,26 +357,26 @@ const Products: React.FC = () => {
 
         <input
           type="number"
-          placeholder="Stock min"
+          placeholder="Tri Stock min"
           value={minStock}
           onChange={(e) => {
             const val = e.target.value;
             setMinStock(val === '' ? '' : Number(val));
             setCurrentPage(1);
           }}
-          className="w-32 border rounded-md px-2 py-2"
+          className="w-32 border rounded-md px-1 py-2"
         />
 
         <input
           type="number"
-          placeholder="Stock max"
+          placeholder="Tri Stock max"
           value={maxStock}
           onChange={(e) => {
             const val = e.target.value;
             setMaxStock(val === '' ? '' : Number(val));
             setCurrentPage(1);
           }}
-          className="w-32 border rounded-md px-2 py-2"
+          className="w-32 border rounded-md px-1 py-2"
         />
 
         <button
