@@ -300,7 +300,7 @@ const handleCustomerLookup = async () => {
       <div className="md:w-2/3 bg-white rounded-lg shadow-sm p-4">
         <div className="mb-6">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={10} />
             <input
               type="text"
               placeholder="Entrez le nom de l'article ou son barcode..."
