@@ -31,6 +31,9 @@ const Products: React.FC = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
+  const [minStock, setMinStock] = useState<number | ''>('');
+  const [maxStock, setMaxStock] = useState<number | ''>('');
+
   const initialFormState = {
     name: '',
     barcode: '',
@@ -42,7 +45,6 @@ const Products: React.FC = () => {
   };
   const [formData, setFormData] = useState(initialFormState);
 
-  // 📌 Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
@@ -95,29 +97,14 @@ const Products: React.FC = () => {
         const oldStock = editingProduct.stock;
         const newStock = formData.stock;
         if (oldStock !== newStock) {
-          await supabase.from('stock_history').insert([{
-            product_id: editingProduct.id,
-            old_stock: oldStock,
-            new_stock: newStock,
-            change: newStock - oldStock,
-            reason: 'Mise à jour manuelle',
-          }]);
+          await supabase.from('stock_history').insert([{ product_id: editingProduct.id, old_stock: oldStock, new_stock: newStock, change: newStock - oldStock, reason: 'Mise à jour manuelle' }]);
         }
-        response = await supabase
-          .from('products')
-          .update(dataToSend)
-          .eq('id', editingProduct.id);
+        response = await supabase.from('products').update(dataToSend).eq('id', editingProduct.id);
       } else {
         response = await supabase.from('products').insert([dataToSend]);
         if (response.data && response.data[0]) {
           const newProduct = response.data[0];
-          await supabase.from('stock_history').insert([{
-            product_id: newProduct.id,
-            old_stock: 0,
-            new_stock: newProduct.stock,
-            change: newProduct.stock,
-            reason: 'Ajout initial',
-          }]);
+          await supabase.from('stock_history').insert([{ product_id: newProduct.id, old_stock: 0, new_stock: newProduct.stock, change: newProduct.stock, reason: 'Ajout initial' }]);
         }
       }
       if (response.error) throw response.error;
@@ -153,39 +140,42 @@ const Products: React.FC = () => {
     const filePath = `products/${fileName}`;
 
     const { error } = await supabase.storage.from('product-images').upload(filePath, file);
-    if (error) {
-      console.error('Erreur lors de l’upload :', error.message);
-      return;
-    }
+    if (error) return console.error('Erreur upload image', error.message);
 
     const { data } = supabase.storage.from('product-images').getPublicUrl(filePath);
-    if (data?.publicUrl) {
-      setFormData((prev) => ({ ...prev, image_url: data.publicUrl }));
-    }
+    if (data?.publicUrl) setFormData(prev => ({ ...prev, image_url: data.publicUrl }));
   };
 
   const filteredProducts = products.filter(product => {
-    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.barcode.includes(searchTerm);
+    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) || product.barcode.includes(searchTerm);
+
     const matchesCategory = selectedCategory === 'all' || product.category_id === selectedCategory;
-    return matchesSearch && matchesCategory;
+
+    const matchesStockMin = minStock === '' || product.stock >= minStock;
+    const matchesStockMax = maxStock === '' || product.stock <= maxStock;
+
+    return matchesSearch && matchesCategory && matchesStockMin && matchesStockMax;
   });
 
-  // 📌 Pagination logic
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentProducts = filteredProducts.slice(indexOfFirstItem, indexOfLastItem);
 
   if (loading) {
     return (
+    <div>
+      {/* Affichage compteur */}
+      <div className="text-sm text-gray-600 mb-2">
+        Affichage de Produits {indexOfFirstItem + 1} à {Math.min(indexOfLastItem, filteredProducts.length)} sur {filteredProducts.length} Produits
+      </div>
+    
       <div className="flex items-center justify-center h-64">
         <Loader2 className="w-8 h-8 animate-spin text-primary-500" />
       </div>
     );
   }
 
-  const formatPrice = (price: number) =>
-    new Intl.NumberFormat('fr-CD', { style: 'currency', currency: 'CDF' }).format(price);
+  const formatPrice = (price: number) => new Intl.NumberFormat('fr-CD', { style: 'currency', currency: 'CDF' }).format(price);
 
   return (
     <div className="space-y-6">
@@ -218,6 +208,7 @@ const Products: React.FC = () => {
           }}
           className="flex-1 border rounded-md px-3 py-2"
         />
+
         <select
           value={selectedCategory}
           onChange={(e) => {
@@ -231,203 +222,9 @@ const Products: React.FC = () => {
             <option key={cat.id} value={cat.id}>{cat.name}</option>
           ))}
         </select>
-      </div>
 
-      <div className="overflow-x-auto bg-white rounded shadow">
-        <table className="min-w-full">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="px-4 py-2 text-left">Nom</th>
-              <th className="px-4 py-2 text-left">Catégorie</th>
-              <th className="px-4 py-2 text-right">Prix Achat</th>
-              <th className="px-4 py-2 text-right">Prix Vente</th>
-              <th className="px-4 py-2 text-right">Stock</th>
-              <th className="px-4 py-2 text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {currentProducts.map((product) => (
-              <tr key={product.id} className="border-b">
-                <td className="px-4 py-2 flex items-center gap-2">
-                  {product.image_url ? (
-                    <img src={product.image_url} alt={product.name} className="w-10 h-10 rounded object-cover" />
-                  ) : (
-                    <div className="w-10 h-10 bg-gray-200 flex justify-center items-center rounded">
-                      <Package size={20} className="text-gray-400" />
-                    </div>
-                  )}
-                  {product.name}
-                </td>
-                <td className="px-4 py-2">{product.category?.name}</td>
-                <td className="px-4 py-2 text-right">{formatPrice(product.purchase_price)}</td>
-                <td className="px-4 py-2 text-right">{formatPrice(product.selling_price)}</td>
-                <td className="px-4 py-2 text-right">
-                  {product.stock < 10 && <AlertTriangle size={16} className="text-red-500 inline mr-1" />}
-                  {product.stock}
-                </td>
-                <td className="px-4 py-2 text-right">
-                  <button
-                    className="text-blue-500 hover:underline mr-2"
-                    onClick={() => {
-                      setEditingProduct(product);
-                      setFormData({
-                        name: product.name,
-                        barcode: product.barcode,
-                        purchase_price: product.purchase_price,
-                        selling_price: product.selling_price,
-                        stock: product.stock,
-                        image_url: product.image_url || '',
-                        category_id: product.category_id,
-                      });
-                      setIsFormOpen(true);
-                    }}
-                  >
-                    <Edit size={16} />
-                  </button>
-                  <button
-                    className="text-red-500 hover:underline"
-                    onClick={() => handleDelete(product.id)}
-                  >
-                    <Trash size={16} />
-                  </button>
-                </td>
-              </tr>
-            ))}
-
-            {filteredProducts.length === 0 && (
-              <tr>
-                <td colSpan={6} className="text-center p-4 text-gray-500">
-                  Aucun article trouvé
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-
-      {/* 📌 PAGINATION BUTTONS */}
-      {filteredProducts.length > itemsPerPage && (
-        <div className="flex justify-center items-center gap-4 mt-4">
-          <button
-            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-            disabled={currentPage === 1}
-            className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
-          >
-            Précédent
-          </button>
-
-          <span className="font-medium">
-            Page {currentPage} / {Math.ceil(filteredProducts.length / itemsPerPage)}
-          </span>
-
-          <button
-            onClick={() =>
-              setCurrentPage((prev) =>
-                prev < Math.ceil(filteredProducts.length / itemsPerPage) ? prev + 1 : prev
-              )
-            }
-            disabled={currentPage === Math.ceil(filteredProducts.length / itemsPerPage)}
-            className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
-          >
-            Suivant
-          </button>
-        </div>
-      )}
-
-      {isFormOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-30 flex justify-center items-center z-50">
-          <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg relative">
-            <button
-              onClick={() => setIsFormOpen(false)}
-              className="absolute top-2 right-2 text-gray-500"
-            >
-              <X size={24} />
-            </button>
-            <h2 className="text-xl font-semibold mb-4">
-              {editingProduct ? 'Modifier l’article' : 'Nouvel article'}
-            </h2>
-            <form onSubmit={handleFormSubmit} className="space-y-4">
-              <div>
-                <label>Nom</label>
-                <input
-                  type="text"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  required
-                  className="w-full border px-3 py-2 rounded"
-                />
-              </div>
-              <div>
-                <label>Barcode</label>
-                <input
-                  type="text"
-                  value={formData.barcode}
-                  onChange={(e) => setFormData({ ...formData, barcode: e.target.value })}
-                  className="w-full border px-3 py-2 rounded"
-                />
-              </div>
-              <div>
-                <label>Catégorie</label>
-                <select
-                  value={formData.category_id}
-                  onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
-                  required
-                  className="w-full border px-3 py-2 rounded"
-                >
-                  <option value="">Sélectionnez</option>
-                  {categories.map((cat) => (
-                    <option key={cat.id} value={cat.id}>{cat.name}</option>
-                  ))}
-                </select>
-              </div>
-              <div className="flex gap-4">
-                <div className="flex-1">
-                  <label>Prix d’achat</label>
-                  <input
-                    type="number"
-                    value={formData.purchase_price}
-                    onChange={(e) => setFormData({ ...formData, purchase_price: Number(e.target.value) })}
-                    className="w-full border px-3 py-2 rounded"
-                  />
-                </div>
-                <div className="flex-1">
-                  <label>Prix de vente</label>
-                  <input
-                    type="number"
-                    value={formData.selling_price}
-                    onChange={(e) => setFormData({ ...formData, selling_price: Number(e.target.value) })}
-                    className="w-full border px-3 py-2 rounded"
-                  />
-                </div>
-              </div>
-              <div>
-                <label>Stock</label>
-                <input
-                  type="number"
-                  value={formData.stock}
-                  onChange={(e) => setFormData({ ...formData, stock: Number(e.target.value) })}
-                  className="w-full border px-3 py-2 rounded"
-                />
-              </div>
-              <div>
-                <label>Image (optionnel)</label>
-                <input type="file" onChange={handleImageUpload} />
-                {formData.image_url && (
-                  <img src={formData.image_url} alt="Preview" className="mt-2 w-24 h-24 object-cover rounded" />
-                )}
-              </div>
-              <button
-                type="submit"
-                className="w-full bg-primary-500 text-white py-2 rounded"
-              >
-                {editingProduct ? 'Mettre à jour' : 'Ajouter'}
-              </button>
-            </form>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
-
-export default Products;
+        <input
+          type="number"
+          placeholder="Stock min"
+          value={minStock}
+          onChange={(e) => {
