@@ -21,6 +21,9 @@ const Dashboard: React.FC = () => {
   const [dailySales, setDailySales] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
+  // 💱 Ajout : stockage du taux de change
+  const [exchangeRate, setExchangeRate] = useState<number | null>(null);
+
   const formatCurrency = (amount: number) =>
     new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -113,6 +116,18 @@ const Dashboard: React.FC = () => {
     });
 
     setDailySales(grouped);
+
+    // 💱 AJOUT : récupération du taux de change le plus récent
+    const { data: latestRate } = await supabase
+      .from("exchange_rates")
+      .select("rate")
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .single();
+
+    if (latestRate) {
+      setExchangeRate(latestRate.rate);
+    }
   };
 
   const calculateProfitForSales = async (saleIds: number[]) => {
@@ -151,7 +166,8 @@ const Dashboard: React.FC = () => {
         <div className="text-center text-gray-500 py-10">Chargement en cours...</div>
       ) : (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {/* 🟪 AJOUT : une 5ᵉ card pour le taux */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
             <DashboardCard 
               title="Total Vente du Jour" 
               value={formatCurrency(salesToday)}
@@ -180,6 +196,15 @@ const Dashboard: React.FC = () => {
               icon={<Users size={20} className="text-white" />}
               iconBgColor="bg-accent-500"
             />
+
+            {/* 💱 Nouveau : taux de change */}
+            <DashboardCard 
+              title="Taux de Change (CDF → USD)"
+              value={exchangeRate ? exchangeRate.toString() : "--"}
+              change={0.0}
+              icon={<DollarSign size={20} className="text-white" />}
+              iconBgColor="bg-purple-600"
+            />
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -197,7 +222,7 @@ const Dashboard: React.FC = () => {
               </div>
             </div>
 
-            {/* Tu pourrais mettre ici un résumé ou des actions rapides */}
+            {/* Slot vide laissé inchangé */}
           </div>
         </>
       )}
