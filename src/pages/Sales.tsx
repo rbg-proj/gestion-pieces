@@ -312,7 +312,7 @@ const handleCustomerLookup = async () => {
         </div>
 
 
-        {/*Nouvelle grille produits*/}
+        {/*Grille affichage des produits*/}
 
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
   {paginatedProducts.map(product => (
@@ -368,10 +368,8 @@ const handleCustomerLookup = async () => {
     </button>
   ))}
 </div>
-
-
         
-        {/*Fin grille*/}
+        {/*Fin grille Produits*/}
         
         <div className="flex justify-center items-center mt-4 space-x-4">
   <button
@@ -394,10 +392,10 @@ const handleCustomerLookup = async () => {
 </div>
 </div>
 
-      {/* Cart Section */}
+      {/* Section Panier */}
       <div className="md:w-1/3 bg-white rounded-lg shadow-sm p-4 flex flex-col">
             <div className="flex items-center mb-4">
-              <ShoppingCart className="text-primary-500 mr-2" size={26} />
+              <ShoppingCart className="text-primary-500 mr-2" size={52} />
               <h2 className="text-xl font-semibold">Articles sélectionnés</h2>
             </div>
 
@@ -441,7 +439,6 @@ const handleCustomerLookup = async () => {
                     <Minus size={16} />
                   </button>
                   
-
                 <input
                     type="number"
                     min="1"
