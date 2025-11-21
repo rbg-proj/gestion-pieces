@@ -2,7 +2,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'com.pts.gesvente',
-  appName: 'Gestion des ventes',
+  appName: 'RBG POS',
   webDir: 'dist'
 };
 
