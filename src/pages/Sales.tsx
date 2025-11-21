@@ -71,7 +71,6 @@ const Sales: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
 // Exchange rate state (CDF per 1 USD). Will be fetched from DB (exchange_rates).
- 
   const [exchangeRate, setExchangeRate] = useState<number | null>(null);
 
 
@@ -102,6 +101,23 @@ const Sales: React.FC = () => {
     fetchExchangeRate();
     fetchProducts();
   }, []);
+
+  const fetchLatestRate = async () => {
+  const { data, error } = await supabase
+    .from('exchange_rates')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .single();
+
+  if (error) {
+    console.error('Erreur lors de la récupération du taux:', error);
+    return;
+  }
+
+  setExchangeRate(data.rate);
+};
+
 
   // Fetch the latest exchange rate from exchange_rates table
   const fetchExchangeRate = async () => {
