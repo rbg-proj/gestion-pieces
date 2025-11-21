@@ -29,7 +29,7 @@ function generateInvoiceNumber(id: string | number, prefix = 'Fac') {
 interface Product {
   id: string;
   name: string;
-  selling_price: number;
+  selling_price: number; // assumed stored in USD
   stock: number;
   barcode: string;
 }
@@ -37,7 +37,7 @@ interface Product {
 interface CartItem {
   id: string;
   name: string;
-  price: number;
+  price: number; // stored in CDF for UI and converted to USD on save
   quantity: number;
 }
 
@@ -66,37 +66,64 @@ const Sales: React.FC = () => {
   const [isCustomerConfirmed, setIsCustomerConfirmed] = useState(false);
   const [customerNotFound, setCustomerNotFound] = useState(false);
 
-  //Pagination
+  // Pagination
   const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
 
+  // Exchange rate state (CDF per 1 USD). Will be fetched from DB (exchange_rates).
+  const [exchangeRate, setExchangeRate] = useState<number>(2700);
+
   const filteredProducts = products.filter(product =>
-  product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  product.barcode.includes(searchTerm)
-);
+    product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    product.barcode.includes(searchTerm)
+  );
   const paginatedProducts = filteredProducts.slice(
-  (currentPage - 1) * itemsPerPage,
-  currentPage * itemsPerPage
-);  
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );  
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
 
   const goToNextPage = () => {
-  if (currentPage < totalPages) setCurrentPage(currentPage + 1);
-};
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  };
 
   const goToPreviousPage = () => {
-  if (currentPage > 1) setCurrentPage(currentPage - 1);
-};
-// Fin Pagination
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
+  };
+  // Fin Pagination
 
- useEffect(() => {
-  setCurrentPage(1);
-}, [searchTerm]);
-  
   useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
+    
+  useEffect(() => {
+    fetchExchangeRate();
     fetchProducts();
   }, []);
 
+  // Fetch the latest exchange rate from exchange_rates table
+  const fetchExchangeRate = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('exchange_rates')
+        .select('rate')
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
+
+      if (error && (error as any).code !== 'PGRST116') {
+        console.warn('Erreur en récupérant le taux de change :', error.message || error);
+        return;
+      }
+
+      if (data && data.rate) {
+        setExchangeRate(Number(data.rate));
+      }
+    } catch (err) {
+      console.warn('fetchExchangeRate error', err);
+    }
+  };
+  
   const fetchProducts = async () => {
     try {
       setLoading(true);
@@ -121,6 +148,9 @@ const Sales: React.FC = () => {
 
     setCart(prevCart => {
       const existingItem = prevCart.find(item => item.id === product.id);
+      // Price shown/stored in cart is in CDF (product.selling_price assumed in USD)
+      const priceInCDF = Number((product.selling_price * exchangeRate) ?? 0);
+
       if (existingItem) {
         return prevCart.map(item =>
           item.id === product.id
@@ -131,25 +161,25 @@ const Sales: React.FC = () => {
       return [...prevCart, { 
         id: product.id, 
         name: product.name, 
-        price: product.selling_price, 
+        price: priceInCDF, 
         quantity: 1 
       }];
     });
   };
 
   const updateQuantity = (id: string, change: number) => {
-  setCart(prevCart => {
-    return prevCart.map(item => {
-      if (item.id === id) {
-        const product = products.find(p => p.id === id);
-        const maxQty = product ? product.stock : item.quantity;
-        const newQty = Math.min(maxQty, item.quantity + change);
-        return { ...item, quantity: Math.max(0, newQty) };
-      }
-      return item;
-    }).filter(item => item.quantity > 0);
-  });
-};
+    setCart(prevCart => {
+      return prevCart.map(item => {
+        if (item.id === id) {
+          const product = products.find(p => p.id === id);
+          const maxQty = product ? product.stock : item.quantity;
+          const newQty = Math.min(maxQty, item.quantity + change);
+          return { ...item, quantity: Math.max(0, newQty) };
+        }
+        return item;
+      }).filter(item => item.quantity > 0);
+    });
+  };
 
   const removeFromCart = (id: string) => {
     setCart(prevCart => prevCart.filter(item => item.id !== id));
@@ -162,56 +192,76 @@ const Sales: React.FC = () => {
 
   
   {/*New CustumerLookUp*/}
-const handleCustomerLookup = async () => {
-  if (!customerPhone) return;
-  setSaleCompleted(false);
-  setShowReceiptModal(false);
-  setIsCustomerConfirmed(true);
+  const handleCustomerLookup = async () => {
+    if (!customerPhone) return;
+    setSaleCompleted(false);
+    setShowReceiptModal(false);
+    setIsCustomerConfirmed(true);
 
-  const { data: customer, error } = await supabase
-    .from('customers')
-    .select('id, full_name')
-    .eq('phone', customerPhone)
-    .single();
+    const { data: customer, error } = await supabase
+      .from('customers')
+      .select('id, full_name')
+      .eq('phone', customerPhone)
+      .single();
 
-  if (error && error.code !== 'PGRST116') {
-    setError(error.message);
-    return;
-  }
+    if (error && (error as any).code !== 'PGRST116') {
+      setError(error.message);
+      return;
+    }
 
-  if (customer) {
-    setSelectedCustomerId(customer.id);
-    setCustomerName(customer.full_name ?? null);
-    toast.success(`Client trouvé : ${customer.full_name ?? customerPhone}`);
-  } else {
-    // Aucun client trouvé → on associe le client standard (id = 0)
-    setSelectedCustomerId("0");
-    setCustomerName("Standard");
-    toast(`Aucun client trouvé. Utilisation du client standard`, {
-      icon: '⚠️',
-    });
-  }
-};
+    if (customer) {
+      setSelectedCustomerId(customer.id);
+      setCustomerName(customer.full_name ?? null);
+      toast.success(`Client trouvé : ${customer.full_name ?? customerPhone}`);
+    } else {
+      // Aucun client trouvé → on associe le client standard (id = 0)
+      setSelectedCustomerId("0");
+      setCustomerName("Standard");
+      toast(`Aucun client trouvé. Utilisation du client standard`, {
+        icon: '⚠️',
+      });
+    }
+  };
 
   
-  {/*Fin LookUp*/}
-  
+    {/*Fin LookUp*/}
+    
   const handleCompleteSale = async () => {
     setSaleCompleted(false); // cacher l'ancien reçu
     
-
     try {
       if (cart.length === 0 || !selectedPayment) return;
 
-      const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+      // Re-fetch latest rate to ensure we use the most recent rate at moment of sale
+      let rate = exchangeRate;
+      try {
+        const { data } = await supabase
+          .from('exchange_rates')
+          .select('rate')
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .single();
+        if (data && data.rate) rate = Number(data.rate);
+      } catch (e) {
+        // fallback to local state rate
+      }
+
+      if (!rate || rate <= 0) {
+        throw new Error('Taux de change invalide');
+      }
+
+      // total in CDF (cart prices are in CDF)
+      const totalCDF = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+      const totalUSD = totalCDF / rate;
 
       // Start a transaction by inserting the sale first
       const { data: saleData, error: saleError } = await supabase
         .from('sales')
         .insert([{
-          total_amount: total,
+          total_amount: totalUSD,
           payment_method: selectedPayment,
           customer_id: selectedCustomerId, // peut être null
+          exchange_rate: rate,
         }])
         .select()
         .single();
@@ -220,12 +270,12 @@ const handleCustomerLookup = async () => {
       if (saleError) throw saleError;
      
 
-      // Insert sale items
+      // Insert sale items (unit_price stored in USD)
       const saleItems = cart.map(item => ({
         sale_id: saleData.id,
         product_id: item.id,
         quantity: item.quantity,
-        unit_price: item.price,
+        unit_price: item.price / rate, // convert from CDF -> USD
       }));
 
       const { error: itemsError } = await supabase
@@ -267,8 +317,8 @@ const handleCustomerLookup = async () => {
       }
 
       // Clear cart and refresh products
-      setPrintedCart([...cart]); // sauvegarde du panier
-      setPrintedTotal(total); // sauvegarde du total
+      setPrintedCart([...cart]); // sauvegarde du panier (en CDF)
+      setPrintedTotal(totalCDF); // sauvegarde du total en CDF pour l'affichage du reçu
       setPrintedCustomerName(customerName);
       setPrintedPaymentMethod(selectedPayment);
       setShowReceiptModal(true);
@@ -282,13 +332,11 @@ const handleCustomerLookup = async () => {
       toast.success('Vente complétée avec succès ✅');
      
 
-
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to complete sale');
     }
   };
   
-
   const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   const tax = subtotal * 0.0;
   const total = subtotal + tax;
@@ -335,7 +383,8 @@ const handleCustomerLookup = async () => {
       </h6>
 
       <p className="text-lg font-bold text-primary-600">
-        {Number(product.selling_price ?? 0).toFixed(2)} $
+        {/* display price in CDF for UI */}
+        {Number((product.selling_price * exchangeRate) ?? 0).toFixed(0)} CDF
       </p>
 
       <p
@@ -408,13 +457,13 @@ const handleCustomerLookup = async () => {
                   <h6 className="font-medium">{item.name}</h6>
                  
                   
-                 {/* Zone de saisie - prix unitaire modifiable*/}
+                 {/* Zone de saisie - prix unitaire modifiable (en CDF)*/}
               <div className="flex items-center gap-2">
                 <span className="text-sm text-gray-500">Prix:</span>
                 <input
                   type="number"
                   min="0"
-                  step="0.01"
+                  step="1"
                   value={item.price}
                   onChange={(e) => {
                   const newPrice = parseFloat(e.target.value);
@@ -426,9 +475,9 @@ const handleCustomerLookup = async () => {
                     );
                   }
                 }}
-                className="w-20 text-center border border-gray-300 rounded px-1 py-0.5 text-sm"
+                className="w-28 text-center border border-gray-300 rounded px-1 py-0.5 text-sm"
               />
-              <span>$</span>
+              <span>CDF</span>
             </div>
 
                   
@@ -465,15 +514,15 @@ const handleCustomerLookup = async () => {
         <div className="border-t pt-4 space-y-2">
           <div className="flex justify-between text-sm">
             <span>Subtotal</span>
-            <span>$ {Number(subtotal ?? 0).toFixed(2)}</span>
+            <span>{Number(subtotal ?? 0).toFixed(0)} CDF</span>
           </div>
           <div className="flex justify-between text-sm">
             <span>Tax (0%)</span>
-            <span>$ {Number(tax ?? 0).toFixed(2)}</span>
+            <span>{Number(tax ?? 0).toFixed(0)} CDF</span>
           </div>
           <div className="flex justify-between font-bold text-lg">
             <span>Total</span>
-            <span>$ {Number(total ?? 0).toFixed(2)}</span>
+            <span>{Number(total ?? 0).toFixed(0)} CDF</span>
           </div>
         </div>
 
@@ -577,40 +626,39 @@ const handleCustomerLookup = async () => {
 
         
       </div>
- 
-  
-  
-{showReceiptModal && (
-  <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
-    <div className="bg-white p-6 rounded shadow-lg w-full max-w-md">
-      <Receipt
-        ref={receiptRef}
-        cart={printedCart}
-        total={printedTotal}
-        customerName={printedCustomerName}
-        paymentMethod={printedPaymentMethod}
-        date={new Date().toLocaleString()}
-        invoiceNumber={generateInvoiceNumber(selectedSaleId)}
-        userName={user?.name || ''}
-      
-      />
-      <div className="flex justify-end gap-2 mt-4">
-        <button
-          onClick={() => setShowReceiptModal(false)}
-          className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
-        >
-          Fermer
-        </button>
-        <button
-          onClick={handlePrint}
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-        >
-          Imprimer la Facture
-        </button>
+   
+   
+  {showReceiptModal && (
+    <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+      <div className="bg-white p-6 rounded shadow-lg w-full max-w-md">
+        <Receipt
+          ref={receiptRef}
+          cart={printedCart}
+          total={printedTotal}
+          customerName={printedCustomerName}
+          paymentMethod={printedPaymentMethod}
+          date={new Date().toLocaleString()}
+          invoiceNumber={generateInvoiceNumber(selectedSaleId)}
+          userName={user?.name || ''}
+          
+        />
+        <div className="flex justify-end gap-2 mt-4">
+          <button
+            onClick={() => setShowReceiptModal(false)}
+            className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+          >
+            Fermer
+          </button>
+          <button
+            onClick={handlePrint}
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            Imprimer la Facture
+          </button>
+        </div>
       </div>
     </div>
-  </div>
-)}
+  )}
     </div>
    
   );
