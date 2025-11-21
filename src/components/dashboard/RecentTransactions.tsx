@@ -43,8 +43,8 @@ const RecentTransactions: React.FC<RecentTransactionsProps> = ({ transactions })
   return (
     <div className="bg-white rounded-lg shadow-sm h-full animate-slide-up">
       <div className="px-5 py-4 border-b border-gray-200">
-        <h3 className="text-lg font-medium text-gray-900">Recent Transactions</h3>
-        <p className="text-sm text-gray-500">Latest customer purchases</p>
+        <h3 className="text-lg font-medium text-gray-900">Transactions recentes</h3>
+        <p className="text-sm text-gray-500">Derniers achats du client</p>
       </div>
       
       <div className="divide-y divide-gray-200">
@@ -79,7 +79,7 @@ const RecentTransactions: React.FC<RecentTransactionsProps> = ({ transactions })
       
       <div className="px-5 py-3 border-t border-gray-200">
         <a href="#view-all" className="text-sm font-medium text-primary-600 hover:text-primary-500">
-          View all transactions
+          Voir toutes les transactions
         </a>
       </div>
     </div>
