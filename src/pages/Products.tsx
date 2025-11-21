@@ -270,7 +270,7 @@ const Products: React.FC = () => {
             setMaxStock(val === '' ? '' : Number(val));
             setCurrentPage(1);
           }}
-          className="w-32 border rounded-md px-4 py-2"
+          className="w-32 border rounded-md px-8 py-2"
         />
 
         <button
