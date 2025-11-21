@@ -149,7 +149,9 @@ const Sales: React.FC = () => {
     setCart(prevCart => {
       const existingItem = prevCart.find(item => item.id === product.id);
       // Price shown/stored in cart is in CDF (product.selling_price assumed in USD)
-      const priceInCDF = Number((product.selling_price * exchangeRate) ?? 0);
+      
+      const priceInCDF = Number((product.selling_price ?? 0) * (exchangeRate ?? 0));
+
 
       if (existingItem) {
         return prevCart.map(item =>
