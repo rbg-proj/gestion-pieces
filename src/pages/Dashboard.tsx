@@ -6,7 +6,8 @@ import {
   Users, 
   Package, 
   TrendingUp,
-  Wallet
+  Wallet,
+  Banknote
 } from 'lucide-react';
 import DashboardCard from '../components/dashboard/DashboardCard';
 import SalesChart from '../components/dashboard/SalesChart';
@@ -173,7 +174,7 @@ const Dashboard: React.FC = () => {
               title="Total Vente du Jour" 
               value={formatCurrency(salesToday)}
               change={0.0}
-              icon={<Wallet size={20} className="text-white" />}
+              icon={<Banknote size={20} className="text-white" />}
               iconBgColor="bg-primary-500"
             />
             <DashboardCard 
