@@ -448,7 +448,7 @@ const handleCustomerLookup = async () => {
                         updateQuantity(item.id, newQuantity - item.quantity); // calcul de la différence
                       }
                     }}
-                    className="w-16 text-center border border-gray-300 rounded-lg px-2 py-1 text-base />
+                    className="w-16 text-center border border-gray-300 rounded-lg px-2 py-1 text-base" />
               
                   <button onClick={() => updateQuantity(item.id, 1)} className="p-1 rounded-full hover:bg-gray-100">
                     <Plus size={16} />
