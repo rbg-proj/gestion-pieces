@@ -1,7 +1,7 @@
 import React from 'react';
 import { Menu, Search, Bell, User } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
-import { Link } from 'react-router-dom'; // Ajoute ça en haut
+import { Link } from 'react-router-dom'; 
 
 interface HeaderProps {
   toggleSidebar: () => void;
