@@ -321,7 +321,7 @@ const handleCustomerLookup = async () => {
       className="p-4 border border-gray-200 rounded-lg hover:border-primary-500 transition-colors duration-200 text-left bg-white shadow-sm"
       disabled={getDisplayedStock(product) <= 0}
     >
-      <h3 className="font-medium text-gray-900 truncate">{product.name}</h3>
+      <h6 className="font-medium text-gray-900 truncate">{product.name}</h6>
       <p className="text-lg font-bold text-primary-600">
         {Number(product.selling_price ?? 0).toFixed(2)} $
       </p>
