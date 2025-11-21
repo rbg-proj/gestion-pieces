@@ -394,7 +394,8 @@ const handleCustomerLookup = async () => {
 
       {/* Section Panier */}
 
-        <div className="md:w-1/3 bg-white rounded-lg shadow-sm p-4 flex flex-col">
+        <div className="w-full md:w-1/2 lg:w-1/3 bg-white rounded-lg shadow-sm p-4 flex flex-col">
+
             <div className="flex items-center mb-4">
               <ShoppingCart className="text-primary-500 mr-2" size={26} />
               <h2 className="text-xl font-semibold">Articles sélectionnés</h2>
@@ -407,7 +408,6 @@ const handleCustomerLookup = async () => {
                 <div className="flex-1">
                   <h6 className="font-medium">{item.name}</h6>
                 
-                  
                  {/* Zone de saisie - prix unitaire modifiable*/}
               <div className="flex items-center gap-2">
                 <span className="text-sm text-gray-500">Prix:</span>
