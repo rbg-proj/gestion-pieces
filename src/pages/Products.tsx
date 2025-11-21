@@ -319,7 +319,7 @@ const Products: React.FC = () => {
             }}
             className="inline-flex items-center px-4 py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600"
           >
-            <PlusCircle size={16} className="mr-2" /> Nouvel Article
+            <PlusCircle size={16} className="mr-2" /> Ajouter Article
           </button>
         </div>
       </div>
