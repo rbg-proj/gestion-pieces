@@ -71,7 +71,7 @@ const Sales: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
 // Exchange rate state (CDF per 1 USD). Will be fetched from DB (exchange_rates).
-  const [exchangeRate, setExchangeRate] = useState<number>(2700);
+  const [exchangeRate, setExchangeRate] = useState<number>(0);
 
   const filteredProducts = products.filter(product =>
     product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
