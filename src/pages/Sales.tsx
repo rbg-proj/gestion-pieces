@@ -66,37 +66,33 @@ const Sales: React.FC = () => {
   const [isCustomerConfirmed, setIsCustomerConfirmed] = useState(false);
   const [customerNotFound, setCustomerNotFound] = useState(false);
 
-  // NEW: compact mode and horizontal swipe toggle (non-invasive)
-  const [compactMode, setCompactMode] = useState(false);
-  const [horizontalSwipe, setHorizontalSwipe] = useState(false);
-
   //Pagination
   const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
 
   const filteredProducts = products.filter(product =>
-    product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    product.barcode.includes(searchTerm)
-  );
+  product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  product.barcode.includes(searchTerm)
+);
   const paginatedProducts = filteredProducts.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );  
+  (currentPage - 1) * itemsPerPage,
+  currentPage * itemsPerPage
+);  
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
 
   const goToNextPage = () => {
-    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
-  };
+  if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+};
 
   const goToPreviousPage = () => {
-    if (currentPage > 1) setCurrentPage(currentPage - 1);
-  };
-  // Fin Pagination
+  if (currentPage > 1) setCurrentPage(currentPage - 1);
+};
+// Fin Pagination
 
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchTerm]);
-    
+ useEffect(() => {
+  setCurrentPage(1);
+}, [searchTerm]);
+  
   useEffect(() => {
     fetchProducts();
   }, []);
@@ -142,18 +138,18 @@ const Sales: React.FC = () => {
   };
 
   const updateQuantity = (id: string, change: number) => {
-    setCart(prevCart => {
-      return prevCart.map(item => {
-        if (item.id === id) {
-          const product = products.find(p => p.id === id);
-          const maxQty = product ? product.stock : item.quantity;
-          const newQty = Math.min(maxQty, item.quantity + change);
-          return { ...item, quantity: Math.max(0, newQty) };
-        }
-        return item;
-      }).filter(item => item.quantity > 0);
-    });
-  };
+  setCart(prevCart => {
+    return prevCart.map(item => {
+      if (item.id === id) {
+        const product = products.find(p => p.id === id);
+        const maxQty = product ? product.stock : item.quantity;
+        const newQty = Math.min(maxQty, item.quantity + change);
+        return { ...item, quantity: Math.max(0, newQty) };
+      }
+      return item;
+    }).filter(item => item.quantity > 0);
+  });
+};
 
   const removeFromCart = (id: string) => {
     setCart(prevCart => prevCart.filter(item => item.id !== id));
@@ -166,43 +162,44 @@ const Sales: React.FC = () => {
 
   
   {/*New CustumerLookUp*/}
-  const handleCustomerLookup = async () => {
-    if (!customerPhone) return;
-    setSaleCompleted(false);
-    setShowReceiptModal(false);
-    setIsCustomerConfirmed(true);
+const handleCustomerLookup = async () => {
+  if (!customerPhone) return;
+  setSaleCompleted(false);
+  setShowReceiptModal(false);
+  setIsCustomerConfirmed(true);
 
-    const { data: customer, error } = await supabase
-      .from('customers')
-      .select('id, full_name')
-      .eq('phone', customerPhone)
-      .single();
+  const { data: customer, error } = await supabase
+    .from('customers')
+    .select('id, full_name')
+    .eq('phone', customerPhone)
+    .single();
 
-    if (error && (error as any).code !== 'PGRST116') {
-      setError((error as any).message || 'Erreur recherche client');
-      return;
-    }
+  if (error && error.code !== 'PGRST116') {
+    setError(error.message);
+    return;
+  }
 
-    if (customer) {
-      setSelectedCustomerId(customer.id);
-      setCustomerName(customer.full_name ?? null);
-      toast.success(`Client trouvé : ${customer.full_name ?? customerPhone}`);
-    } else {
-      // Aucun client trouvé → on associe le client standard (id = 0)
-      setSelectedCustomerId("0");
-      setCustomerName("Standard");
-      toast(`Aucun client trouvé. Utilisation du client standard`, {
-        icon: '⚠️',
-      });
-    }
-  };
+  if (customer) {
+    setSelectedCustomerId(customer.id);
+    setCustomerName(customer.full_name ?? null);
+    toast.success(`Client trouvé : ${customer.full_name ?? customerPhone}`);
+  } else {
+    // Aucun client trouvé → on associe le client standard (id = 0)
+    setSelectedCustomerId("0");
+    setCustomerName("Standard");
+    toast(`Aucun client trouvé. Utilisation du client standard`, {
+      icon: '⚠️',
+    });
+  }
+};
 
   
-    {/*Fin LookUp*/}
-    
+  {/*Fin LookUp*/}
+  
   const handleCompleteSale = async () => {
     setSaleCompleted(false); // cacher l'ancien reçu
     
+
     try {
       if (cart.length === 0 || !selectedPayment) return;
 
@@ -265,7 +262,7 @@ const Sales: React.FC = () => {
           .select();
 
         if (updateError) {
-          throw new Error(`Failed to update stock for product ${item.id}: ${(updateError as any).message}`);
+          throw new Error(`Failed to update stock for product ${item.id}: ${updateError.message}`);
         }
       }
 
@@ -284,6 +281,7 @@ const Sales: React.FC = () => {
       setCustomerName(null); // ✅ reset du nom
       toast.success('Vente complétée avec succès ✅');
      
+
 
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to complete sale');
@@ -396,157 +394,72 @@ const Sales: React.FC = () => {
 
       {/* Section Panier */}
 
-        <div className="w-full md:w-1/3 xl:w-1/4 bg-white rounded-lg shadow-sm p-4 flex flex-col">
-            <div className="flex items-center mb-3 justify-between">
-              <div className="flex items-center">
-                <ShoppingCart className="text-primary-500 mr-2" size={26} />
-                <h2 className="text-xl font-semibold">Articles sélectionnés</h2>
-              </div>
-
-              {/* Controls: compact mode & horizontal swipe */}
-              <div className="flex items-center space-x-2">
-                <button
-                  type="button"
-                  onClick={() => setCompactMode(prev => !prev)}
-                  className={`text-xs px-2 py-1 rounded ${compactMode ? 'bg-primary-50 border border-primary-200' : 'bg-gray-100 border border-gray-200'}`}
-                  title="Basculer en mode compact"
-                >
-                  {compactMode ? 'Compact On' : 'Compact Off'}
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setHorizontalSwipe(prev => !prev)}
-                  className={`text-xs px-2 py-1 rounded ${horizontalSwipe ? 'bg-primary-50 border border-primary-200' : 'bg-gray-100 border border-gray-200'}`}
-                  title="Basculer swipe horizontal"
-                >
-                  {horizontalSwipe ? 'Swipe On' : 'Swipe Off'}
-                </button>
-              </div>
+        <div className="md:w-1/3 bg-white rounded-lg shadow-sm p-4 flex flex-col">
+            <div className="flex items-center mb-4">
+              <ShoppingCart className="text-primary-500 mr-2" size={26} />
+              <h2 className="text-xl font-semibold">Articles sélectionnés</h2>
             </div>
 
-          {/* Scrollable area: either horizontal swipe or responsive grid/list */}
-          <div className={`flex-1 mb-4 ${horizontalSwipe ? 'overflow-x-auto' : 'overflow-y-auto'}`}>
-            {horizontalSwipe ? (
-              // Horizontal swipe: a flex row with min-w per card, horizontally scrollable
-              <div className="flex space-x-3 px-1 py-2">
-                {cart.map(item => (
-                  <div key={item.id} className={`min-w-[160px] p-2 border rounded-lg bg-gray-50 flex-shrink-0 ${compactMode ? 'py-1 px-2' : ''}`}>
-                    <div className="flex flex-col justify-between h-full">
-                      <div>
-                        <h6 className={`font-medium ${compactMode ? 'text-xs' : 'text-sm'}`}>{item.name}</h6>
-                        <div className={`flex items-center gap-2 mt-1 ${compactMode ? 'text-xs' : 'text-sm'}`}>
-                          <span>Prix</span>
-                          <input
-                            type="number"
-                            min="0"
-                            step="0.01"
-                            value={item.price}
-                            onChange={(e) => {
-                              const newPrice = parseFloat(e.target.value);
-                              if (!isNaN(newPrice) && newPrice >= 0) {
-                                setCart(prevCart =>
-                                  prevCart.map(i =>
-                                    i.id === item.id ? { ...i, price: newPrice } : i
-                                  )
-                                );
-                              }
-                            }}
-                            className={`w-20 text-center border border-gray-300 rounded px-1 py-0.5 ${compactMode ? 'text-xs' : 'text-sm'}`}
-                          />
-                        </div>
-                      </div>
+          <div className="flex-1 overflow-y-auto mb-4">
+          
+            {cart.map(item => (
+              <div key={item.id} className="flex items-center justify-between p-2 border-b">
+                <div className="flex-1">
+                  <h6 className="font-medium">{item.name}</h6>
+                
+                  
+                 {/* Zone de saisie - prix unitaire modifiable*/}
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-500">Prix:</span>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={item.price}
+                  onChange={(e) => {
+                  const newPrice = parseFloat(e.target.value);
+                  if (!isNaN(newPrice) && newPrice >= 0) {
+                    setCart(prevCart =>
+                      prevCart.map(i =>
+                        i.id === item.id ? { ...i, price: newPrice } : i
+                      )
+                    );
+                  }
+                }}
+                className="w-20 text-center border border-gray-300 rounded px-1 py-0.5 text-sm"
+              />
+              <span>$</span>
+            </div>
 
-                      <div className="flex items-center justify-between mt-2">
-                        <div className="flex items-center space-x-1">
-                          <button onClick={() => updateQuantity(item.id, -1)} className="p-1 rounded-full hover:bg-gray-100">
-                            <Minus size={14} />
-                          </button>
-                          <input
-                            type="number"
-                            min="1"
-                            value={item.quantity}
-                            onChange={(e) => {
-                              const newQuantity = parseInt(e.target.value, 10);
-                              if (!isNaN(newQuantity) && newQuantity > 0) {
-                                updateQuantity(item.id, newQuantity - item.quantity);
-                              }
-                            }}
-                            className={`w-12 text-center border border-gray-300 rounded px-1 py-0.5 ${compactMode ? 'text-xs' : 'text-sm'}`}
-                          />
-                          <button onClick={() => updateQuantity(item.id, 1)} className="p-1 rounded-full hover:bg-gray-100">
-                            <Plus size={14} />
-                          </button>
-                        </div>
-
-                        <button onClick={() => removeFromCart(item.id)} className="p-1 text-error-500 rounded-full hover:bg-error-50">
-                          <Trash2 size={14} />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
+                  
+                </div>
+                <div className="flex items-center space-x-2">
+                  <button onClick={() => updateQuantity(item.id, -1)} className="p-1 rounded-full hover:bg-gray-100">
+                    <Minus size={16} />
+                  </button>
+                  
+                <input
+                    type="number"
+                    min="1"
+                    value={item.quantity}
+                    onChange={(e) => {
+                      const newQuantity = parseInt(e.target.value, 10);
+                      if (!isNaN(newQuantity) && newQuantity > 0) {
+                        updateQuantity(item.id, newQuantity - item.quantity); // calcul de la différence
+                      }
+                    }}
+                    className="w-12 text-center border border-gray-300 rounded px-1 py-0.5 text-sm"
+                   />
+              
+                  <button onClick={() => updateQuantity(item.id, 1)} className="p-1 rounded-full hover:bg-gray-100">
+                    <Plus size={16} />
+                  </button>
+                  <button onClick={() => removeFromCart(item.id)} className="p-1 text-error-500 rounded-full hover:bg-error-50">
+                    <Trash2 size={16} />
+                  </button>
+                </div>
               </div>
-            ) : (
-              // Grid / List responsive: 2 columns on small screens to show up to 4 items comfortably, single column on md+
-              <div className={`grid ${compactMode ? 'gap-2' : 'gap-3'} grid-cols-2 md:grid-cols-1`}>
-                {cart.map(item => (
-                  <div key={item.id} className={`flex items-center justify-between p-2 border-b ${compactMode ? 'py-1' : ''}`}>
-                    <div className="flex-1 pr-2">
-                      <h6 className={`font-medium ${compactMode ? 'text-sm' : ''} line-clamp-2`}>{item.name}</h6>
-
-                      <div className={`flex items-center gap-2 mt-1 ${compactMode ? 'text-xs' : 'text-sm'}`}>
-                        <span className="text-gray-500">Prix:</span>
-                        <input
-                          type="number"
-                          min="0"
-                          step="0.01"
-                          value={item.price}
-                          onChange={(e) => {
-                            const newPrice = parseFloat(e.target.value);
-                            if (!isNaN(newPrice) && newPrice >= 0) {
-                              setCart(prevCart =>
-                                prevCart.map(i =>
-                                  i.id === item.id ? { ...i, price: newPrice } : i
-                                )
-                              );
-                            }
-                          }}
-                          className={`w-20 text-center border border-gray-300 rounded px-1 py-0.5 ${compactMode ? 'text-xs' : 'text-sm'}`}
-                        />
-                        <span className="text-sm">$</span>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center space-x-2">
-                      <button onClick={() => updateQuantity(item.id, -1)} className="p-1 rounded-full hover:bg-gray-100">
-                        <Minus size={16} />
-                      </button>
-
-                      <input
-                        type="number"
-                        min="1"
-                        value={item.quantity}
-                        onChange={(e) => {
-                          const newQuantity = parseInt(e.target.value, 10);
-                          if (!isNaN(newQuantity) && newQuantity > 0) {
-                            updateQuantity(item.id, newQuantity - item.quantity); // calcul de la différence
-                          }
-                        }}
-                        className={`w-12 text-center border border-gray-300 rounded px-1 py-0.5 ${compactMode ? 'text-xs' : 'text-sm'}`}
-                      />
-
-                      <button onClick={() => updateQuantity(item.id, 1)} className="p-1 rounded-full hover:bg-gray-100">
-                        <Plus size={16} />
-                      </button>
-                      <button onClick={() => removeFromCart(item.id)} className="p-1 text-error-500 rounded-full hover:bg-error-50">
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
+            ))}
           </div>
 
         <div className="border-t pt-4 space-y-2">
@@ -664,7 +577,7 @@ const Sales: React.FC = () => {
 
         
       </div>
-   
+ 
   
   
 {showReceiptModal && (
