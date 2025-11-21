@@ -345,7 +345,25 @@ const Sales: React.FC = () => {
     <div className="h-screen flex flex-col md:flex-row gap-6 p-4 bg-gray-50">
       {/* Products Section */}
       <div className="md:w-2/3 bg-white rounded-lg shadow-sm p-4">
-          
+
+
+        {typeof exchangeRate === 'number' && exchangeRate > 0 && (
+    <div className="mb-3 p-2 bg-blue-100 border border-blue-300 rounded text-blue-800 text-sm font-medium flex items-center justify-between">
+      <span>
+        💱 Taux du jour : <span className="font-bold">{exchangeRate}</span> CDF pour 1 USD
+      </span>
+
+      <button
+        type="button"
+        onClick={fetchLatestRate} // doit être défini (voir ci-dessous)
+        className="ml-3 px-3 py-1 text-sm border rounded hover:bg-blue-50"
+      >
+        🔄 Rafraîchir
+      </button>
+    </div>
+  )}
+
+        
         <div className="mb-6">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
