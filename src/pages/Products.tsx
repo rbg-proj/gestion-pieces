@@ -251,7 +251,7 @@ const Products: React.FC = () => {
 
         <input
           type="number"
-          placeholder="Filtre Stock min"
+          placeholder="Tri Stock min"
           value={minStock}
           onChange={(e) => {
             const val = e.target.value;
@@ -263,7 +263,7 @@ const Products: React.FC = () => {
 
         <input
           type="number"
-          placeholder="Filtre Stock max"
+          placeholder="Tri Stock max"
           value={maxStock}
           onChange={(e) => {
             const val = e.target.value;
