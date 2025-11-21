@@ -394,88 +394,134 @@ const handleCustomerLookup = async () => {
 
       {/* Section Panier */}
 
-        <div className="w-full md:w-1/2 lg:w-1/3 bg-white rounded-lg shadow-sm p-4 flex flex-col">
+       {/* SECTION PANIER — VERSION PRO */}
 
-            <div className="flex items-center mb-4">
-              <ShoppingCart className="text-primary-500 mr-2" size={26} />
-              <h2 className="text-xl font-semibold">Articles sélectionnés</h2>
-            </div>
+<div className="w-full md:w-1/2 lg:w-1/3 bg-white rounded-xl shadow-md p-5 flex flex-col">
 
-          <div className="flex-1 overflow-y-auto mb-4 min-h-[200px]">
+  {/* Header */}
+  <div className="flex items-center mb-5">
+    <ShoppingCart className="text-primary-500 mr-2" size={28} />
+    <h2 className="text-2xl font-bold tracking-tight">Panier</h2>
+  </div>
+
+  {/* Liste articles */}
+  <div className="flex-1 overflow-y-auto pr-1 space-y-4 mb-4">
+
+    {cart.length === 0 && (
+      <div className="text-center text-gray-400 py-10">
+        Aucun article sélectionné.
+      </div>
+    )}
+
+    {cart.map(item => (
+      <div 
+        key={item.id}
+        className="bg-gray-50 rounded-xl p-4 shadow-sm border border-gray-200"
+      >
+
+        {/* Ligne 1 — Nom + delete */}
+        <div className="flex justify-between items-start mb-3">
+          <h6 className="font-semibold text-lg">{item.name}</h6>
+
+          <button 
+            onClick={() => removeFromCart(item.id)}
+            className="p-2 rounded-full hover:bg-red-50 text-red-500"
+          >
+            <Trash2 size={18} />
+          </button>
+        </div>
+
+        {/* Ligne 2 — Quantité (alignée centre) */}
+        <div className="flex items-center justify-between mb-3">
           
-            {cart.map(item => (
-              <div key={item.id} className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 border-b">
-                <div className="flex-1">
-                  <h6 className="font-medium">{item.name}</h6>
-                
-                 {/* Zone de saisie - prix unitaire modifiable*/}
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-500">Prix:</span>
-                <input
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  value={item.price}
-                  onChange={(e) => {
-                  const newPrice = parseFloat(e.target.value);
-                  if (!isNaN(newPrice) && newPrice >= 0) {
-                    setCart(prevCart =>
-                      prevCart.map(i =>
-                        i.id === item.id ? { ...i, price: newPrice } : i
-                      )
-                    );
-                  }
-                }}
-                className="w-20 text-center border border-gray-300 rounded px-1 py-0.5 text-sm"
-              />
-              <span>$</span>
-            </div>
+          <span className="text-sm text-gray-500">Quantité</span>
 
-                  
-                </div>
-                <div className="flex items-center space-x-2">
-                  <button onClick={() => updateQuantity(item.id, -1)} className="p-1 rounded-full hover:bg-gray-100">
-                    <Minus size={16} />
-                  </button>
-                  
-                <input
-                    type="number"
-                    min="1"
-                    value={item.quantity}
-                    onChange={(e) => {
-                      const newQuantity = parseInt(e.target.value, 10);
-                      if (!isNaN(newQuantity) && newQuantity > 0) {
-                        updateQuantity(item.id, newQuantity - item.quantity); // calcul de la différence
-                      }
-                    }}
-                    className="w-12 text-center border border-gray-300 rounded-lg px-1 py-0.5 text-sm" />
-              
-                  <button onClick={() => updateQuantity(item.id, 1)} className="p-1 rounded-full hover:bg-gray-100">
-                    <Plus size={16} />
-                  </button>
-                  <button onClick={() => removeFromCart(item.id)} className="p-1 text-error-500 rounded-full hover:bg-error-50">
-                    <Trash2 size={16} />
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-          
+          <div className="flex items-center space-x-3">
+            <button 
+              onClick={() => updateQuantity(item.id, -1)}
+              className="p-2 rounded-full bg-white border hover:bg-gray-100 shadow-sm"
+            >
+              <Minus size={18} />
+            </button>
 
-        <div className="border-t pt-4 space-y-2">
-          <div className="flex justify-between text-sm">
-            <span>Subtotal</span>
-            <span>$ {Number(subtotal ?? 0).toFixed(2)}</span>
-          </div>
-          <div className="flex justify-between text-sm">
-            <span>Tax (0%)</span>
-            <span>$ {Number(tax ?? 0).toFixed(2)}</span>
-          </div>
-          <div className="flex justify-between font-bold text-lg">
-            <span>Total</span>
-            <span>$ {Number(total ?? 0).toFixed(2)}</span>
+            <input
+              type="number"
+              min="1"
+              value={item.quantity}
+              onChange={(e) => {
+                const newQuantity = parseInt(e.target.value, 10);
+                if (!isNaN(newQuantity) && newQuantity > 0) {
+                  updateQuantity(item.id, newQuantity - item.quantity);
+                }
+              }}
+              className="w-16 text-center border border-gray-300 rounded-lg text-lg font-semibold py-1"
+            />
+
+            <button 
+              onClick={() => updateQuantity(item.id, 1)}
+              className="p-2 rounded-full bg-white border hover:bg-gray-100 shadow-sm"
+            >
+              <Plus size={18} />
+            </button>
           </div>
         </div>
+
+        {/* Ligne 3 — Prix unitaire */}
+        <div className="flex flex-col">
+
+          <span className="text-sm text-gray-500 mb-1">Prix unitaire</span>
+
+          <div className="flex items-center gap-2">
+            <input
+              type="number"
+              min="0"
+              step="0.01"
+              value={item.price}
+              onChange={(e) => {
+                const newPrice = parseFloat(e.target.value);
+                if (!isNaN(newPrice) && newPrice >= 0) {
+                  setCart(prevCart =>
+                    prevCart.map(i =>
+                      i.id === item.id ? { ...i, price: newPrice } : i
+                    )
+                  );
+                }
+              }}
+              className="w-32 text-center border border-gray-300 rounded-lg py-1 text-lg font-medium"
+            />
+            <span className="text-lg">$</span>
+          </div>
+
+        </div>
+
+      </div>
+    ))}
+
+  </div>
+
+  {/* Totaux bas de caisse */}
+  <div className="border-t pt-4 space-y-2 text-base">
+
+    <div className="flex justify-between text-gray-600">
+      <span>Sous-total</span>
+      <span className="font-medium">${Number(subtotal ?? 0).toFixed(2)}</span>
+    </div>
+
+    <div className="flex justify-between text-gray-600">
+      <span>Taxe (0%)</span>
+      <span className="font-medium">${Number(tax ?? 0).toFixed(2)}</span>
+    </div>
+
+    <div className="flex justify-between text-2xl font-bold mt-2">
+      <span>Total</span>
+      <span>${Number(total ?? 0).toFixed(2)}</span>
+    </div>
+
+  </div>
+
+</div>
+
+{/* FIN SECTION PANIER PRO */}
 
 
       {/* Fin Section Panier */}
