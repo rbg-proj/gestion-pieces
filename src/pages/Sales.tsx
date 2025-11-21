@@ -495,7 +495,6 @@ const handleCustomerLookup = async () => {
   </div>
 </div>
 
-      
       {/* Fin Section Panier */}
 
       {/* Bas de la Section Panier */}
@@ -597,7 +596,7 @@ const handleCustomerLookup = async () => {
       </div>
   {/* Fin Bas de Section Panier */}
   
-  {/* Traitement Affichage Facture */}
+  
 {showReceiptModal && (
   <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
     <div className="bg-white p-6 rounded shadow-lg w-full max-w-md">
