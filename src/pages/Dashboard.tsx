@@ -26,7 +26,7 @@ const Dashboard: React.FC = () => {
   const [exchangeRate, setExchangeRate] = useState<number | null>(null);
 
   const formatCurrency = (amount: number) =>
-    new Intl.NumberFormat('en-US', {
+    new Intl.NumberFormat('fr-CD', {
       style: 'currency',
       currency: 'USD',
       minimumFractionDigits: 2,
@@ -173,7 +173,7 @@ const Dashboard: React.FC = () => {
               title="Total Vente du Jour" 
               value={formatCurrency(salesToday)}
               change={0.0}
-              icon={<DollarSign size={20} className="text-white" />}
+              icon={<Wallet size={20} className="text-white" />}
               iconBgColor="bg-primary-500"
             />
             <DashboardCard 
