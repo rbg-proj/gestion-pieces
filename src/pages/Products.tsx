@@ -233,7 +233,7 @@ const Products: React.FC = () => {
       const workbook = xlsx.utils.book_new();
       xlsx.utils.book_append_sheet(workbook, worksheet, 'Articles');
 
-      xlsx.writeFile(workbook, 'articles.xlsx');
+      xlsx.writeFile(workbook, 'RBG Liste articles.xlsx');
     });
   };
 
@@ -259,7 +259,7 @@ const Products: React.FC = () => {
       ]);
     });
 
-    doc.text('Liste des Articles', 14, 15);
+    doc.text('RBG Liste des Articles', 14, 15);
     (doc as any).autoTable({
       head: [tableColumn],
       body: tableRows,
