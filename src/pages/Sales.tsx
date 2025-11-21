@@ -346,7 +346,7 @@ const Sales: React.FC = () => {
       {/* Products Section */}
       <div className="md:w-2/3 bg-white rounded-lg shadow-sm p-4">
 
-        <div className="mb-3 p-2 bg-blue-100 border border-blue-300 rounded flex items-                            center justify-between">
+        
             <span className="text-blue-800 text-sm font-medium">
               💱 Taux du jour : <strong>{exchangeRate}</strong> CDF = 1 USD
             </span>
@@ -358,7 +358,7 @@ const Sales: React.FC = () => {
             >
               🔄 Rafraîchir
             </Button>
-          </div>
+          
 
         
         <div className="mb-6">
