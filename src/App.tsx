@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import StockHistory from './pages/StockHistory';
 import ProfilePage from './pages/ProfilePage';
 import SettingsPage from './pages/SettingsPage';
+import ExchangeRatesPage from './pages/exchangeRates';
 
 const InactivityWarning = () => {
   const { showWarning } = useAuth();
