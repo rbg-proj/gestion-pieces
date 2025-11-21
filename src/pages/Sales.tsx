@@ -404,7 +404,7 @@ const handleCustomerLookup = async () => {
           <div className="flex-1 overflow-y-auto mb-4 min-h-[200px]">
           
             {cart.map(item => (
-              <div key={item.id} className="flex items-center justify-between p-2 border-b">
+              <div key={item.id} className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 border-b">
                 <div className="flex-1">
                   <h6 className="font-medium">{item.name}</h6>
                 
