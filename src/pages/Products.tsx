@@ -364,7 +364,7 @@ const Products: React.FC = () => {
             setMinStock(val === '' ? '' : Number(val));
             setCurrentPage(1);
           }}
-          className="w-32 border rounded-md px-1 py-2"
+          className="w-32 border rounded-md px-2 py-2"
         />
 
         <input
@@ -376,7 +376,7 @@ const Products: React.FC = () => {
             setMaxStock(val === '' ? '' : Number(val));
             setCurrentPage(1);
           }}
-          className="w-32 border rounded-md px-1 py-2"
+          className="w-32 border rounded-md px-2 py-2"
         />
 
         <button
