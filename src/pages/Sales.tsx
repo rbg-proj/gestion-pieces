@@ -398,7 +398,6 @@ const handleCustomerLookup = async () => {
               <ShoppingCart className="text-primary-500 mr-2" size={26} />
               <h6 className="text-xl font-semibold">Articles sélectionnés</h6>
             </div>
-
           <div className="flex-1 overflow-y-auto mb-4">
           
             {cart.map(item => (
