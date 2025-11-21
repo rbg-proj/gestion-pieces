@@ -396,7 +396,7 @@ const handleCustomerLookup = async () => {
       <div className="md:w-1/3 bg-white rounded-lg shadow-sm p-4 flex flex-col">
             <div className="flex items-center mb-4">
               <ShoppingCart className="text-primary-500 mr-2" size={26} />
-              <h2 className="text-xl font-semibold">Articles sélectionnés</h2>
+              <h6 className="text-xl font-semibold">Articles sélectionnés</h6>
             </div>
 
           <div className="flex-1 overflow-y-auto mb-4">
