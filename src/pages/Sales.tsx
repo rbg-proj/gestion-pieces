@@ -343,14 +343,22 @@ const Sales: React.FC = () => {
 
   return (
     <div className="h-screen flex flex-col md:flex-row gap-6 p-4 bg-gray-50">
-      
       {/* Products Section */}
       <div className="md:w-2/3 bg-white rounded-lg shadow-sm p-4">
- {exchangeRate && (
-  <div className="mb-3 p-2 bg-blue-100 border border-blue-300 rounded text-blue-800 text-sm font-medium">
-    💱 Taux du jour : <span className="font-bold">{exchangeRate}</span> CDF pour 1 USD
-  </div>
-)}
+       {exchangeRate && (
+         <div className="mb-3 p-2 bg-blue-100 border border-blue-300 rounded text-blue-800                 text-sm font-medium">
+            💱 Taux du jour : <span className="font-bold">{exchangeRate}</span> CDF pour 1 USD
+                     <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={fetchLatestRate}
+            className="ml-2"
+          >
+            Rafraîchir le taux 🔄
+          </Button>
+
+            </div>
+          )}
 
         
         <div className="mb-6">
