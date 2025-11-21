@@ -266,8 +266,9 @@ const Sales: React.FC = () => {
         // fallback to local state rate
       }
 
+   
       if (!rate || rate <= 0) {
-        throw new Error('Taux de change invalide');
+        throw new Error('Taux de change invalide. Vérifiez-le svp !');
       }
 
       // total in CDF (cart prices are in CDF)
