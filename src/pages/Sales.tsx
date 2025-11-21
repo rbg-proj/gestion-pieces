@@ -359,6 +359,12 @@ const Sales: React.FC = () => {
           </div>
         </div>
 
+        {exchangeRate && (
+  <div className="mb-3 p-2 bg-blue-100 border border-blue-300 rounded text-blue-800 text-sm font-medium">
+    💱 Taux du jour : <span className="font-bold">{exchangeRate}</span> CDF pour 1 USD
+  </div>
+)}
+
 
         {/*Grille affichage des produits*/}
 
