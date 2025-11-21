@@ -22,7 +22,7 @@ import { initOfflineDB } from "@/lib/offlineDB";
 
 // Fonction utilitaire (hors composant)
 function generateInvoiceNumber(id: string | number, prefix = 'Fac') {
-  if (!id) return ''; // Ou null selon ton cas
+  if (!id) return ''; // Ou null selon mon cas
   return `${prefix}-${String(new Date().getFullYear()).slice(2)}${String(new Date().getMonth() + 1).padStart(2, '0')}-${String(id).slice(0, 6).toUpperCase()}`;
 }
 
