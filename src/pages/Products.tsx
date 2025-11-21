@@ -4,6 +4,9 @@ import {
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
+// -------------------------
+// TYPES
+// -------------------------
 interface Category {
   id: string;
   name: string;
@@ -21,6 +24,9 @@ interface Product {
   category?: Category;
 }
 
+// -------------------------
+// COMPONENT
+// -------------------------
 const Products: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -50,6 +56,9 @@ const Products: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
+  // -------------------------
+  // LOAD DATA
+  // -------------------------
   useEffect(() => {
     fetchProducts();
     fetchCategories();
@@ -81,6 +90,9 @@ const Products: React.FC = () => {
     }
   };
 
+  // -------------------------
+  // FORM SUBMIT
+  // -------------------------
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -98,6 +110,7 @@ const Products: React.FC = () => {
       if (editingProduct) {
         const oldStock = editingProduct.stock;
         const newStock = formData.stock;
+
         if (oldStock !== newStock) {
           await supabase.from('stock_history').insert([{
             product_id: editingProduct.id,
@@ -124,18 +137,23 @@ const Products: React.FC = () => {
           }]);
         }
       }
+
       if ((response as any).error) throw (response as any).error;
 
       setIsFormOpen(false);
       setEditingProduct(null);
       setFormData(initialFormState);
       fetchProducts();
+
     } catch (err) {
-      console.error('Error submitting product form:', err);
+      console.error('Error submitting:', err);
       setError(err instanceof Error ? err.message : 'Une erreur est survenue !');
     }
   };
 
+  // -------------------------
+  // DELETE
+  // -------------------------
   const handleDelete = async (id: string) => {
     if (!confirm('Voulez-vous vraiment supprimer ce produit ?')) return;
     try {
@@ -143,11 +161,14 @@ const Products: React.FC = () => {
       if (error) throw error;
       fetchProducts();
     } catch (err) {
-      console.error('Error deleting product:', err);
+      console.error('Error deleting:', err);
       setError(err instanceof Error ? err.message : 'Une erreur est survenue !');
     }
   };
 
+  // -------------------------
+  // IMAGE UPLOAD
+  // -------------------------
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -158,7 +179,7 @@ const Products: React.FC = () => {
 
     const { error } = await supabase.storage.from('product-images').upload(filePath, file);
     if (error) {
-      console.error('Erreur lors de l’upload :', error.message);
+      console.error('Erreur upload :', error.message);
       return;
     }
 
@@ -168,28 +189,98 @@ const Products: React.FC = () => {
     }
   };
 
-  // Filtrage avec stock min/max
+  // -------------------------
+  // FILTERS & PAGINATION
+  // -------------------------
   const filteredProducts = products.filter(product => {
-    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    const matchesSearch =
+      product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.barcode.includes(searchTerm);
-    const matchesCategory = selectedCategory === 'all' || product.category_id === selectedCategory;
+
+    const matchesCategory =
+      selectedCategory === 'all' || product.category_id === selectedCategory;
+
     const matchesStockMin = minStock === '' || product.stock >= minStock;
     const matchesStockMax = maxStock === '' || product.stock <= maxStock;
+
     return matchesSearch && matchesCategory && matchesStockMin && matchesStockMax;
   });
 
-  // Pagination
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentProducts = filteredProducts.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.max(1, Math.ceil(filteredProducts.length / itemsPerPage));
 
-  // Si on filtre et que la page courante dépasse le nombre de pages, on la remet à 1
   useEffect(() => {
     if (currentPage > totalPages) setCurrentPage(1);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filteredProducts.length, totalPages]);
 
+  // -------------------------
+  // EXPORT EXCEL
+  // -------------------------
+  const exportToExcel = () => {
+    import('xlsx').then((xlsx) => {
+      const exportData = filteredProducts.map((p) => ({
+        Nom: p.name,
+        CodeBarre: p.barcode,
+        Categorie: p.category?.name || '',
+        PrixAchat: p.purchase_price,
+        PrixVente: p.selling_price,
+        Stock: p.stock,
+      }));
+
+      const worksheet = xlsx.utils.json_to_sheet(exportData);
+      const workbook = xlsx.utils.book_new();
+      xlsx.utils.book_append_sheet(workbook, worksheet, 'Articles');
+
+      xlsx.writeFile(workbook, 'articles.xlsx');
+    });
+  };
+
+  // -------------------------
+  // EXPORT PDF
+  // -------------------------
+  const exportToPDF = () => {
+    const jsPDF = require('jspdf');
+    require('jspdf-autotable');
+
+    const doc = new jsPDF();
+
+    const tableColumn = ['Nom', 'Catégorie', 'Prix Achat', 'Prix Vente', 'Stock'];
+    const tableRows: any[] = [];
+
+    filteredProducts.forEach((p) => {
+      tableRows.push([
+        p.name,
+        p.category?.name || '',
+        p.purchase_price,
+        p.selling_price,
+        p.stock,
+      ]);
+    });
+
+    doc.text('Liste des Articles', 14, 15);
+    (doc as any).autoTable({
+      head: [tableColumn],
+      body: tableRows,
+      startY: 20,
+    });
+
+    doc.save('articles.pdf');
+  };
+
+  // -------------------------
+  // PRICE FORMAT
+  // -------------------------
+  const formatPrice = (price: number) =>
+    new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'USD' }).format(price);
+
+  const startDisplay = filteredProducts.length === 0 ? 0 : indexOfFirstItem + 1;
+  const endDisplay = Math.min(indexOfLastItem, filteredProducts.length);
+
+  // -------------------------
+  // RENDER
+  // -------------------------
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -198,32 +289,46 @@ const Products: React.FC = () => {
     );
   }
 
-  const formatPrice = (price: number) =>
-    new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'USD' }).format(price);
-
-  const startDisplay = filteredProducts.length === 0 ? 0 : indexOfFirstItem + 1;
-  const endDisplay = Math.min(indexOfLastItem, filteredProducts.length);
-
   return (
     <div className="space-y-6">
+
+      {/* HEADER + EXPORT BUTTONS */}
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Les Articles</h1>
-        <button
-          onClick={() => {
-            setIsFormOpen(true);
-            setEditingProduct(null);
-            setFormData(initialFormState);
-          }}
-          className="inline-flex items-center px-4 py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600"
-        >
-          <PlusCircle size={16} className="mr-2" /> Nouvel Article
-        </button>
+
+        <div className="flex gap-3">
+          <button
+            onClick={exportToExcel}
+            className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+          >
+            Export Excel
+          </button>
+
+          <button
+            onClick={exportToPDF}
+            className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+          >
+            Export PDF
+          </button>
+
+          <button
+            onClick={() => {
+              setIsFormOpen(true);
+              setEditingProduct(null);
+              setFormData(initialFormState);
+            }}
+            className="inline-flex items-center px-4 py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600"
+          >
+            <PlusCircle size={16} className="mr-2" /> Nouvel Article
+          </button>
+        </div>
       </div>
 
       {error && (
         <div className="bg-red-100 text-red-700 p-3 rounded">{error}</div>
       )}
 
+      {/* FILTERS */}
       <div className="flex gap-4 mb-4 flex-wrap">
         <input
           type="text"
@@ -235,6 +340,7 @@ const Products: React.FC = () => {
           }}
           className="flex-1 min-w-[200px] border rounded-md px-3 py-2"
         />
+
         <select
           value={selectedCategory}
           onChange={(e) => {
@@ -251,7 +357,7 @@ const Products: React.FC = () => {
 
         <input
           type="number"
-          placeholder="Tri Stock min"
+          placeholder="Stock min"
           value={minStock}
           onChange={(e) => {
             const val = e.target.value;
@@ -263,7 +369,7 @@ const Products: React.FC = () => {
 
         <input
           type="number"
-          placeholder="Tri Stock max"
+          placeholder="Stock max"
           value={maxStock}
           onChange={(e) => {
             const val = e.target.value;
@@ -281,10 +387,11 @@ const Products: React.FC = () => {
           }}
           className="border rounded-md px-3 py-2 bg-gray-100"
         >
-          Afficher tous stocks
+          Réinitialiser
         </button>
       </div>
 
+      {/* TABLE */}
       <div className="overflow-x-auto bg-white rounded shadow">
         <table className="min-w-full">
           <thead>
@@ -336,6 +443,7 @@ const Products: React.FC = () => {
                   >
                     <Edit size={16} />
                   </button>
+
                   <button
                     className="text-red-500 hover:underline"
                     onClick={() => handleDelete(product.id)}
@@ -357,16 +465,16 @@ const Products: React.FC = () => {
         </table>
       </div>
 
-      {/* Ligne demandée : Affichage de Produits X à Y sur Z Produits */}
+      {/* FOOTER */}
       <div className="text-sm text-gray-600 mt-2">
         Affichage de Produits {startDisplay} à {endDisplay} sur {filteredProducts.length} Produits
       </div>
 
-      {/* PAGINATION BUTTONS */}
+      {/* PAGINATION */}
       {filteredProducts.length > itemsPerPage && (
         <div className="flex justify-center items-center gap-4 mt-4">
           <button
-            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            onClick={() => setCurrentPage(Math.max(currentPage - 1, 1))}
             disabled={currentPage === 1}
             className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
           >
@@ -379,9 +487,7 @@ const Products: React.FC = () => {
 
           <button
             onClick={() =>
-              setCurrentPage((prev) =>
-                prev < totalPages ? prev + 1 : prev
-              )
+              setCurrentPage(currentPage < totalPages ? currentPage + 1 : currentPage)
             }
             disabled={currentPage === totalPages}
             className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
@@ -391,19 +497,24 @@ const Products: React.FC = () => {
         </div>
       )}
 
+      {/* FORM MODAL */}
       {isFormOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-30 flex justify-center items-center z-50">
           <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg relative">
+
             <button
               onClick={() => setIsFormOpen(false)}
               className="absolute top-2 right-2 text-gray-500"
             >
               <X size={24} />
             </button>
+
             <h2 className="text-xl font-semibold mb-4">
               {editingProduct ? 'Modifier l’article' : 'Nouvel article'}
             </h2>
+
             <form onSubmit={handleFormSubmit} className="space-y-4">
+
               <div>
                 <label>Nom</label>
                 <input
@@ -414,6 +525,7 @@ const Products: React.FC = () => {
                   className="w-full border px-3 py-2 rounded"
                 />
               </div>
+
               <div>
                 <label>Barcode</label>
                 <input
@@ -423,6 +535,7 @@ const Products: React.FC = () => {
                   className="w-full border px-3 py-2 rounded"
                 />
               </div>
+
               <div>
                 <label>Catégorie</label>
                 <select
@@ -437,6 +550,7 @@ const Products: React.FC = () => {
                   ))}
                 </select>
               </div>
+
               <div className="flex gap-4">
                 <div className="flex-1">
                   <label>Prix d’achat</label>
@@ -447,6 +561,7 @@ const Products: React.FC = () => {
                     className="w-full border px-3 py-2 rounded"
                   />
                 </div>
+
                 <div className="flex-1">
                   <label>Prix de vente</label>
                   <input
@@ -457,6 +572,7 @@ const Products: React.FC = () => {
                   />
                 </div>
               </div>
+
               <div>
                 <label>Stock</label>
                 <input
@@ -466,6 +582,7 @@ const Products: React.FC = () => {
                   className="w-full border px-3 py-2 rounded"
                 />
               </div>
+
               <div>
                 <label>Image (optionnel)</label>
                 <input type="file" onChange={handleImageUpload} />
@@ -473,16 +590,19 @@ const Products: React.FC = () => {
                   <img src={formData.image_url} alt="Preview" className="mt-2 w-24 h-24 object-cover rounded" />
                 )}
               </div>
+
               <button
                 type="submit"
                 className="w-full bg-primary-500 text-white py-2 rounded"
               >
                 {editingProduct ? 'Mettre à jour' : 'Ajouter'}
               </button>
+
             </form>
           </div>
         </div>
       )}
+
     </div>
   );
 };
