@@ -313,7 +313,8 @@ const handleCustomerLookup = async () => {
 
 
         {/*Nouvelle grille produits*/}
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
   {paginatedProducts.map(product => (
     <button
       key={product.id}
@@ -321,42 +322,57 @@ const handleCustomerLookup = async () => {
       className="p-4 border border-gray-200 rounded-lg hover:border-primary-500 transition-colors duration-200 text-left bg-white shadow-sm"
       disabled={getDisplayedStock(product) <= 0}
     >
-      <p>{product.name}</p>
+      
+      <h6
+        className="
+          font-medium text-gray-900 
+          text-sm sm:text-base
+          line-clamp-2
+          min-h-[2.5rem]
+        "
+      >
+        {product.name}
+      </h6>
+
       <p className="text-lg font-bold text-primary-600">
         {Number(product.selling_price ?? 0).toFixed(2)} $
       </p>
+
       <p
-  className={`text-sm font-medium flex items-center gap-1 ${
-    getDisplayedStock(product) === 0
-      ? 'text-red-600'
-      : getDisplayedStock(product) <= 5
-      ? 'text-orange-500'
-      : 'text-black'
-  }`}
->
-  {getDisplayedStock(product) === 0 ? (
-    <>
-      <AlertCircle size={16} />
-      Stock épuisé
-    </>
-  ) : getDisplayedStock(product) <= 5 ? (
-    <>
-      <AlertTriangle size={16} />
-      Stock faible : {getDisplayedStock(product)}
-    </>
-  ) : (
-    <>
-      <CheckCircle size={16} />
-      En stock : {getDisplayedStock(product)}
-    </>
-  )}
-</p>
+        className={`text-sm font-medium flex items-center gap-1 ${
+          getDisplayedStock(product) === 0
+            ? 'text-red-600'
+            : getDisplayedStock(product) <= 5
+            ? 'text-orange-500'
+            : 'text-black'
+        }`}
+      >
+        {getDisplayedStock(product) === 0 ? (
+          <>
+            <AlertCircle size={16} />
+            Stock épuisé
+          </>
+        ) : getDisplayedStock(product) <= 5 ? (
+          <>
+            <AlertTriangle size={16} />
+            Stock faible : {getDisplayedStock(product)}
+          </>
+        ) : (
+          <>
+            <CheckCircle size={16} />
+            En stock : {getDisplayedStock(product)}
+          </>
+        )}
+      </p>
 
     </button>
   ))}
 </div>
 
+
+        
         {/*Fin grille*/}
+        
         <div className="flex justify-center items-center mt-4 space-x-4">
   <button
     onClick={goToPreviousPage}
