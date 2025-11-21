@@ -182,6 +182,15 @@ const Dashboard: React.FC = () => {
               icon={<TrendingUp size={20} className="text-white" />}
               iconBgColor="bg-success-500"
             />
+
+             {/* 💱 Nouveau : taux de change */}
+            <DashboardCard 
+              title="Taux du Jour (CDF → USD)"
+              value={exchangeRate ? exchangeRate.toString() : "--"}
+              change={0.0}
+              icon={<DollarSign size={20} className="text-white" />}
+              iconBgColor="bg-purple-600"
+            />
             <DashboardCard 
               title="Nombre total Articles" 
               value={productCount.toString()}
@@ -197,14 +206,7 @@ const Dashboard: React.FC = () => {
               iconBgColor="bg-accent-500"
             />
 
-            {/* 💱 Nouveau : taux de change */}
-            <DashboardCard 
-              title="Taux du Jour (CDF → USD)"
-              value={exchangeRate ? exchangeRate.toString() : "--"}
-              change={0.0}
-              icon={<DollarSign size={20} className="text-white" />}
-              iconBgColor="bg-purple-600"
-            />
+           
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
