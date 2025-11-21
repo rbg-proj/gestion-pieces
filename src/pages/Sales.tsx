@@ -404,61 +404,79 @@ const handleCustomerLookup = async () => {
           <div className="flex-1 overflow-y-auto mb-4 min-h-[200px]">
           
             {cart.map(item => (
-              <div key={item.id} className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 border-b">
-                <div className="flex-1">
-                  <h6 className="font-medium">{item.name}</h6>
-                
-                 {/* Zone de saisie - prix unitaire modifiable*/}
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-500">Prix:</span>
-                <input
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  value={item.price}
-                  onChange={(e) => {
-                  const newPrice = parseFloat(e.target.value);
-                  if (!isNaN(newPrice) && newPrice >= 0) {
-                    setCart(prevCart =>
-                      prevCart.map(i =>
-                        i.id === item.id ? { ...i, price: newPrice } : i
-                      )
-                    );
-                  }
-                }}
-                className="w-20 text-center border border-gray-300 rounded px-1 py-0.5 text-sm"
-              />
-              <span>$</span>
-            </div>
+  <div 
+    key={item.id} 
+    className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 border-b"
+  >
+    {/* Nom de l'article */}
+    <div>
+      <h6 className="font-medium">{item.name}</h6>
+    </div>
 
-                  
-                </div>
-                <div className="flex items-center space-x-2">
-                  <button onClick={() => updateQuantity(item.id, -1)} className="p-1 rounded-full hover:bg-gray-100">
-                    <Minus size={16} />
-                  </button>
-                  
-                <input
-                    type="number"
-                    min="1"
-                    value={item.quantity}
-                    onChange={(e) => {
-                      const newQuantity = parseInt(e.target.value, 10);
-                      if (!isNaN(newQuantity) && newQuantity > 0) {
-                        updateQuantity(item.id, newQuantity - item.quantity); // calcul de la différence
-                      }
-                    }}
-                    className="w-12 text-center border border-gray-300 rounded-lg px-1 py-0.5 text-sm" />
-              
-                  <button onClick={() => updateQuantity(item.id, 1)} className="p-1 rounded-full hover:bg-gray-100">
-                    <Plus size={16} />
-                  </button>
-                  <button onClick={() => removeFromCart(item.id)} className="p-1 text-error-500 rounded-full hover:bg-error-50">
-                    <Trash2 size={16} />
-                  </button>
-                </div>
-              </div>
-            ))}
+    {/* Quantité + boutons */}
+    <div className="flex items-center justify-end space-x-2">
+      <button 
+        onClick={() => updateQuantity(item.id, -1)} 
+        className="p-1 rounded-full hover:bg-gray-100"
+      >
+        <Minus size={16} />
+      </button>
+
+      <input
+        type="number"
+        min="1"
+        value={item.quantity}
+        onChange={(e) => {
+          const newQuantity = parseInt(e.target.value, 10);
+          if (!isNaN(newQuantity) && newQuantity > 0) {
+            updateQuantity(item.id, newQuantity - item.quantity);
+          }
+        }}
+        className="w-16 text-center border border-gray-300 rounded-lg px-2 py-1 text-base"
+      />
+
+      <button 
+        onClick={() => updateQuantity(item.id, 1)} 
+        className="p-1 rounded-full hover:bg-gray-100"
+      >
+        <Plus size={16} />
+      </button>
+
+      <button 
+        onClick={() => removeFromCart(item.id)} 
+        className="p-1 text-error-500 rounded-full hover:bg-error-50"
+      >
+        <Trash2 size={16} />
+      </button>
+    </div>
+
+    {/* Prix unitaire en-dessous — pleine largeur */}
+    <div className="col-span-1 sm:col-span-2 flex items-center gap-2">
+      <span className="text-sm text-gray-500">Prix :</span>
+
+      <input
+        type="number"
+        min="0"
+        step="0.01"
+        value={item.price}
+        onChange={(e) => {
+          const newPrice = parseFloat(e.target.value);
+          if (!isNaN(newPrice) && newPrice >= 0) {
+            setCart(prevCart =>
+              prevCart.map(i =>
+                i.id === item.id ? { ...i, price: newPrice } : i
+              )
+            );
+          }
+        }}
+        className="w-24 sm:w-28 text-center border border-gray-300 rounded px-2 py-1 text-sm"
+      />
+      <span>$</span>
+    </div>
+
+  </div>
+))}
+
           </div>
 
         <div className="border-t pt-4 space-y-2">
