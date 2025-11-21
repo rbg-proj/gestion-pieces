@@ -199,7 +199,7 @@ const Dashboard: React.FC = () => {
 
             {/* 💱 Nouveau : taux de change */}
             <DashboardCard 
-              title="Taux de Change (CDF → USD)"
+              title="Taux du Jour (CDF → USD)"
               value={exchangeRate ? exchangeRate.toString() : "--"}
               change={0.0}
               icon={<DollarSign size={20} className="text-white" />}
