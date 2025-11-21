@@ -351,14 +351,7 @@ const Sales: React.FC = () => {
             </div>
       
           )}
-<Button 
-            variant="outline" 
-            size="sm" 
-            onClick={fetchLatestRate}
-            className="ml-2"
-          >
-            Rafraîchir le taux 🔄
-          </Button>
+
         
         <div className="mb-6">
           <div className="relative">
