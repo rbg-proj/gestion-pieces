@@ -405,7 +405,8 @@ const Sales: React.FC = () => {
 
       <p className="text-lg font-bold text-primary-600">
         {/* display price in CDF for UI */}
-        {Number((product.selling_price * exchangeRate) ?? 0).toFixed(0)} CDF
+        {Number((product.selling_price ?? 0) * (exchangeRate ?? 0)).toFixed(0)} CDF
+
       </p>
 
       <p
