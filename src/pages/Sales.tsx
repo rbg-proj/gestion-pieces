@@ -426,7 +426,7 @@ const handleCustomerLookup = async () => {
                     );
                   }
                 }}
-                className="w-20 text-center border border-gray-300 rounded px-1 py-0.5 text-sm"
+                className="w-20 text-center border border-gray-300 rounded px-8 py-0.5 text-sm"
               />
               <span>$</span>
             </div>
