@@ -294,4 +294,140 @@ const Products: React.FC = () => {
               </tr>
             ))}
 
-            {fil
+            {filteredProducts.length === 0 && (
+              <tr>
+                <td colSpan={6} className="text-center p-4 text-gray-500">
+                  Aucun article trouvé
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {/* 📌 PAGINATION BUTTONS */}
+      {filteredProducts.length > itemsPerPage && (
+        <div className="flex justify-center items-center gap-4 mt-4">
+          <button
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+            className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+          >
+            Précédent
+          </button>
+
+          <span className="font-medium">
+            Page {currentPage} / {Math.ceil(filteredProducts.length / itemsPerPage)}
+          </span>
+
+          <button
+            onClick={() =>
+              setCurrentPage((prev) =>
+                prev < Math.ceil(filteredProducts.length / itemsPerPage) ? prev + 1 : prev
+              )
+            }
+            disabled={currentPage === Math.ceil(filteredProducts.length / itemsPerPage)}
+            className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+          >
+            Suivant
+          </button>
+        </div>
+      )}
+
+      {isFormOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-30 flex justify-center items-center z-50">
+          <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg relative">
+            <button
+              onClick={() => setIsFormOpen(false)}
+              className="absolute top-2 right-2 text-gray-500"
+            >
+              <X size={24} />
+            </button>
+            <h2 className="text-xl font-semibold mb-4">
+              {editingProduct ? 'Modifier l’article' : 'Nouvel article'}
+            </h2>
+            <form onSubmit={handleFormSubmit} className="space-y-4">
+              <div>
+                <label>Nom</label>
+                <input
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  required
+                  className="w-full border px-3 py-2 rounded"
+                />
+              </div>
+              <div>
+                <label>Barcode</label>
+                <input
+                  type="text"
+                  value={formData.barcode}
+                  onChange={(e) => setFormData({ ...formData, barcode: e.target.value })}
+                  className="w-full border px-3 py-2 rounded"
+                />
+              </div>
+              <div>
+                <label>Catégorie</label>
+                <select
+                  value={formData.category_id}
+                  onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
+                  required
+                  className="w-full border px-3 py-2 rounded"
+                >
+                  <option value="">Sélectionnez</option>
+                  {categories.map((cat) => (
+                    <option key={cat.id} value={cat.id}>{cat.name}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex gap-4">
+                <div className="flex-1">
+                  <label>Prix d’achat</label>
+                  <input
+                    type="number"
+                    value={formData.purchase_price}
+                    onChange={(e) => setFormData({ ...formData, purchase_price: Number(e.target.value) })}
+                    className="w-full border px-3 py-2 rounded"
+                  />
+                </div>
+                <div className="flex-1">
+                  <label>Prix de vente</label>
+                  <input
+                    type="number"
+                    value={formData.selling_price}
+                    onChange={(e) => setFormData({ ...formData, selling_price: Number(e.target.value) })}
+                    className="w-full border px-3 py-2 rounded"
+                  />
+                </div>
+              </div>
+              <div>
+                <label>Stock</label>
+                <input
+                  type="number"
+                  value={formData.stock}
+                  onChange={(e) => setFormData({ ...formData, stock: Number(e.target.value) })}
+                  className="w-full border px-3 py-2 rounded"
+                />
+              </div>
+              <div>
+                <label>Image (optionnel)</label>
+                <input type="file" onChange={handleImageUpload} />
+                {formData.image_url && (
+                  <img src={formData.image_url} alt="Preview" className="mt-2 w-24 h-24 object-cover rounded" />
+                )}
+              </div>
+              <button
+                type="submit"
+                className="w-full bg-primary-500 text-white py-2 rounded"
+              >
+                {editingProduct ? 'Mettre à jour' : 'Ajouter'}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default Products;
