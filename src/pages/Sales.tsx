@@ -346,6 +346,13 @@ const Sales: React.FC = () => {
       
       {/* Products Section */}
       <div className="md:w-2/3 bg-white rounded-lg shadow-sm p-4">
+ {exchangeRate && (
+  <div className="mb-3 p-2 bg-blue-100 border border-blue-300 rounded text-blue-800 text-sm font-medium">
+    💱 Taux du jour : <span className="font-bold">{exchangeRate}</span> CDF pour 1 USD
+  </div>
+)}
+
+        
         <div className="mb-6">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
@@ -359,12 +366,7 @@ const Sales: React.FC = () => {
           </div>
         </div>
 
-        {exchangeRate && (
-  <div className="mb-3 p-2 bg-blue-100 border border-blue-300 rounded text-blue-800 text-sm font-medium">
-    💱 Taux du jour : <span className="font-bold">{exchangeRate}</span> CDF pour 1 USD
-  </div>
-)}
-
+       
 
         {/*Grille affichage des produits*/}
 
