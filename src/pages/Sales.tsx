@@ -161,7 +161,7 @@ const Sales: React.FC = () => {
   };
 
   
-  {/*New CustumerLookUp*/}
+  //New CustumerLookUp
 const handleCustomerLookup = async () => {
   if (!customerPhone) return;
   setSaleCompleted(false);
@@ -194,7 +194,7 @@ const handleCustomerLookup = async () => {
 };
 
   
-  {/*Fin LookUp*/}
+  //Fin LookUp
   
   const handleCompleteSale = async () => {
     setSaleCompleted(false); // cacher l'ancien reçu
@@ -394,7 +394,7 @@ const handleCustomerLookup = async () => {
 
       {/* Section Panier */}
 
-       {/* SECTION PANIER — VERSION PRO */}
+    //SECTION PANIER — VERSION PRO
 
 <div className="w-full md:w-1/2 lg:w-1/3 bg-white rounded-xl shadow-md p-5 flex flex-col">
 
