@@ -5,7 +5,8 @@ import {
   ShoppingCart, 
   Users, 
   Package, 
-  TrendingUp 
+  TrendingUp,
+  Wallet
 } from 'lucide-react';
 import DashboardCard from '../components/dashboard/DashboardCard';
 import SalesChart from '../components/dashboard/SalesChart';
