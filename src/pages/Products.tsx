@@ -145,7 +145,7 @@ const Products: React.FC = () => {
             setToastMessage("Un produit portant ce nom existe déjà !");
             //setIsFormOpen(false);
             setTimeout(() => setToastMessage(null), 3000);
-             nameInputRef.current?.focus();
+            
             return;
           }
 
