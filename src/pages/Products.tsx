@@ -474,6 +474,7 @@ return (
         <table className="min-w-full">
           <thead>
             <tr className="bg-gray-100">
+              <th className="px-4 py-2">N°</th>
               <th className="px-4 py-2 text-left">Nom</th>
               <th className="px-4 py-2 text-left">Catégorie</th>
               <th className="px-4 py-2 text-right">Prix Achat</th>
