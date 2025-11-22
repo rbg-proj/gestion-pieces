@@ -144,7 +144,7 @@ const Products: React.FC = () => {
           }
         
           if (existing && existing.length > 0) {
-            setToastMessage("Un produit portant ce nom existe déjà !");
+            setToastMessage("Un produit portant ce nom existe déjà, utilisez un autre nom !");
             
             // 🔥 Redonner le focus au champ du nom
               setTimeout(() => {
