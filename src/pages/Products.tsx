@@ -91,6 +91,7 @@ const Products: React.FC = () => {
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Une erreur est survenue');
     } finally {
+      setError(null);
       setLoading(false);
     }
   };
