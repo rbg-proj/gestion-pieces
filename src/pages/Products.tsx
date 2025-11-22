@@ -314,6 +314,7 @@ const Products: React.FC = () => {
 
     // Construire les données à partir de filteredProducts
     const tableData = filteredProducts.map((p) => [
+      index + 1,
       p.name,
       p.category?.name || "",
       formatPrice(p.purchase_price),
