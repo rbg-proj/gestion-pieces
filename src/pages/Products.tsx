@@ -123,24 +123,29 @@ const Products: React.FC = () => {
             .eq('id', editingProduct.id)
             .select()
             .single();
-      
+    
         if (updateError) throw updateError;
 
-      // Puis, seulement si le stock a changé, enregistrer l'historique
-        
-        if (oldStock !== newStock) {
-          await supabase.from('stock_history').insert([{
+          // 2. Insérer historique SEULEMENT si stock changé
+          if (oldStock !== newStock) {
+          const { error: histError } = await supabase
+          .from('stock_history')
+          .insert([{
             product_id: editingProduct.id,
             old_stock: oldStock,
             new_stock: newStock,
             change: newStock - oldStock,
             reason: 'Mise à jour manuelle',
           }]);
+          
+          if (histError) {
+          // optionnel : log/notify — on choisit de ne pas rollbacker l'update ici
+            console.error('Erreur insertion stock_history après update', histError);
+          }
         }
-        response = await supabase
-          .from('products')
-          .update(dataToSend)
-          .eq('id', editingProduct.id);
+
+        response = { data: updateData, error: updateError };
+       
       } else {
         // // Vérification nom existant
           const { data: existing, error: checkError } = await supabase
