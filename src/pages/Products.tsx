@@ -288,9 +288,15 @@ const Products: React.FC = () => {
   // -------------------------
   // EXPORT PDF
   // -------------------------
-  const exportToPDF = () => {
-    const jsPDF = require('jspdf');
-    require('jspdf-autotable');
+  
+  const exportToPDF = async () => {
+  try {
+    // Dynamic imports — évitent les problèmes SSR et allègent le bundle initial
+    const jsPDFModule = await import('jspdf');
+    const autoTableModule = await import('jspdf-autotable');
+
+    const jsPDF = jsPDFModule.default || jsPDFModule.jsPDF;
+    // jspdf-autotable n'exporte souvent rien utile, il attache la fonction autoTable au prototype de jsPDF, alors on l'importe juste pour l'exécuter (side effect); certains bundlers exposent default (autoTableModule.default) — import ci-dessus suffit en général.
 
     const doc = new jsPDF();
 
@@ -308,6 +314,8 @@ const Products: React.FC = () => {
     });
 
     doc.text('RBG Liste des Articles', 14, 15);
+
+    // @ts-ignore - autoTable est souvent ajouté comme méthode sur l'instance
     (doc as any).autoTable({
       head: [tableColumn],
       body: tableRows,
@@ -315,7 +323,13 @@ const Products: React.FC = () => {
     });
 
     doc.save('articles.pdf');
-  };
+  } catch (err) {
+    console.error('Erreur export PDF', err);
+    setToastMessage('Impossible de générer le PDF');
+    setTimeout(() => setToastMessage(null), 3000);
+  }
+};
+
 
   // -------------------------
   // PRICE FORMAT
