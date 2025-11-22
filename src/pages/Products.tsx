@@ -127,7 +127,6 @@ const Products: React.FC = () => {
           .eq('id', editingProduct.id);
       } else {
         // // Vérification nom existant
-       
           const { data: existing, error: checkError } = await supabase
             .from('products')
             .select('id')
