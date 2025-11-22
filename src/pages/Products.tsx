@@ -284,15 +284,11 @@ const Products: React.FC = () => {
       xlsx.writeFile(workbook, 'RBG Liste articles.xlsx');
     });
   };
-
   // -------------------------
   // EXPORT PDF
   // -------------------------
   
- 
-
-
-  const exportToPDF = async () => {
+const exportToPDF = async () => {
   try {
     // Import jsPDF
     const jsPDFModule = await import("jspdf");
@@ -317,41 +313,42 @@ const Products: React.FC = () => {
     const title = "Liste des articles";
     const exportDate = "Date d'export : " + new Date().toLocaleDateString();
 
+    // Titre
     doc.setFontSize(16);
-    doc.text(title, doc.internal.pageSize.width / 2, 15, { align: "center" });
+    doc.text(title, doc.internal.pageSize.width / 2, 20, { align: "center" });
 
+    // Date
     doc.setFontSize(11);
-    doc.text(exportDate, doc.internal.pageSize.width / 2, 22, { align: "center" });
+    doc.text(exportDate, doc.internal.pageSize.width / 2, 28, { align: "center" });
 
-    // Ajout d’un petit espace avant le tableau
-    const startY = 30;
+    // ----------- TABLEAU PDF -----------
+    // Le tableau démarre plus bas pour ne PAS recouvrir le titre
+    const startY = 40;
 
-
-    // Construire les données à partir de filteredProducts
     const tableData = filteredProducts.map((p, index) => [
       index + 1,
       p.name,
       p.category?.name || "",
       formatPrice(p.purchase_price),
       formatPrice(p.selling_price),
-      p.stock.toString()
+      p.stock.toString(),
     ]);
 
-    // Générer le tableau
     autoTable(doc, {
-      head: [["#","Produit", "Catégorie", "Prix Achat", "Prix Vente", "Stock"]],
+      head: [["#", "Produit", "Catégorie", "Prix Achat", "Prix Vente", "Stock"]],
       body: tableData,
+      startY: startY,
+      margin: { top: 40 },  // 🔥 Espace réservé pour le titre + date
     });
 
     // Télécharger
     doc.save("Liste_Articles.pdf");
   } catch (error) {
     console.error("Erreur export PDF :", error);
-    setError("Impossible de générer le PDF.");
+    setError("Impossible à générer le PDF.");
   }
 };
 
-  
   
   // -------------------------
   // PRICE FORMAT
