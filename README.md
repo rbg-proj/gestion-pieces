@@ -9,5 +9,5 @@ Gestion des doublons sur le nom des articles,
 Correction de l'export en PDF et ajout de la numérotation des lignes du tableau, le titre et la date d'export sur la 1ère page, ainsi que le numéro de page.
 
 Version 20 :
-Modification de la facture : affichage des totaux en Fc
-Amélioration UX/IX de la page Taux de change
+Modification de la facture : affichage des totaux en Fc,
+Amélioration UX/IX de la page Taux de change,
