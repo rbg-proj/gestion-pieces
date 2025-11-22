@@ -290,14 +290,14 @@ const Products: React.FC = () => {
   // -------------------------
   
   const exportToPDF = async () => {
-   try {
-  // 1. Importer jsPDF (module ES)
+    try {
+  // 1. Importer jsPDF
   const jsPDFModule = await import('jspdf');
   const jsPDF = jsPDFModule.jsPDF || jsPDFModule.default;
 
-  // 2. Importer autotable APRÈS jsPDF
+  // 2. Importer autotable — il expose une fonction autoTable()
   const autoTableModule = await import('jspdf-autotable');
-  // (jspdf-autotable s’attache automatiquement à jsPDF, rien à extraire)
+  const autoTable = autoTableModule.autoTable; // <- IMPORTANT !
 
   // 3. Créer le document PDF
   const doc = new jsPDF();
@@ -309,18 +309,20 @@ const Products: React.FC = () => {
     item.stock
   ]);
 
-  // 4. Générer la table
-  doc.autoTable({
+  // 4. Utiliser autoTable() avec doc (et non doc.autoTable)
+  autoTable(doc, {
     head: [['Produit', 'Catégorie', 'Prix', 'Stock']],
     body: tableData
   });
 
-  // 5. Enregistrer
+  // 5. Sauvegarde
   doc.save('products.pdf');
+
 } catch (error) {
   console.error("Erreur export PDF :", error);
   setError("Impossible de générer le PDF.");
 }
+
 };
 
 
