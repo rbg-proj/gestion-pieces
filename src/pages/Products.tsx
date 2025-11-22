@@ -145,7 +145,7 @@ const Products: React.FC = () => {
         
           if (existing && existing.length > 0) {
             setToastMessage("Un produit portant ce nom existe déjà !");
-            //setIsFormOpen(false);
+            
             // 🔥 Redonner le focus au champ du nom
               setTimeout(() => {
                               nameInputRef.current?.focus();
