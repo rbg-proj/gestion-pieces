@@ -324,7 +324,7 @@ const Products: React.FC = () => {
 
     // Générer le tableau
     autoTable(doc, {
-      head: [["Produit", "Catégorie", "Prix Achat", "Prix Vente", "Stock"]],
+      head: [["#","Produit", "Catégorie", "Prix Achat", "Prix Vente", "Stock"]],
       body: tableData,
     });
 
