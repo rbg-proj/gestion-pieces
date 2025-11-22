@@ -290,45 +290,42 @@ const Products: React.FC = () => {
   // -------------------------
   
   const exportToPDF = async () => {
-  try {
-    // Dynamic imports — évitent les problèmes SSR et allègent le bundle initial
-    const jsPDFModule = await import('jspdf');
-    const autoTableModule = await import('jspdf-autotable');
+   try {
+  // 1. Importer jsPDF (module ES)
+  const jsPDFModule = await import('jspdf');
+  const jsPDF = jsPDFModule.jsPDF || jsPDFModule.default;
 
-    const jsPDF = jsPDFModule.default || jsPDFModule.jsPDF;
-    // jspdf-autotable n'exporte souvent rien utile, il attache la fonction autoTable au prototype de jsPDF, alors on l'importe juste pour l'exécuter (side effect); certains bundlers exposent default (autoTableModule.default) — import ci-dessus suffit en général.
+  // 2. Importer autotable APRÈS jsPDF
+  const autoTableModule = await import('jspdf-autotable');
+  // (jspdf-autotable s’attache automatiquement à jsPDF, rien à extraire)
 
-    const doc = new jsPDF();
+  // 3. Créer le document PDF
+  const doc = new jsPDF();
 
-    const tableColumn = ['Nom', 'Catégorie', 'Prix Achat', 'Prix Vente', 'Stock'];
-    const tableRows: any[] = [];
+  const tableData = exportData.map(item => [
+    item.name,
+    item.category,
+    formatPrice(item.price),
+    item.stock
+  ]);
 
-    filteredProducts.forEach((p) => {
-      tableRows.push([
-        p.name,
-        p.category?.name || '',
-        p.purchase_price,
-        p.selling_price,
-        p.stock,
-      ]);
-    });
+  // 4. Générer la table
+  doc.autoTable({
+    head: [['Produit', 'Catégorie', 'Prix', 'Stock']],
+    body: tableData
+  });
 
-    doc.text('RBG Liste des Articles', 14, 15);
-
-    // @ts-ignore - autoTable est souvent ajouté comme méthode sur l'instance
-    (doc as any).autoTable({
-      head: [tableColumn],
-      body: tableRows,
-      startY: 20,
-    });
-
-    doc.save('articles.pdf');
-  } catch (err) {
-    console.error('Erreur export PDF', err);
-    setToastMessage('Impossible de générer le PDF');
-    setTimeout(() => setToastMessage(null), 3000);
-  }
+  // 5. Enregistrer
+  doc.save('products.pdf');
+} catch (error) {
+  console.error("Erreur export PDF :", error);
+  setError("Impossible de générer le PDF.");
+}
 };
+
+
+
+ 
 
 
   // -------------------------
