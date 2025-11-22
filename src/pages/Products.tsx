@@ -137,7 +137,7 @@ const Products: React.FC = () => {
           }
         
           if (existing && existing.length > 0) {
-            alert("Un produit portant ce nom existe déjà, vérifiez svp!!!");
+            setError("Un produit portant ce nom existe déjà, vérifiez svp!!!");
             return;
           }
 
