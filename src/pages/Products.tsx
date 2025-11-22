@@ -288,7 +288,7 @@ const Products: React.FC = () => {
   // EXPORT PDF
   // -------------------------
   
-  const exportToPDF = async () => {
+const exportToPDF = async () => {
   try {
     const jsPDFModule = await import("jspdf");
     const jsPDF = jsPDFModule.jsPDF || jsPDFModule.default;
@@ -316,26 +316,35 @@ const Products: React.FC = () => {
       p.stock.toString(),
     ]);
 
-    // AutoTable avec hook pour gérer les pages
     autoTable(doc, {
       head: [["#", "Produit", "Catégorie", "Prix Achat", "Prix Vente", "Stock"]],
       body: tableData,
+      startY: 40,
+      margin: { top: 40 },
 
-      startY: 40, // uniquement pour la 1ère page
       didDrawPage: (data) => {
+        // --- TITRE & DATE uniquement sur la 1ère page ---
         if (data.pageNumber === 1) {
-          // Titre centré
           doc.setFontSize(16);
           doc.text(title, doc.internal.pageSize.width / 2, 20, { align: "center" });
 
-          // Date centrée
           doc.setFontSize(11);
           doc.text(exportDate, doc.internal.pageSize.width / 2, 28, { align: "center" });
         }
-      },
 
-      // marge seulement en haut de la première page
-      margin: { top: 40 },
+        // --- NUMÉRO DE PAGE (sur toutes les pages) ---
+        const pageSize = doc.internal.pageSize;
+        const pageHeight = pageSize.height ? pageSize.height : pageSize.getHeight();
+        const totalPages = doc.internal.getNumberOfPages();
+
+        doc.setFontSize(10);
+        doc.text(
+          `Page ${data.pageNumber} / ${totalPages}`,
+          pageSize.width / 2,
+          pageHeight - 10,
+          { align: "center" }
+        );
+      }
     });
 
     doc.save("Liste_Articles.pdf");
@@ -344,6 +353,7 @@ const Products: React.FC = () => {
     setError("Impossible de générer le PDF.");
   }
 };
+
 
   
   // -------------------------
