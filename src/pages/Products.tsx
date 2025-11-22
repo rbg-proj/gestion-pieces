@@ -311,7 +311,7 @@ const Products: React.FC = () => {
     );
   }
 
-  return (
+return (
     <div className="space-y-6">
 
       {/* HEADER + EXPORT BUTTONS */}
