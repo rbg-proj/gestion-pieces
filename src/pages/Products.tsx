@@ -315,14 +315,13 @@ return (
     <div className="space-y-6">
 
       {/* Toast d'affichage message */}
-
       {toastMessage && (
-  <div className="fixed inset-0 flex items-center justify-center z-50">
+      <div className="fixed inset-0 flex items-center justify-center z-50">
     <div className="bg-red-600 text-white px-6 py-4 rounded-lg shadow-xl text-lg animate-fade">
-      {toastMessage}
-    </div>
-  </div>
-)}
+        {toastMessage}
+          </div>
+          </div>
+              )}
 
 
       {/* HEADER + EXPORT BUTTONS */}
