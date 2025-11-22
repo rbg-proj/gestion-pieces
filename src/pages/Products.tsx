@@ -5,8 +5,6 @@ import {
 import { supabase } from '../lib/supabase';
 
 
-
-
 // -------------------------
 // TYPES
 // -------------------------
@@ -118,6 +116,18 @@ const Products: React.FC = () => {
         const oldStock = editingProduct.stock;
         const newStock = formData.stock;
 
+        // D'abord effectuer la mise à jour produit
+        const { data: updateData, error: updateError } = await supabase
+            .from('products')
+            .update(dataToSend)
+            .eq('id', editingProduct.id)
+            .select()
+            .single();
+      
+        if (updateError) throw updateError;
+
+      // Puis, seulement si le stock a changé, enregistrer l'historique
+        
         if (oldStock !== newStock) {
           await supabase.from('stock_history').insert([{
             product_id: editingProduct.id,
