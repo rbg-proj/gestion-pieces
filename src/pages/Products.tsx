@@ -36,6 +36,7 @@ const Products: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   // filtres stock
   const [minStock, setMinStock] = useState<number | ''>('');
@@ -125,19 +126,24 @@ const Products: React.FC = () => {
           .update(dataToSend)
           .eq('id', editingProduct.id);
       } else {
-        // 🔴 Vérification avant insertion : le nom existe déjà ?
+        // // Vérification nom existant
+       
           const { data: existing, error: checkError } = await supabase
             .from('products')
             .select('id')
             .eq('name', formData.name.trim());
         
           if (checkError) {
-            setError("Erreur lors de la vérification du nom");
+            setToastMessage("Erreur lors de la vérification du nom");
+            setIsFormOpen(false);
+            setTimeout(() => setToastMessage(null), 3000);
             return;
           }
         
           if (existing && existing.length > 0) {
-            setError("Un produit portant ce nom existe déjà, vérifiez svp!!!");
+            setToastMessage("Un produit portant ce nom existe déjà !");
+            setIsFormOpen(false);
+            setTimeout(() => setToastMessage(null), 3000);
             return;
           }
 
