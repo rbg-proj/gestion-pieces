@@ -6,4 +6,4 @@ La gestion du taux est intégré,
 L'affichage du taux sur le Dashboard,
 L'affichage des prix en CDF lors de la vente,
 Gestion des doublons sur le nom des articles,
-Correction de l'export en PDF et ajout de la numérotation des lignes du tableau, le titre et la date d'export sur la 1ère page
+Correction de l'export en PDF et ajout de la numérotation des lignes du tableau, le titre et la date d'export sur la 1ère page, ainsi que le numéro de page.
