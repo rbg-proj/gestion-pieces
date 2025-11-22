@@ -324,7 +324,7 @@ const Products: React.FC = () => {
     doc.text(exportDate, doc.internal.pageSize.width / 2, 22, { align: "center" });
 
     // Ajout d’un petit espace avant le tableau
-    const startY = 60;
+    const startY = 30;
 
 
     // Construire les données à partir de filteredProducts
