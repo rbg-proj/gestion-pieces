@@ -89,7 +89,7 @@ const Products: React.FC = () => {
       if (error) throw error;
       setProducts(data || []);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Une erreur est survenue');
+      setError(err instanceof Error ? err.message : 'Une erreur est survenue lors du chargement !');
     } finally {
       setError(null);
       setLoading(false);
