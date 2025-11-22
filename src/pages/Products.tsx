@@ -125,6 +125,23 @@ const Products: React.FC = () => {
           .update(dataToSend)
           .eq('id', editingProduct.id);
       } else {
+        // 🔴 Vérification avant insertion : le nom existe déjà ?
+          const { data: existing, error: checkError } = await supabase
+            .from('products')
+            .select('id')
+            .eq('name', formData.name.trim());
+        
+          if (checkError) {
+            setError("Erreur lors de la vérification du nom");
+            return;
+          }
+        
+          if (existing && existing.length > 0) {
+            alert("Un produit portant ce nom existe déjà !");
+            return;
+          }
+
+      // 🔵 Si tout est bon, on peut insérer
         response = await supabase.from('products').insert([dataToSend]);
         if (response.data && response.data[0]) {
           const newProduct = response.data[0];
