@@ -288,43 +288,25 @@ const Products: React.FC = () => {
   // EXPORT PDF
   // -------------------------
   
-const exportToPDF = async () => {
+  const exportToPDF = async () => {
   try {
-    // Import jsPDF
     const jsPDFModule = await import("jspdf");
     const jsPDF = jsPDFModule.jsPDF || jsPDFModule.default;
 
-    // Import AutoTable
     const autoTableModule = await import("jspdf-autotable");
     const autoTable =
       autoTableModule.default ||
       autoTableModule.autoTable ||
       autoTableModule.default?.autoTable;
 
-    if (!autoTable) {
-      throw new Error("Le plugin jspdf-autotable n'a pas été trouvé.");
-    }
+    if (!autoTable) throw new Error("Le plugin jspdf-autotable n'a pas été trouvé.");
 
-    // Créer le PDF
     const doc = new jsPDF();
-
-    // ----------- TITRE + DATE D'EXPORT -----------
 
     const title = "Liste des articles";
     const exportDate = "Date d'export : " + new Date().toLocaleDateString();
 
-    // Titre
-    doc.setFontSize(16);
-    doc.text(title, doc.internal.pageSize.width / 2, 20, { align: "center" });
-
-    // Date
-    doc.setFontSize(11);
-    doc.text(exportDate, doc.internal.pageSize.width / 2, 28, { align: "center" });
-
-    // ----------- TABLEAU PDF -----------
-    // Le tableau démarre plus bas pour ne PAS recouvrir le titre
-    const startY = 40;
-
+    // Données du tableau
     const tableData = filteredProducts.map((p, index) => [
       index + 1,
       p.name,
@@ -334,18 +316,32 @@ const exportToPDF = async () => {
       p.stock.toString(),
     ]);
 
+    // AutoTable avec hook pour gérer les pages
     autoTable(doc, {
       head: [["#", "Produit", "Catégorie", "Prix Achat", "Prix Vente", "Stock"]],
       body: tableData,
-      startY: startY,
-      margin: { top: 40 },  // 🔥 Espace réservé pour le titre + date
+
+      startY: 40, // uniquement pour la 1ère page
+      didDrawPage: (data) => {
+        if (data.pageNumber === 1) {
+          // Titre centré
+          doc.setFontSize(16);
+          doc.text(title, doc.internal.pageSize.width / 2, 20, { align: "center" });
+
+          // Date centrée
+          doc.setFontSize(11);
+          doc.text(exportDate, doc.internal.pageSize.width / 2, 28, { align: "center" });
+        }
+      },
+
+      // marge seulement en haut de la première page
+      margin: { top: 40 },
     });
 
-    // Télécharger
     doc.save("Liste_Articles.pdf");
   } catch (error) {
     console.error("Erreur export PDF :", error);
-    setError("Impossible à générer le PDF.");
+    setError("Impossible de générer le PDF.");
   }
 };
 
