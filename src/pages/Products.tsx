@@ -313,13 +313,13 @@ const Products: React.FC = () => {
 
 return (
     <div className="space-y-6">
+
+      {/* Toast d'affichage message */}
       {toastMessage && (
         <div className="fixed bottom-6 right-6 bg-red-600 text-white px-4 py-3 rounded shadow-lg animate-fade-in">
     {toastMessage}
   </div>
       )}
-
-          
 
 
       {/* HEADER + EXPORT BUTTONS */}
