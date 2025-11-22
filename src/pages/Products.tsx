@@ -37,6 +37,8 @@ const Products: React.FC = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const nameInputRef = useRef<HTMLInputElement>(null);
+
 
   // filtres stock
   const [minStock, setMinStock] = useState<number | ''>('');
