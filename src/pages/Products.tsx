@@ -552,6 +552,7 @@ return (
               <div>
                 <label>Nom</label>
                 <input
+                  ref={nameInputRef}
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
