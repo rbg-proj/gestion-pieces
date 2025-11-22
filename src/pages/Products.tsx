@@ -313,7 +313,7 @@ const Products: React.FC = () => {
     const doc = new jsPDF();
 
     // Construire les données à partir de filteredProducts
-    const tableData = filteredProducts.map((p) => [
+    const tableData = filteredProducts.map((p, index) => [
       index + 1,
       p.name,
       p.category?.name || "",
