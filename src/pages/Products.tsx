@@ -289,54 +289,54 @@ const Products: React.FC = () => {
   // EXPORT PDF
   // -------------------------
   
- const exportToPDF = async () => {
+ 
+
+
+  const exportToPDF = async () => {
   try {
-    // 1. Importer jsPDF
+    // Import jsPDF
     const jsPDFModule = await import("jspdf");
     const jsPDF = jsPDFModule.jsPDF || jsPDFModule.default;
 
-    // 2. Importer AUTOTABLE correctement
+    // Import AutoTable
     const autoTableModule = await import("jspdf-autotable");
-
-    // Dans certaines versions :
-    // - autoTableModule.default = function autoTable(doc, options)
-    // - autoTableModule.autoTable = fonction
-    // - ou encore autoTableModule.default.default
-
     const autoTable =
-      autoTableModule.default?.autoTable ||
       autoTableModule.default ||
-      autoTableModule.autoTable;
+      autoTableModule.autoTable ||
+      autoTableModule.default?.autoTable;
 
     if (!autoTable) {
-      throw new Error("autoTable introuvable — plugin non chargé");
+      throw new Error("Le plugin jspdf-autotable n'a pas été trouvé.");
     }
 
-    // 3. Créer le document PDF
+    // Créer le PDF
     const doc = new jsPDF();
 
-    const tableData = exportData.map((item) => [
-      item.name,
-      item.category,
-      formatPrice(item.price),
-      item.stock,
+    // Construire les données à partir de filteredProducts
+    const tableData = filteredProducts.map((p) => [
+      p.name,
+      p.category?.name || "",
+      formatPrice(p.purchase_price),
+      formatPrice(p.selling_price),
+      p.stock.toString()
     ]);
 
-    // 4. Générer le tableau
+    // Générer le tableau
     autoTable(doc, {
-      head: [["Produit", "Catégorie", "Prix", "Stock"]],
+      head: [["Produit", "Catégorie", "Prix Achat", "Prix Vente", "Stock"]],
       body: tableData,
     });
 
-    // 5. Télécharger le PDF
-    doc.save("products.pdf");
+    // Télécharger
+    doc.save("Liste_Articles.pdf");
   } catch (error) {
     console.error("Erreur export PDF :", error);
     setError("Impossible de générer le PDF.");
   }
 };
 
-
+  
+  
   // -------------------------
   // PRICE FORMAT
   // -------------------------
