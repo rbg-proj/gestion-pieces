@@ -312,6 +312,21 @@ const Products: React.FC = () => {
     // Créer le PDF
     const doc = new jsPDF();
 
+    // ----------- TITRE + DATE D'EXPORT -----------
+
+    const title = "Liste des articles";
+    const exportDate = "Date d'export : " + new Date().toLocaleDateString();
+
+    doc.setFontSize(16);
+    doc.text(title, doc.internal.pageSize.width / 2, 15, { align: "center" });
+
+    doc.setFontSize(11);
+    doc.text(exportDate, doc.internal.pageSize.width / 2, 22, { align: "center" });
+
+    // Ajout d’un petit espace avant le tableau
+    const startY = 30;
+
+
     // Construire les données à partir de filteredProducts
     const tableData = filteredProducts.map((p, index) => [
       index + 1,
