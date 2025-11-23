@@ -336,7 +336,8 @@ const filteredOrders = orders
                 customerName={selectedOrderInfo.customerName}
                 paymentMethod={selectedOrderInfo.paymentMethod}
                 date={selectedOrderInfo.date}
-                userName={user?.name || ''}
+            //    userName={user?.name || ''}
+                userName={sale.profiles.full_name}     // ⬅️ L’agent correct !
                 exchangeRate={selectedOrderInfo.exchange_rate} 
                 invoiceNumber={`Dupl FAC-${String(new Date().getFullYear()).slice(2)}${String(new Date().getMonth() + 1).padStart(2, '0')}-${String(selectedOrderId ?? '').slice(0, 6).toUpperCase()}`}
               />
