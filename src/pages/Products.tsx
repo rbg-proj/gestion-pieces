@@ -675,8 +675,7 @@ return (
                     type="number"
                     Placeholder="Prix en dollars US"
                     value={formData.selling_price}
-                    onChange={(e) => {
-                        const val = e.target.value;
+                    onChange={(e) => {const val = e.target.value;
                         setFormData({...formData, selling_price: val === '' ? '' : Number(val) });
                       }}
                     className="w-full border px-3 py-2 rounded"
