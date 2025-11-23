@@ -671,8 +671,6 @@ return (
                         }}
                         className="w-32 border rounded-md px-2 py-2"
                       />
-
-                  
                 </div>
 
                 <div className="flex-1">
