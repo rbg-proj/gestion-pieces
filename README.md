@@ -18,4 +18,4 @@ Amélioration de l'enregistrement de la vente - Affichage d'un Pop-up durant la 
 Version 21 :
 Affichage du nom de l'agent sur le duplicata qui prenait par defaut le nom de l'utilisateur connecté au lieu de considérer celui qui avait effectué la vente.
 
-Gérer l'application en OffLine
+Gérer l'application en OffLine sans connection internet et synchroniser une fois la connection retablie.
