@@ -301,7 +301,7 @@ const Sales: React.FC = () => {
             payment_method: selectedPayment,
             customer_id: selectedCustomerId,
             exchange_rate: rate,
-            user_id: user?.id, // ✅ ajoute l’agent qui a fait la vente
+            user_id: user?.id, // ✅ ajout de l’agent qui a fait la vente
           },
         ])
         .select()
