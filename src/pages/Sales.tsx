@@ -658,8 +658,8 @@ const Sales: React.FC = () => {
               paymentMethod={printedPaymentMethod}
               date={new Date().toLocaleString()}
               invoiceNumber={generateInvoiceNumber(selectedSaleId)}
-           //   userName={user?.name || ''}
-              userName={agent?.name || "Agent inconnu"}
+              userName={user?.name || ''}
+            //  userName={agent?.name || "Agent inconnu"}
               exchangeRate={printedRate ?? undefined}
             />
             <div className="flex justify-end gap-2 mt-4">
