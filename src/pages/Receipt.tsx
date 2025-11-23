@@ -14,7 +14,7 @@ interface ReceiptProps {
 const TAX_RATE = 0.00;
 
 const Receipt = forwardRef<HTMLDivElement, ReceiptProps>(
-  ({ cart, total, customerName, paymentMethod, date, invoiceNumber, userName }, ref) => {
+  ({ cart, total, customerName, paymentMethod, date, invoiceNumber, userName,exchangeRate  }, ref) => {
     const totalHT = total / (1 + TAX_RATE);
     const taxAmount = total - totalHT;
 
