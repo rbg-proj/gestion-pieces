@@ -541,7 +541,7 @@ const Sales: React.FC = () => {
 
         <div className="border-t pt-4 space-y-2">
           <div className="flex justify-between text-sm">
-            <span>Subtotal</span>
+            <span>Suus Total</span>
             <span>{Number(subtotal ?? 0).toFixed(0)} Fc</span>
           </div>
           <div className="flex justify-between text-sm">
@@ -549,7 +549,7 @@ const Sales: React.FC = () => {
             <span>{Number(tax ?? 0).toFixed(0)} Fc</span>
           </div>
           <div className="flex justify-between font-bold text-lg">
-            <span>Total</span>
+            <span>Total Général</span>
             <span>{Number(total ?? 0).toFixed(0)} Fc</span>
           </div>
         </div>
