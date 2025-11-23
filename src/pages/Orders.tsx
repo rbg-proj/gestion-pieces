@@ -254,6 +254,7 @@ const filteredOrders = orders
                   paymentMethod: order.paymentMethod,
                   date: order.date.toLocaleDateString(),
                   total: order.total,
+                   exchange_rate: order.exchange_rate,
                 });
               }}
               className={`cursor-pointer hover:bg-muted/50 ${
