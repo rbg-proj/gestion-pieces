@@ -12,3 +12,4 @@ Version 20 :
 Modification de la facture : affichage des totaux en Fc,
 Affichage du taux de change sur la facture et le duplicata
 Amélioration UX/IX de la page Taux de change,
+Amélioration de l'enregistrement de la vente - Affichage d'un Pop-up durant la connexion Supabase
