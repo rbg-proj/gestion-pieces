@@ -60,7 +60,7 @@ export default function OrdersPage() {
           total: sale.total_amount,
           items: sale.sale_items?.length || 0,
           paymentMethod: sale.payment_method || "Inconnu",
-          exchange_rate: sale.exchange_rate ?? 0,   // Récupération du Taux de change
+          exchange_rate: sale.exchange_rate ?? 1,   // Récupération du Taux de change
           status:
           sale.payment_method === "cash" || sale.payment_method === "mobile_money"
               ? "Payé"
