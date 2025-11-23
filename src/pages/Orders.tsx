@@ -344,7 +344,7 @@ const filteredOrders = orders
             )}
           </div>
 
-          <div className="mt-4 text-right max-h-[90vh] overflow-y-auto">
+          <div className="mt-4 text-right">
             <Button onClick={handlePrint}>Imprimer le duplicata</Button>
           </div>
         </DialogContent>
