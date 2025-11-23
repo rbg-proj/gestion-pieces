@@ -8,7 +8,7 @@ interface ReceiptProps {
   date: string;
   invoiceNumber: string;
   userName: string;
-  exchangeRate: number; // ⬅️ Ajout du taux ici
+  exchangeRate: number; // ⬅️ Ajout du taux
 }
 
 const TAX_RATE = 0.00;
