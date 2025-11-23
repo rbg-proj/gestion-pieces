@@ -250,117 +250,128 @@ const Sales: React.FC = () => {
   
     {/*Fin LookUp*/}
     
+ 
   const handleCompleteSale = async () => {
-    setSaleCompleted(false); // cacher l'ancien reçu
-    
+  if (isSubmitting) return; // Empêche les clics multiples
+
+  setIsSubmitting(true);
+  setSaleCompleted(false);
+  toast.loading("Validation de la vente en cours… Veuillez patienter.", {
+    id: "sale-progress",
+  });
+
+  try {
+    if (cart.length === 0 || !selectedPayment) return;
+
+    // Re-fetch latest rate
+    let rate = exchangeRate;
     try {
-      if (cart.length === 0 || !selectedPayment) return;
+      const { data } = await supabase
+        .from("exchange_rates")
+        .select("rate")
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .single();
+      if (data && data.rate) rate = Number(data.rate);
+    } catch {}
 
-      // Re-fetch latest rate to ensure we use the most recent rate at moment of sale
-      let rate = exchangeRate;
-      try {
-        const { data } = await supabase
-          .from('exchange_rates')
-          .select('rate')
-          .order('created_at', { ascending: false })
-          .limit(1)
-          .single();
-        if (data && data.rate) rate = Number(data.rate);
-      } catch (e) {
-        // fallback to local state rate
-      }
+    if (!rate || rate <= 0) {
+      throw new Error("Taux de change nul ou invalide. Vérifiez-le svp !");
+    }
 
-   
-      if (!rate || rate <= 0) {
-        throw new Error('Taux de change nul ou invalide. Vérifiez-le svp !');
-      }
+    const totalCDF = cart.reduce(
+      (sum, item) => sum + item.price * item.quantity,
+      0
+    );
+    const totalUSD = totalCDF / rate;
 
-      // total in CDF (cart prices are in CDF)
-      const totalCDF = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-      const totalUSD = totalCDF / rate;
-
-      // Start a transaction by inserting the sale first
-      const { data: saleData, error: saleError } = await supabase
-        .from('sales')
-        .insert([{
+    // Insert sale
+    const { data: saleData, error: saleError } = await supabase
+      .from("sales")
+      .insert([
+        {
           total_amount: totalUSD,
           payment_method: selectedPayment,
-          customer_id: selectedCustomerId, // peut être null
+          customer_id: selectedCustomerId,
           exchange_rate: rate,
-        }])
-        .select()
+        },
+      ])
+      .select()
+      .single();
+
+    if (saleError) throw saleError;
+
+    const saleItems = cart.map((item) => ({
+      sale_id: saleData.id,
+      product_id: item.id,
+      quantity: item.quantity,
+      unit_price: item.price / rate,
+    }));
+
+    const { error: itemsError } = await supabase
+      .from("sale_items")
+      .insert(saleItems);
+
+    if (itemsError) throw itemsError;
+
+    // Update stock
+    for (const item of cart) {
+      const { data: productData, error: fetchError } = await supabase
+        .from("products")
+        .select("stock")
+        .eq("id", item.id)
         .single();
-      
-      
-      if (saleError) throw saleError;
-     
 
-      // Insert sale items (unit_price stored in USD)
-      const saleItems = cart.map(item => ({
-        sale_id: saleData.id,
-        product_id: item.id,
-        quantity: item.quantity,
-        unit_price: item.price / rate, // convert from CDF -> USD
-      }));
+      if (fetchError) throw fetchError;
 
-      const { error: itemsError } = await supabase
-        .from('sale_items')
-        .insert(saleItems);
+      const newStock = productData.stock - item.quantity;
 
-      const invoiceNumber = generateInvoiceNumber(saleData.id);
-      setSelectedSaleId(saleData.id);
-      
-      if (itemsError) throw itemsError;
+      const { error: updateError } = await supabase
+        .from("products")
+        .update({ stock: newStock })
+        .eq("id", item.id);
 
-      // Update product stock levels
-      for (const item of cart) {
-        // Get current stock level
-        const { data: productData, error: fetchError } = await supabase
-          .from('products')
-          .select('stock')
-          .eq('id', item.id)
-          .single();
-
-        if (fetchError) throw fetchError;
-
-        if (!productData) {
-          throw new Error(`Product ${item.id} not found`);
-        }
-
-        const newStock = productData.stock - item.quantity;
-
-        // Update stock level
-        const { error: updateError } = await supabase
-          .from('products')
-          .update({ stock: newStock })
-          .eq('id', item.id)
-          .select();
-
-        if (updateError) {
-          throw new Error(`Failed to update stock for product ${item.id}: ${updateError.message}`);
-        }
-      }
-
-      // Clear cart and refresh products
-      setPrintedCart([...cart]); // sauvegarde du panier (en CDF)
-      setPrintedTotal(totalCDF); // sauvegarde du total en CDF pour l'affichage du reçu
-      setPrintedCustomerName(customerName);
-      setPrintedPaymentMethod(selectedPayment);
-      setShowReceiptModal(true);
-      setSaleCompleted(true); // déclenche l'affichage du reçu
-      setCart([]);
-      setSelectedPayment('');
-      await fetchProducts();
-      setCustomerPhone('');
-      setSelectedCustomerId(null);
-      setCustomerName(null); // ✅ reset du nom
-      toast.success('Vente complétée avec succès ✅');
-     
-
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to complete sale');
+      if (updateError)
+        throw new Error(
+          `Erreur mise à jour du stock pour ${item.id}: ${updateError.message}`
+        );
     }
-  };
+
+    // Préparation reçu
+    const invoiceNumber = generateInvoiceNumber(saleData.id);
+    setSelectedSaleId(saleData.id);
+    setPrintedCart([...cart]);
+    setPrintedTotal(totalCDF);
+    setPrintedCustomerName(customerName);
+    setPrintedPaymentMethod(selectedPayment);
+
+    setCart([]);
+    setSelectedPayment("");
+    await fetchProducts();
+
+    setCustomerPhone("");
+    setSelectedCustomerId(null);
+    setCustomerName(null);
+
+    setSaleCompleted(true);
+    setShowReceiptModal(true);
+
+    toast.success("Vente complétée avec succès !", {
+      id: "sale-progress",
+    });
+  } catch (err) {
+    console.error(err);
+    toast.error("Une erreur est survenue lors de la validation.", {
+      id: "sale-progress",
+    });
+    setError(
+      err instanceof Error ? err.message : "Une erreur est survenue..."
+    );
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+
   
   const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   const tax = subtotal * 0.0;
