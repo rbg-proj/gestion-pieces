@@ -650,7 +650,7 @@ const Sales: React.FC = () => {
       {showReceiptModal && (
         <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded shadow-lg w-full max-w-md">
-            <div className="max-h-[70vh] overflow-y-auto pr-2 min-h-0">
+            <div className="max-h-[70vh] overflow-y-auto pr-2">
             <Receipt
               ref={receiptRef}
               cart={printedCart}
