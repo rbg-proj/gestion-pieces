@@ -66,6 +66,8 @@ const Sales: React.FC = () => {
   const [isCustomerConfirmed, setIsCustomerConfirmed] = useState(false);
   const [customerNotFound, setCustomerNotFound] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
+
 
 
   // Pagination
