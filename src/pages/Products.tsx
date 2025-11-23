@@ -663,7 +663,7 @@ return (
                   />
                       <input
                         type="number"
-                        placeholder="Tri Stock min"
+                        placeholder="0"
                         value={minStock}
                         onChange={(e) => {
                           const val = e.target.value;
