@@ -20,8 +20,6 @@ import { useAuth } from '../contexts/AuthContext'; // Added import for useAuth
 import { initOfflineDB } from "@/lib/offlineDB";
 
 
-
-
 // Fonction utilitaire (hors composant)
 function generateInvoiceNumber(id: string | number, prefix = 'Fac') {
   if (!id) return ''; // Ou null selon mon cas
@@ -68,9 +66,7 @@ const Sales: React.FC = () => {
   const [isCustomerConfirmed, setIsCustomerConfirmed] = useState(false);
   const [customerNotFound, setCustomerNotFound] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { toast } = useToast();
-
-
+  
 
   // Pagination
   const itemsPerPage = 10;
@@ -709,6 +705,7 @@ const Sales: React.FC = () => {
           date={new Date().toLocaleString()}
           invoiceNumber={generateInvoiceNumber(selectedSaleId)}
           userName={user?.name || ''}
+          exchangeRate={selectedOrderInfo.exchange_rate}
           
         />
         <div className="flex justify-end gap-2 mt-4">
