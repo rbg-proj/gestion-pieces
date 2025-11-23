@@ -20,4 +20,5 @@ Affichage du nom de l'agent sur le duplicata qui prenait par defaut le nom de l'
 
 Gestion de l'affichage d'une longue liste sur la facture afin de faciliter le scrolling sur l'écran
 
+Version 22
 Gérer l'application en OffLine sans connection internet et synchroniser une fois la connection retablie.
