@@ -705,7 +705,7 @@ const Sales: React.FC = () => {
           date={new Date().toLocaleString()}
           invoiceNumber={generateInvoiceNumber(selectedSaleId)}
           userName={user?.name || ''}
-          exchangeRate={selectedOrderInfo.exchange_rate}
+          
           
         />
         <div className="flex justify-end gap-2 mt-4">
