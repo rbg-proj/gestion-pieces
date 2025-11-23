@@ -97,6 +97,7 @@ export default function OrdersPage() {
     paymentMethod: string;
     date: string;
     total: number;
+    exchange_rate: number;
   } | null>(null);
 
   
