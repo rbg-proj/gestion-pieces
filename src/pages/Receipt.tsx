@@ -18,7 +18,7 @@ const TAX_RATE = 0.00;
 const { data: agent, error } = await supabase
     .from('profiles')
     .select('name')
-    .eq('id', sale.user_id) // sale.user_id vient de la table sales
+    .eq('id', sales.user_id) // sale.user_id vient de la table sales
     .single();
 
 const Receipt = forwardRef<HTMLDivElement, ReceiptProps>(
