@@ -70,7 +70,7 @@ const Receipt = forwardRef<HTMLDivElement, ReceiptProps>(
 
        
         <p className="text-center text-xs mt-4"> Merci pour votre achat !</p>
-        <p> ************************</p>
+        <p className="text-center text-xs mt-4"> ************************</p>
       </div>
     );
   }
