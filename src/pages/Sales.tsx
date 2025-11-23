@@ -18,6 +18,8 @@ import { useReactToPrint } from 'react-to-print';
 import Receipt from "@/pages/Receipt";
 import { useAuth } from '../contexts/AuthContext'; // Added import for useAuth
 import { initOfflineDB } from "@/lib/offlineDB";
+import { useToast } from "@/components/ui/use-toast";
+
 
 
 // Fonction utilitaire (hors composant)
