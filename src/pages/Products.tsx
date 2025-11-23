@@ -656,6 +656,7 @@ return (
                   <label>Prix d’achat</label>
                   <input
                     type="number"
+                    placeholder="0"
                     value={formData.purchase_price}
                     onChange={(e) => setFormData({ ...formData, purchase_price: Number(e.target.value) })}
                     className="w-full border px-3 py-2 rounded"
