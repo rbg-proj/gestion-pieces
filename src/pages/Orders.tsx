@@ -326,7 +326,7 @@ const filteredOrders = orders
                 cart={saleItems.map(item => ({
                   name: item.products?.name || 'Produit inconnu',
                   quantity: item.quantity,
-                  price: item.unit_price*exchange_rate
+                  price: item.unit_price * (selectedOrderInfo.exchange_rate ?? 1)
                 }))}
                 total={selectedOrderInfo.total}
                 customerName={selectedOrderInfo.customerName}
