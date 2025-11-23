@@ -329,7 +329,8 @@ const filteredOrders = orders
                   quantity: item.quantity,
                   price: item.unit_price * (selectedOrderInfo.exchange_rate ?? 1)
                 }))}
-                total={selectedOrderInfo.total}
+              
+                total={selectedOrderInfo.total * (selectedOrderInfo.exchange_rate ?? 1)}   // 🔥 conversion totale
                 customerName={selectedOrderInfo.customerName}
                 paymentMethod={selectedOrderInfo.paymentMethod}
                 date={selectedOrderInfo.date}
