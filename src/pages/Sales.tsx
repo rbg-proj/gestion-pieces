@@ -650,6 +650,7 @@ const Sales: React.FC = () => {
       {showReceiptModal && (
         <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded shadow-lg w-full max-w-md">
+            <div className="flex-1 overflow-y-auto pr-2">
             <Receipt
               ref={receiptRef}
               cart={printedCart}
@@ -662,6 +663,7 @@ const Sales: React.FC = () => {
             //  userName={agent?.name || "Agent inconnu"}
               exchangeRate={printedRate ?? undefined}
             />
+            </div>
             <div className="flex justify-end gap-2 mt-4">
               <button onClick={() => setShowReceiptModal(false)} className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">
                 Fermer
