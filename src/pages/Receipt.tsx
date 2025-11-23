@@ -1,4 +1,6 @@
 import React, { forwardRef } from 'react';
+import { supabase } from '@/lib/supabase';
+
 
 interface ReceiptProps {
   cart: { name: string; quantity: number; price: number }[];
