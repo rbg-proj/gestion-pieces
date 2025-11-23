@@ -268,7 +268,7 @@ const Sales: React.FC = () => {
 
    
       if (!rate || rate <= 0) {
-        throw new Error('Taux de change invalide. Vérifiez-le svp !');
+        throw new Error('Taux de change nul ou invalide. Vérifiez-le svp !');
       }
 
       // total in CDF (cart prices are in CDF)
