@@ -46,8 +46,7 @@ export default function OrdersPage() {
           payment_method,
           customers ( full_name ),
           sale_items ( id ),
-          exchange_rate,
-          user_id
+          exchange_rate
         `);
 
       if (error) {
@@ -345,7 +344,7 @@ const filteredOrders = orders
             )}
           </div>
 
-          <div className="mt-4 text-right">
+          <div className="mt-4 text-right" max-h-[90vh] overflow-y-auto>
             <Button onClick={handlePrint}>Imprimer le duplicata</Button>
           </div>
         </DialogContent>
