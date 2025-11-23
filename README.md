@@ -11,6 +11,6 @@ Correction de l'export en PDF et ajout de la numérotation des lignes du tableau
 Version 20 :
 Modification de la facture : affichage des totaux en Fc,
 Affichage du taux de change sur la facture et le duplicata
-Correction du nom de l'agent sur le duplicata qui prenait par defaut le nom de l'utilisateur connecté au lieu de considérer celui qui avait effectué la vente.
+Enregistrement du nom de l'agent (session) qui effectue une vente
 Amélioration UX/IX de la page Taux de change,
 Amélioration de l'enregistrement de la vente - Affichage d'un Pop-up durant la connexion Supabase
