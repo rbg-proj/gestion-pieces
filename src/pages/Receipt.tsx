@@ -24,7 +24,7 @@ const Receipt = forwardRef<HTMLDivElement, ReceiptProps>(
     return (
       <div
         ref={ref}
-        className="p-4 max-w-[80mm] bg-white text-black text-sm border border-gray-300"
+        className="p-4 max-w-[80mm] max-h-[90vh] overflow-y-auto bg-white text-black text-sm border border-gray-300"
       >
         <div className="text-center mb-2">
           <h1 className="font-bold text-base">REHOBOTH BUSINESS GROUP</h1>
