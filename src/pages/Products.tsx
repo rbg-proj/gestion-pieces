@@ -687,8 +687,11 @@ return (
                 <label>Stock</label>
                 <input
                   type="number"
+                  Placeholder="Quantité stock de l'article"
                   value={formData.stock}
-                  onChange={(e) => setFormData({ ...formData, stock: Number(e.target.value) })}
+                  onChange={(e) => {const val = e.target.value;
+                        setFormData({...formData, stock: val === '' ? '' :                                   Number(val) });
+                      }}
                   className="w-full border px-3 py-2 rounded"
                 />
               </div>
