@@ -677,8 +677,7 @@ return (
                     value={formData.selling_price}
                     onChange={(e) => {
                         const val = e.target.value;
-                        setFormData({
-                          ...formData,
+                        setFormData({...formData,
                           selling_price: val === '' ? '' : Number(val)
                         });
                       }}
