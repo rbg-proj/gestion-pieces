@@ -67,8 +67,7 @@ const Receipt = forwardRef<HTMLDivElement, ReceiptProps>(
           <p className="font-bold">Total TTC : {total.toLocaleString('fr-FR')} Fc</p>
         </div>
         <p className="text-center text-xs mt-4">Merci pour votre achat !</p>
-        <p className="text-sm"> Taux appliqué : {sales.exchange_rate} FC
-</p>
+        
       </div>
     );
   }
