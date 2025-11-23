@@ -323,7 +323,6 @@ const filteredOrders = orders
 
           <div ref={printRef}>
             {saleItems.length > 0 && selectedOrderInfo && (
-              console.log("Exchange rate:", selectedOrderInfo.exchange_rate);
               <Receipt
                 cart={saleItems.map(item => ({
                   name: item.products?.name || 'Produit inconnu',
