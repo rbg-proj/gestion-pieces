@@ -1,5 +1,5 @@
 import React, { forwardRef } from 'react';
-import { supabase } from '@/lib/supabase';
+
 
 
 interface ReceiptProps {
