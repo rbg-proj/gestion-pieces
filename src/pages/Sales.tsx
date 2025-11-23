@@ -65,6 +65,8 @@ const Sales: React.FC = () => {
   const { user } = useAuth();
   const [isCustomerConfirmed, setIsCustomerConfirmed] = useState(false);
   const [customerNotFound, setCustomerNotFound] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
 
   // Pagination
   const itemsPerPage = 10;
