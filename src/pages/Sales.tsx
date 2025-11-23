@@ -292,7 +292,7 @@ const Sales: React.FC = () => {
       const totalCDF = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
       const totalUSD = totalCDF / rate;
 
-      // Insert sale
+      // Insertion dans sales
       const { data: saleData, error: saleError } = await supabase
         .from('sales')
         .insert([
@@ -301,6 +301,7 @@ const Sales: React.FC = () => {
             payment_method: selectedPayment,
             customer_id: selectedCustomerId,
             exchange_rate: rate,
+            user_id: user?.id, // ✅ ajoute l’agent qui a fait la vente
           },
         ])
         .select()
