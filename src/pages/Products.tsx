@@ -656,11 +656,24 @@ return (
                   <label>Prix d’achat</label>
                   <input
                     type="number"
-                    placeholder="0"
+                    placeholder="1"
                     value={formData.purchase_price}
                     onChange={(e) => setFormData({ ...formData, purchase_price: Number(e.target.value) })}
                     className="w-full border px-3 py-2 rounded"
                   />
+                      <input
+                        type="number"
+                        placeholder="Tri Stock min"
+                        value={minStock}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setMinStock(val === '' ? '' : Number(val));
+                          setCurrentPage(1);
+                        }}
+                        className="w-32 border rounded-md px-2 py-2"
+                      />
+
+                  
                 </div>
 
                 <div className="flex-1">
