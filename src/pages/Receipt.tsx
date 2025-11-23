@@ -17,11 +17,7 @@ const Receipt = forwardRef<HTMLDivElement, ReceiptProps>(
   ({ cart, total, customerName, paymentMethod, date, invoiceNumber, userName,exchangeRate  }, ref) => {
     const totalHT = total / (1 + TAX_RATE);
     const taxAmount = total - totalHT;
-    const { data: agent, error } = await supabase
-    .from('profiles')
-    .select('name')
-    .eq('id', sale.user_id) // sale.user_id vient de la table sales
-    .single();
+   
 
     return (
       <div
