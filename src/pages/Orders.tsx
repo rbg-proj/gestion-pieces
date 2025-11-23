@@ -46,7 +46,8 @@ export default function OrdersPage() {
           payment_method,
           customers ( full_name ),
           sale_items ( id ),
-          exchange_rate
+          exchange_rate,
+          user_id
         `);
 
       if (error) {
