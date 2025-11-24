@@ -262,6 +262,25 @@ const Dashboard: React.FC = () => {
                     </li>
                   ))}
                 </ul>
+          {/* Conteneur global (titre fixe) */}
+<div className="bg-white rounded-lg shadow-sm p-6">
+  <h3 className="text-md font-bold text-red-700 mb-4 px-3 py-1 rounded-md border border-red-300 bg-red-50">
+    ⚠️ Produits critiques / Faible stock
+  </h3>
+
+  {/* Zone défilante */}
+  <div
+    className="relative overflow-hidden"
+    aria-label="Produits en faible stock"
+    role="region"
+  >
+    {/* On duplique la liste pour un défilement continu */}
+    <div className="scroll-viewport" tabIndex={0}>
+      
+    </div>
+  </div>
+</div>
+
               )}
             </div>
           </div>
