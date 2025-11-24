@@ -1,280 +1,141 @@
-import React, { useEffect, useState } from 'react';
-import { supabase } from '../lib/supabase';
-import { 
-  DollarSign, 
-  ShoppingCart, 
-  Users, 
-  Package, 
-  TrendingUp,
-  Wallet,
-  Banknote
-} from 'lucide-react';
-import DashboardCard from '../components/dashboard/DashboardCard';
-import SalesChart from '../components/dashboard/SalesChart';
-import { useAuth } from '../contexts/AuthContext';
+// Dashboard.tsx avec liste défilante intégrée et titre amélioré
 
-const Dashboard: React.FC = () => {
-  const { user } = useAuth();
+import React, { useEffect, useState } from "react";
+import { supabase } from "../lib/supabase";
+import { DollarSign, ShoppingCart, Package, TrendingUp } from "lucide-react";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 
-  const [salesToday, setSalesToday] = useState(0);
-  const [profitToday, setProfitToday] = useState(0);
-  const [customerCount, setCustomerCount] = useState(0);
+const Dashboard = () => {
+  const [dailySales, setDailySales] = useState([]);
+  const [totalRevenue, setTotalRevenue] = useState(0);
+  const [totalSalesCount, setTotalSalesCount] = useState(0);
   const [productCount, setProductCount] = useState(0);
-  const [dailySales, setDailySales] = useState<any[]>([]);
   const [lowStockProducts, setLowStockProducts] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
-
-  // 💱 Ajout : stockage du taux de change
-  const [exchangeRate, setExchangeRate] = useState<number | null>(null);
-
-  const formatCurrency = (amount: number) =>
-    new Intl.NumberFormat('fr-CD', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }).format(amount);
 
   useEffect(() => {
-    const loadData = async () => {
-      setLoading(true);
-      try {
-        await fetchDashboardData();
-      } catch (err) {
-        console.error('Erreur lors du chargement du dashboard:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadData();
+    fetchDashboardData();
   }, []);
 
   const fetchDashboardData = async () => {
-    const today = new Date();
-    const startOfDay = new Date(today.setHours(0, 0, 0, 0)).toISOString();
-    const endOfDay = new Date(today.setHours(23, 59, 59, 999)).toISOString();
+    // Daily sales
+    const { data: salesData } = await supabase.rpc("get_daily_sales");
+    setDailySales(salesData || []);
 
-    // 🧾 Total sales today
-    const { data: salesData, error: salesError } = await supabase
-      .from('sales')
-      .select('id, total_amount, sale_date')
-      .gte('sale_date', startOfDay)
-      .lte('sale_date', endOfDay);
+    // Total revenue
+    const { data: revenueData } = await supabase
+      .from("sales")
+      .select("total_price");
 
-    if (salesError) throw salesError;
+    const total = revenueData?.reduce((sum: number, sale: any) => sum + sale.total_price, 0) || 0;
+    setTotalRevenue(total);
+    setTotalSalesCount(revenueData?.length || 0);
 
-    const total = salesData.reduce((sum, s) => sum + s.total_amount, 0);
-    setSalesToday(total);
+    // Product count
+    const { count } = await supabase
+      .from("products")
+      .select("id", { count: "exact", head: true });
+    setProductCount(count || 0);
 
-    // 🧮 Profit for today's sales
-    const saleIds = salesData.map(s => s.id);
-    if (saleIds.length > 0) {
-      const profit = await calculateProfitForSales(saleIds);
-      setProfitToday(profit);
-    }
-
-    // 📦 Total products
-    const { count: productCountRes, error: productError } = await supabase
-      .from('products')
-      .select('*', { count: 'exact', head: true });
-    if (productError) throw productError;
-    setProductCount(productCountRes || 0);
-
-    // 👥 Total customers
-    const { count: customerCountRes, error: customerError } = await supabase
-      .from('customers')
-      .select('*', { count: 'exact', head: true });
-    if (customerError) throw customerError;
-    setCustomerCount(customerCountRes || 0);
-
-    // 📊 Sales of last 7 days
-    const lastWeek = new Date();
-    lastWeek.setDate(lastWeek.getDate() - 6);
-    const { data: weekSales, error: weekError } = await supabase
-      .from('sales')
-      .select('total_amount, sale_date')
-      .gte('sale_date', lastWeek.toISOString());
-
-    if (weekError) throw weekError;
-
-    const grouped = Array(7).fill(0).map((_, i) => {
-      const date = new Date();
-      date.setDate(date.getDate() - (6 - i));
-      return {
-        name: date.toLocaleDateString('fr-FR', { weekday: 'short' }),
-        sales: 0,
-        orders: 0,
-        date: date.toISOString().split('T')[0],
-      };
-    });
-
-    weekSales.forEach(s => {
-      const date = new Date(s.sale_date).toISOString().split('T')[0];
-      const day = grouped.find(g => g.date === date);
-      if (day) {
-        day.sales += s.total_amount;
-        day.orders += 1;
-      }
-    });
-
-    setDailySales(grouped);
-
-    // 💱 AJOUT : récupération du taux de change le plus récent
-    const { data: latestRate } = await supabase
-      .from("exchange_rates")
-      .select("rate")
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .single();
-
-    if (latestRate) {
-      setExchangeRate(latestRate.rate);
-    }
-
-    // 🛑 Produits en rupture ou faible stock (stock <= 5)
-    const { data: lowStock, error: lowStockError } = await supabase
-      .from('products')
-      .select('id, name, stock')
-      .lte('stock', 5)
-      .order('stock', { ascending: true });
-
-    if (lowStockError) console.error(lowStockError);
-
+    // Low stock products (<= 5)
+    const { data: lowStock } = await supabase
+      .from("products")
+      .select("id, name, stock")
+      .lte("stock", 5)
+      .order("stock", { ascending: true });
     setLowStockProducts(lowStock || []);
   };
 
-  const calculateProfitForSales = async (saleIds: number[]) => {
-    const { data: saleItems, error: itemError } = await supabase
-      .from('sale_items')
-      .select('quantity, product_id, unit_price')
-      .in('sale_id', saleIds);
-
-    if (itemError || !saleItems || saleItems.length === 0) return 0;
-
-    const productIds = [...new Set(saleItems.map(item => item.product_id))];
-    const { data: products, error: productError } = await supabase
-      .from('products')
-      .select('id, purchase_price')
-      .in('id', productIds);
-
-    if (productError || !products) return 0;
-
-    const productMap = Object.fromEntries(products.map(p => [p.id, p]));
-
-    return saleItems.reduce((sum, item) => {
-      const product = productMap[item.product_id];
-      if (!product) return sum;
-
-      const profitPerItem = item.unit_price - product.purchase_price;
-      return sum + profitPerItem * item.quantity;
-    }, 0);
-  };
-
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Point de Vente - Dashboard</h1>
-          <p className="text-sm text-gray-500">Bienvenue {user?.name}!</p>
+    <div className="p-6 space-y-6">
+      {/* Header Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="p-4 bg-white shadow rounded-lg flex items-center justify-between">
+          <div>
+            <p className="text-gray-500">Total Ventes</p>
+            <h3 className="text-2xl font-bold">{totalSalesCount}</h3>
+          </div>
+          <ShoppingCart className="text-blue-500" />
+        </div>
+
+        <div className="p-4 bg-white shadow rounded-lg flex items-center justify-between">
+          <div>
+            <p className="text-gray-500">Revenu Total</p>
+            <h3 className="text-2xl font-bold">{totalRevenue} FC</h3>
+          </div>
+          <DollarSign className="text-green-500" />
+        </div>
+
+        <div className="p-4 bg-white shadow rounded-lg flex items-center justify-between">
+          <div>
+            <p className="text-gray-500">Produits</p>
+            <h3 className="text-2xl font-bold">{productCount}</h3>
+          </div>
+          <Package className="text-orange-500" />
+        </div>
+
+        <div className="p-4 bg-white shadow rounded-lg flex items-center justify-between">
+          <div>
+            <p className="text-gray-500">Stock critique</p>
+            <h3 className="text-2xl font-bold text-red-600">{lowStockProducts.length}</h3>
+          </div>
+          <TrendingUp className="text-red-500" />
         </div>
       </div>
 
-      {loading ? (
-        <div className="text-center text-gray-500 py-10">Chargement en cours...</div>
-      ) : (
-        <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-            <DashboardCard 
-              title="Total Vente du Jour" 
-              value={formatCurrency(salesToday)}
-              change={0.0}
-              icon={<Banknote size={20} className="text-white" />}
-              iconBgColor="bg-primary-500"
-            />
-            <DashboardCard 
-              title="Bénéfice du Jour" 
-              value={formatCurrency(profitToday)}
-              change={0.0}
-              icon={<TrendingUp size={20} className="text-white" />}
-              iconBgColor="bg-success-500"
-            />
-            <DashboardCard 
-              title="Taux du Jour (CDF → USD)"
-              value={exchangeRate ? exchangeRate.toString() : "--"}
-              change={0.0}
-              icon={<DollarSign size={20} className="text-white" />}
-              iconBgColor="bg-purple-600"
-            />
-            <DashboardCard 
-              title="Nombre total Articles" 
-              value={productCount.toString()}
-              change={0.0}
-              icon={<Package size={20} className="text-white" />}
-              iconBgColor="bg-secondary-500"
-            />
-            <DashboardCard 
-              title="Nombre Clients fidèles" 
-              value={customerCount.toString()}
-              change={0.0}
-              icon={<Users size={20} className="text-white" />}
-              iconBgColor="bg-accent-500"
-            />
-          </div>
+      {/* Chart + Low stock list */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Graphique */}
+        <div className="bg-white rounded-lg shadow-sm p-6 lg:col-span-2">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Ventes par jour</h3>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={dailySales}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="date" />
+              <YAxis />
+              <Tooltip />
+              <Bar dataKey="total" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Graphique des ventes */}
-            <div className="lg:col-span-2">
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <div className="flex items-center justify-between mb-6">
-                  <div>
-                    <h2 className="text-lg font-semibold text-gray-900">Vue des ventes par jour</h2>
-                    <p className="text-sm text-gray-500">Performance 7 derniers jours</p>
-                  </div>
-                </div>
-                <div className="h-80">
-                  <SalesChart data={dailySales} type="bar" color="#3b82f6" />
-                </div>
-              </div>
-            </div>
+        {/* Liste critique défilante */}
+        <div className="bg-white rounded-lg shadow-sm p-6">
+          <h3 className="text-md font-bold text-red-700 mb-4 px-3 py-1 rounded-md border border-red-300 bg-red-50 transition transform hover:scale-105 hover:shadow-md duration-300">
+            ⚠️ Produits critiques / Faible stock
+          </h3>
 
-            {/* Liste produits en rupture ou faible stock */}
-            <div className="lg:col-span-1 bg-white rounded-lg shadow-sm p-6 overflow-y-auto h-80">
-              
-              <h3 className="text-md font-bold text-red-700 mb-4 px-3 py-1 rounded-md                                 border border-red-300 bg-red-50 transition transform hover:scale-105 hover:shadow-md duration-300">
-               Produits critiques / Faible stock
-                </h3>
-              {lowStockProducts.length === 0 ? (
-                <p className="text-sm text-gray-500">Aucun produit en rupture de stock.</p>
-              ) : (
-             
-          
-                <div className="relative h-64 overflow-hidden group">
-          <div className="animate-scroll group-hover:[animation-play-state:paused]">
-            <ul className="space-y-2">
-              {lowStockProducts.concat(lowStockProducts).map((product, index) => (
-                <li 
-                  key={product.id + '-' + index}
-                  className="flex justify-between items-center border-b pb-1"
-                >
-                  <div className="flex items-center gap-2">
-                    {product.stock === 0 && (
-                      <span className="text-red-600 text-lg">⚠️</span>
-                    )}
-                    <span>{product.name}</span>
-                  </div>
-                  <span className={`font-semibold ${product.stock === 0 ? "text-red-600" : "text-orange-500"}`}>
-                    {product.stock}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
-              )}
+          <div className="relative h-64 overflow-hidden group">
+            <div className="animate-scroll group-hover:[animation-play-state:paused]">
+              <ul className="space-y-2">
+                {lowStockProducts.concat(lowStockProducts).map((product: any, index: number) => (
+                  <li
+                    key={product.id + "-" + index}
+                    className="flex justify-between items-center border-b pb-1"
+                  >
+                    <div className="flex items-center gap-2">
+                      {product.stock === 0 && <span className="text-red-600 text-lg">⚠️</span>}
+                      <span>{product.name}</span>
+                    </div>
+                    <span
+                      className={`font-semibold ${product.stock === 0 ? "text-red-600" : "text-orange-500"}`}
+                    >
+                      {product.stock}
+                    </span>
+                  </li>
+                ))}
+              </ul>
             </div>
-          
-       
-      )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
