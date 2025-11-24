@@ -22,3 +22,4 @@ Gestion de l'affichage d'une longue liste sur la facture afin de faciliter le sc
 
 Version 22
 Gérer l'application en OffLine sans connection internet et synchroniser une fois la connection retablie.
+Affichage de la liste défilante des produits en rupture/ stock faible.
