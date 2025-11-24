@@ -100,6 +100,7 @@ export default function OrdersPage() {
     date: string;
     total: number;
     exchange_rate: number;
+    agent: string; 
   } | null>(null);
 
   
