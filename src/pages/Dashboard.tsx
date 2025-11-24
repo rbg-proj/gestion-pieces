@@ -223,7 +223,7 @@ const Dashboard: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Graphique */}
+            {/* Graphique des ventes */}
             <div className="lg:col-span-2">
               <div className="bg-white rounded-lg shadow-sm p-6">
                 <div className="flex items-center justify-between mb-6">
@@ -238,73 +238,31 @@ const Dashboard: React.FC = () => {
               </div>
             </div>
 
-            {/* PRODUITS FAIBLE STOCK */}
-            <div className="bg-white rounded-lg shadow-sm p-6">
-             
-
-              <div
-                className="relative overflow-hidden"
-                aria-label="Produits en faible stock"
-                role="region"
-              >
-                <div className="scroll-viewport" tabIndex={0}>
-                  <div className="bg-white rounded-lg shadow-sm p-6">
-                  
-                    {/* Zone défilante */}
-                     <h3 className="text-md font-bold text-red-700 mb-4 px-3 py-1 rounded-md border border-red-300 bg-red-50">
-                ⚠️ Produits critiques / Faible stock
-              </h3>
-                    <div
-                      className="relative overflow-hidden group" 
-                      aria-label="Produits en faible stock"
-                      role="region"
-                      style={{ height: "120px" }} // hauteur visible
-                    >
-                      <div
-                        className="scroll-viewport flex flex-col gap-2"
-                        tabIndex={0}
-                        style={{
-                          animation: "scroll-vertical 12s linear infinite",
-                        }}
-                      >
-                        {/* Liste 1 */}
-                        {lowStockProducts.map((p) => (
-                          <div key={`1-${p.id}`} className="text-sm text-gray-700">
-                            🔸 {p.name} — Stock : {p.stock}
-                          </div>
-                        ))}
-                  
-                        {/* Liste 2 (dupliquée) */}
-                        {lowStockProducts.map((p) => (
-                          <div key={`2-${p.id}`} className="text-sm text-gray-700">
-                            🔸 {p.name} — Stock : {p.stock}
-                          </div>
-                        ))}
-                      </div>
-                  
-                      {/* PAUSE AU SURVOL */}
-                      <style>
-                        {`
-                          .group:hover .scroll-viewport {
-                            animation-play-state: paused;
-                          }
-                  
-                          @keyframes scroll-vertical {
-                            0% {
-                              transform: translateY(0);
-                            }
-                            100% {
-                              transform: translateY(-50%);
-                            }
-                          }
-                        `}
-                      </style>
-                    </div>
-                  </div>
-
-                  
-                </div>
-              </div>
+            {/* Liste produits en rupture ou faible stock */}
+            <div className="lg:col-span-1 bg-white rounded-lg shadow-sm p-6 overflow-y-auto h-80">
+            <h3 className="text-md font-bold text-red-700 mb-4 px-3 py-1 rounded-md border border-red-300 bg-red-50
+                transition transform hover:scale-105 hover:shadow-md duration-300">
+              Produits critiques / Faible stock
+            </h3>
+              {lowStockProducts.length === 0 ? (
+                <p className="text-sm text-gray-500">Aucun produit en rupture de stock.</p>
+              ) : (
+                <ul className="space-y-2">
+                  {lowStockProducts.map((product) => (
+                    <li key={product.id} className="flex justify-between border-b pb-1">
+                      <span className="flex items-center gap-1">
+                        {product.stock === 0 && (
+                          <span className="text-red-600 font-bold">⚠️</span>
+                        )}
+                        {product.name}
+                      </span>
+                      <span className={`font-semibold ${product.stock === 0 ? 'text-red-600' : ''}`}>
+                        {product.stock}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
           </div>
         </>
