@@ -546,7 +546,7 @@ const Sales: React.FC = () => {
             <span>{Number(subtotal ?? 0).toFixed(0)} Fc</span>
           </div>
           <div className="flex justify-between text-sm">
-            <span>Tax (0%)</span>
+            <span>TVA (0%)</span>
             <span>{Number(tax ?? 0).toFixed(0)} Fc</span>
           </div>
           <div className="flex justify-between font-bold text-lg">
