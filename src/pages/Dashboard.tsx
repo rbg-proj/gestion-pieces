@@ -21,6 +21,7 @@ const Dashboard: React.FC = () => {
   const [customerCount, setCustomerCount] = useState(0);
   const [productCount, setProductCount] = useState(0);
   const [dailySales, setDailySales] = useState<any[]>([]);
+  const [lowStockProducts, setLowStockProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
   // 💱 Ajout : stockage du taux de change
@@ -130,6 +131,17 @@ const Dashboard: React.FC = () => {
     if (latestRate) {
       setExchangeRate(latestRate.rate);
     }
+
+    // 🛑 Produits en rupture ou faible stock (stock <= 5)
+    const { data: lowStock, error: lowStockError } = await supabase
+      .from('products')
+      .select('id, name, stock')
+      .lte('stock', 5)
+      .order('stock', { ascending: true });
+
+    if (lowStockError) console.error(lowStockError);
+
+    setLowStockProducts(lowStock || []);
   };
 
   const calculateProfitForSales = async (saleIds: number[]) => {
@@ -172,7 +184,6 @@ const Dashboard: React.FC = () => {
         <div className="text-center text-gray-500 py-10">Chargement en cours...</div>
       ) : (
         <>
-          {/* 🟪 AJOUT : une 5ᵉ card pour le taux */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
             <DashboardCard 
               title="Total Vente du Jour" 
@@ -188,8 +199,6 @@ const Dashboard: React.FC = () => {
               icon={<TrendingUp size={20} className="text-white" />}
               iconBgColor="bg-success-500"
             />
-
-            {/* 💱 Nouveau : taux de change */}
             <DashboardCard 
               title="Taux du Jour (CDF → USD)"
               value={exchangeRate ? exchangeRate.toString() : "--"}
@@ -214,12 +223,13 @@ const Dashboard: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Graphique des ventes */}
             <div className="lg:col-span-2">
               <div className="bg-white rounded-lg shadow-sm p-6">
                 <div className="flex items-center justify-between mb-6">
                   <div>
                     <h2 className="text-lg font-semibold text-gray-900">Vue des ventes par jour</h2>
-                    
+                    <p className="text-sm text-gray-500">Performance 7 derniers jours</p>
                   </div>
                 </div>
                 <div className="h-80">
@@ -228,7 +238,29 @@ const Dashboard: React.FC = () => {
               </div>
             </div>
 
-            {/* Slot vide */}
+            {/* Liste produits en rupture ou faible stock */}
+            <div className="lg:col-span-1 bg-white rounded-lg shadow-sm p-6 overflow-y-auto h-80">
+              <h3 className="text-md font-semibold text-gray-900 mb-4">Produits en rupture ou faible stock</h3>
+              {lowStockProducts.length === 0 ? (
+                <p className="text-sm text-gray-500">Aucun produit en rupture de stock.</p>
+              ) : (
+                <ul className="space-y-2">
+                  {lowStockProducts.map((product) => (
+                    <li key={product.id} className="flex justify-between border-b pb-1">
+                      <span className="flex items-center gap-1">
+                        {product.stock === 0 && (
+                          <span className="text-red-600 font-bold">⚠️</span>
+                        )}
+                        {product.name}
+                      </span>
+                      <span className={`font-semibold ${product.stock === 0 ? 'text-red-600' : ''}`}>
+                        {product.stock}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
           </div>
         </>
       )}
