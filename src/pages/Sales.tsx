@@ -660,7 +660,6 @@ const Sales: React.FC = () => {
               date={new Date().toLocaleString()}
               invoiceNumber={generateInvoiceNumber(selectedSaleId)}
               userName={user?.name || ''}
-            //  userName={agent?.name || "Agent inconnu"}
               exchangeRate={printedRate ?? undefined}
             />
             </div>
