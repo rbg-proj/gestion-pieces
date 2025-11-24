@@ -239,29 +239,7 @@ const Dashboard: React.FC = () => {
             </div>
 
             {/* Liste produits en rupture ou faible stock */}
-            <div className="lg:col-span-1 bg-white rounded-lg shadow-sm p-6 overflow-y-auto h-80">
-            <h3 className="text-md font-bold text-red-700 mb-4 px-3 py-1 rounded-md border border-red-300 bg-red-50
-                transition transform hover:scale-105 hover:shadow-md duration-300">
-              Produits critiques / Faible stock
-            </h3>
-              {lowStockProducts.length === 0 ? (
-                <p className="text-sm text-gray-500">Aucun produit en rupture de stock.</p>
-              ) : (
-                <ul className="space-y-2">
-                  {lowStockProducts.map((product) => (
-                    <li key={product.id} className="flex justify-between border-b pb-1">
-                      <span className="flex items-center gap-1">
-                        {product.stock === 0 && (
-                          <span className="text-red-600 font-bold">⚠️</span>
-                        )}
-                        {product.name}
-                      </span>
-                      <span className={`font-semibold ${product.stock === 0 ? 'text-red-600' : ''}`}>
-                        {product.stock}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
+            
           {/* Conteneur global (titre fixe) */}
 <div className="bg-white rounded-lg shadow-sm p-6">
   <h3 className="text-md font-bold text-red-700 mb-4 px-3 py-1 rounded-md border border-red-300 bg-red-50">
