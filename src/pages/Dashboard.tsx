@@ -253,9 +253,6 @@ const Dashboard: React.FC = () => {
                   {/* Tu ajouteras ici le scroll automatique */}
                     {/* Conteneur global */}
 <div className="bg-white rounded-lg shadow-sm p-6">
-  <h3 className="text-md font-bold text-red-700 mb-4 px-3 py-1 rounded-md border border-red-300 bg-red-50">
-    ⚠️ Produits critiques / Faible stock
-  </h3>
 
   {/* Zone défilante */}
   <div
