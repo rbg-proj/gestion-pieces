@@ -56,7 +56,7 @@ export default function OrdersPage() {
         const formattedOrders = data.map((sale) => ({
           id: `VTE-${sale.id}`,
           rawId: sale.id,
-          customer: sale.customers?.full_name || "Inconnu",
+          customer: sale.customers?.full_name || "Introuvable",
           date: new Date(sale.sale_date),
           total: sale.total_amount,
           items: sale.sale_items?.length || 0,
