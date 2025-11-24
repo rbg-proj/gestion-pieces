@@ -27,7 +27,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
   // Définition des liens avec les rôles autorisés
   const navItems = [
     { name: 'Tableau de Bord', path: '/', icon: <LayoutDashboard size={20} />, roles: ['admin', 'manager', 'employee'] },
-    { name: 'Vendre', path: '/sales', icon: <Calculator size={20} />, roles: ['admin', 'manager', 'employee'] },
+    { name: 'Vendre', path: '/sales', icon: <ShoppingCart size={20} />, roles: ['admin', 'manager', 'employee'] },
     { name: 'Articles', path: '/products', icon: <Package size={20} />, roles: ['admin', 'manager'] },
     { name: 'Clients', path: '/customers', icon: <Users size={20} />, roles: ['admin', 'manager'] },
     { name: 'Rapport Ventes', path: '/orders', icon: <ShoppingCart size={20} />, roles: ['admin', 'manager', 'employee'] },
