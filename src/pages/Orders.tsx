@@ -46,7 +46,8 @@ export default function OrdersPage() {
           payment_method,
           customers ( full_name ),
           sale_items ( id ),
-          exchange_rate
+          exchange_rate,
+          profiles:user_id ( name )
         `);
 
       if (error) {
@@ -323,7 +324,7 @@ const filteredOrders = orders
             <DialogTitle>Détails de la vente</DialogTitle>
           </DialogHeader>
 
-          <div ref={printRef}>
+          <div className="max-h-[70vh] overflow-y-auto pr-2" ref={printRef}>
             {saleItems.length > 0 && selectedOrderInfo && (
               <Receipt
                 cart={saleItems.map(item => ({
