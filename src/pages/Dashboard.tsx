@@ -132,28 +132,34 @@ const Dashboard: React.FC = () => {
     }
   };
 
+  
+
   const calculateProfitForSales = async (saleIds: number[]) => {
-    const { data: saleItems, error: itemError } = await supabase
-      .from('sale_items')
-      .select('quantity, product_id')
-      .in('sale_id', saleIds);
+  const { data: saleItems, error: itemError } = await supabase
+    .from('sale_items')
+    .select('quantity, product_id, unit_price') // ➜ On récupère unit_price
+    .in('sale_id', saleIds);
 
-    if (itemError || !saleItems || saleItems.length === 0) return 0;
+  if (itemError || !saleItems || saleItems.length === 0) return 0;
 
-    const productIds = [...new Set(saleItems.map(item => item.product_id))];
-    const { data: products, error: productError } = await supabase
-      .from('products')
-      .select('id, purchase_price, selling_price')
-      .in('id', productIds);
+  const productIds = [...new Set(saleItems.map(item => item.product_id))];
+  const { data: products, error: productError } = await supabase
+    .from('products')
+    .select('id, purchase_price') // ➜ selling_price n'est plus nécessaire
+    .in('id', productIds);
 
-    if (productError || !products) return 0;
+  if (productError || !products) return 0;
 
-    const productMap = Object.fromEntries(products.map(p => [p.id, p]));
-    return saleItems.reduce((sum, item) => {
-      const product = productMap[item.product_id];
-      return product ? sum + (product.selling_price - product.purchase_price) * item.quantity : sum;
-    }, 0);
-  };
+  const productMap = Object.fromEntries(products.map(p => [p.id, p]));
+
+  return saleItems.reduce((sum, item) => {
+    const product = productMap[item.product_id];
+    if (!product) return sum;
+
+    const profitPerItem = item.unit_price - product.purchase_price;
+    return sum + profitPerItem * item.quantity;
+  }, 0);
+};
 
   return (
     <div className="space-y-6">
