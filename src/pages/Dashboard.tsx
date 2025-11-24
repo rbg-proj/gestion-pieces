@@ -240,9 +240,7 @@ const Dashboard: React.FC = () => {
 
             {/* PRODUITS FAIBLE STOCK */}
             <div className="bg-white rounded-lg shadow-sm p-6">
-              <h3 className="text-md font-bold text-red-700 mb-4 px-3 py-1 rounded-md border border-red-300 bg-red-50">
-                ⚠️ Produits critiques / Faible stock
-              </h3>
+             
 
               <div
                 className="relative overflow-hidden"
@@ -250,58 +248,59 @@ const Dashboard: React.FC = () => {
                 role="region"
               >
                 <div className="scroll-viewport" tabIndex={0}>
-                  {/* Tu ajouteras ici le scroll automatique */}
-                    {/* Conteneur global */}
-<div className="bg-white rounded-lg shadow-sm p-6">
-
-  {/* Zone défilante */}
-  <div
-    className="relative overflow-hidden group" 
-    aria-label="Produits en faible stock"
-    role="region"
-    style={{ height: "120px" }} // hauteur visible
-  >
-    <div
-      className="scroll-viewport flex flex-col gap-2"
-      tabIndex={0}
-      style={{
-        animation: "scroll-vertical 12s linear infinite",
-      }}
-    >
-      {/* Liste 1 */}
-      {lowStockProducts.map((p) => (
-        <div key={`1-${p.id}`} className="text-sm text-gray-700">
-          🔸 {p.name} — Stock : {p.stock}
-        </div>
-      ))}
-
-      {/* Liste 2 (dupliquée) */}
-      {lowStockProducts.map((p) => (
-        <div key={`2-${p.id}`} className="text-sm text-gray-700">
-          🔸 {p.name} — Stock : {p.stock}
-        </div>
-      ))}
-    </div>
-
-    {/* PAUSE AU SURVOL */}
-    <style>
-      {`
-        .group:hover .scroll-viewport {
-          animation-play-state: paused;
-        }
-
-        @keyframes scroll-vertical {
-          0% {
-            transform: translateY(0);
-          }
-          100% {
-            transform: translateY(-50%);
-          }
-        }
-      `}
-    </style>
-  </div>
-</div>
+                  <div className="bg-white rounded-lg shadow-sm p-6">
+                  
+                    {/* Zone défilante */}
+                     <h3 className="text-md font-bold text-red-700 mb-4 px-3 py-1 rounded-md border border-red-300 bg-red-50">
+                ⚠️ Produits critiques / Faible stock
+              </h3>
+                    <div
+                      className="relative overflow-hidden group" 
+                      aria-label="Produits en faible stock"
+                      role="region"
+                      style={{ height: "120px" }} // hauteur visible
+                    >
+                      <div
+                        className="scroll-viewport flex flex-col gap-2"
+                        tabIndex={0}
+                        style={{
+                          animation: "scroll-vertical 12s linear infinite",
+                        }}
+                      >
+                        {/* Liste 1 */}
+                        {lowStockProducts.map((p) => (
+                          <div key={`1-${p.id}`} className="text-sm text-gray-700">
+                            🔸 {p.name} — Stock : {p.stock}
+                          </div>
+                        ))}
+                  
+                        {/* Liste 2 (dupliquée) */}
+                        {lowStockProducts.map((p) => (
+                          <div key={`2-${p.id}`} className="text-sm text-gray-700">
+                            🔸 {p.name} — Stock : {p.stock}
+                          </div>
+                        ))}
+                      </div>
+                  
+                      {/* PAUSE AU SURVOL */}
+                      <style>
+                        {`
+                          .group:hover .scroll-viewport {
+                            animation-play-state: paused;
+                          }
+                  
+                          @keyframes scroll-vertical {
+                            0% {
+                              transform: translateY(0);
+                            }
+                            100% {
+                              transform: translateY(-50%);
+                            }
+                          }
+                        `}
+                      </style>
+                    </div>
+                  </div>
 
                   
                 </div>
