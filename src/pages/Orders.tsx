@@ -62,7 +62,7 @@ export default function OrdersPage() {
           items: sale.sale_items?.length || 0,
           paymentMethod: sale.payment_method || "Inconnu",
           exchange_rate: sale.exchange_rate ?? 1,   // Récupération du Taux de change
-          agent: sale.profiles?.name || "Agent inconnu",
+          agent: sale.profiles?.name || "Non trouvé",
           status:
           sale.payment_method === "cash" || sale.payment_method === "mobile_money"
               ? "Payé"
