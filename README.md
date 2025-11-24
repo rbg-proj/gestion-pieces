@@ -21,7 +21,9 @@ Affichage du nom de l'agent sur le duplicata qui prenait par defaut le nom de l'
 Gestion de l'affichage d'une longue liste sur la facture afin de faciliter le scrolling sur l'écran.
 
 Version 22
-Gérer l'application en OffLine sans connection internet et synchroniser une fois la connection retablie.
-Affichage de la liste défilante des produits en rupture/ stock faible.
+Amélioration du Dashboard --> Affichage de la liste défilante des produits en rupture ou faible stock à côté du graphique des ventes.
+Un badge rouge ⚠️ pour les produits critiques (stock = 0).
+
+Gestion de l'application en OffLine sans connection internet et synchroniser une fois la connection retablie.
 
 Insertion de l'exportation Excel du Rapport de vente et Historique des stocks
