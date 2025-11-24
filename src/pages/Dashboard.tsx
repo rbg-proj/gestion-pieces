@@ -232,7 +232,7 @@ const Dashboard: React.FC = () => {
               </div>
             </div>
 
-            {/* Slot vide laissé inchangé */}
+            {/* Slot vide */}
           </div>
         </>
       )}
