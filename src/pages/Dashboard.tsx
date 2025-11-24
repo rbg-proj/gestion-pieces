@@ -145,7 +145,7 @@ const Dashboard: React.FC = () => {
   const productIds = [...new Set(saleItems.map(item => item.product_id))];
   const { data: products, error: productError } = await supabase
     .from('products')
-    .select('id, purchase_price') // ➜ selling_price n'est plus nécessaire
+    .select('id, selling_price') // ➜ selling_price n'est plus nécessaire
     .in('id', productIds);
 
   if (productError || !products) return 0;
@@ -156,7 +156,7 @@ const Dashboard: React.FC = () => {
     const product = productMap[item.product_id];
     if (!product) return sum;
 
-    const profitPerItem = item.unit_price - product.purchase_price;
+    const profitPerItem = item.unit_price - product.selling_price;
     return sum + profitPerItem * item.quantity;
   }, 0);
 };
