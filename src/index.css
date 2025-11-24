@@ -87,3 +87,52 @@
 .animate-scroll {
   animation: scroll 10s linear infinite;
 }
+/* -------------------------
+   Smooth vertical marquee
+   ------------------------- */
+
+/* réglable : durée totale du cycle (plus grand -> plus lent) */
+:root {
+  --scroll-duration: 20s; /* augmente si tu veux plus lent (ex: 30s, 40s) */
+}
+
+/* animation : translateY de 0 à -50% (parce qu'on a doublé la liste) */
+@keyframes scroll-vertical {
+  0%   { transform: translateY(0); }
+  100% { transform: translateY(-50%); }
+}
+
+/* viewport qui masque le débordement */
+.scroll-viewport {
+  height: 16rem; /* adapte si nécessaire, ex: h-64 = 16rem */
+  overflow: hidden;
+  position: relative;
+  outline: none; /* conserver pour esthétisme; remove si tu veux outline focus visible */
+}
+
+/* la liste qui défile */
+.scroll-list {
+  display: block;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  /* IMPORTANT : block-format vertical flow */
+  animation: scroll-vertical var(--scroll-duration) linear infinite;
+  /* pause au hover / focus */
+  animation-play-state: running;
+}
+
+/* pause au hover et au focus (accessibilité clavier) */
+.scroll-viewport:hover .scroll-list,
+.scroll-viewport:focus .scroll-list,
+.scroll-list:hover,
+.scroll-list:focus {
+  animation-play-state: paused;
+}
+
+/* si l'utilisateur préfère réduire les animations */
+@media (prefers-reduced-motion: reduce) {
+  .scroll-list {
+    animation: none;
+  }
+}
