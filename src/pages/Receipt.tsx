@@ -38,7 +38,9 @@ const Receipt = forwardRef<HTMLDivElement, ReceiptProps>(
           <p><strong>Client :</strong> {customerName || 'Client anonyme'}  </p> 
           <p><strong>Mode de paiement :</strong> {paymentMethod}</p>
           <p> <strong>Caissier :</strong> {userName}
-     *******  Taux : {exchangeRate?.toLocaleString("fr-FR")} Fc </p>
+               <span style={{ marginLeft: "10px" }}>  
+                 Taux : {exchangeRate?.toLocaleString("fr-FR")} Fc </p>
+                </span>
         </div>
 
         <hr className="my-2" />
