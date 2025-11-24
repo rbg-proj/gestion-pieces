@@ -258,6 +258,7 @@ const filteredOrders = orders
                   date: order.date.toLocaleDateString(),
                   total: order.total,
                    exchange_rate: order.exchange_rate,
+                  agent: order.agent,
                 });
               }}
               className={`cursor-pointer hover:bg-muted/50 ${
