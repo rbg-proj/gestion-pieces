@@ -223,7 +223,7 @@ const Dashboard: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Graphique des ventes */}
+            {/* Graphique */}
             <div className="lg:col-span-2">
               <div className="bg-white rounded-lg shadow-sm p-6">
                 <div className="flex items-center justify-between mb-6">
@@ -238,9 +238,20 @@ const Dashboard: React.FC = () => {
               </div>
             </div>
 
-            {/* Liste produits en rupture ou faible stock */}
-            
-          {/* Conteneur global (titre fixe) */}
+            {/* PRODUITS FAIBLE STOCK */}
+            <div className="bg-white rounded-lg shadow-sm p-6">
+              <h3 className="text-md font-bold text-red-700 mb-4 px-3 py-1 rounded-md border border-red-300 bg-red-50">
+                ⚠️ Produits critiques / Faible stock
+              </h3>
+
+              <div
+                className="relative overflow-hidden"
+                aria-label="Produits en faible stock"
+                role="region"
+              >
+                <div className="scroll-viewport" tabIndex={0}>
+                  {/* Tu ajouteras ici le scroll automatique */}
+                    {/* Conteneur global */}
 <div className="bg-white rounded-lg shadow-sm p-6">
   <h3 className="text-md font-bold text-red-700 mb-4 px-3 py-1 rounded-md border border-red-300 bg-red-50">
     ⚠️ Produits critiques / Faible stock
@@ -248,21 +259,59 @@ const Dashboard: React.FC = () => {
 
   {/* Zone défilante */}
   <div
-    className="relative overflow-hidden"
+    className="relative overflow-hidden group" 
     aria-label="Produits en faible stock"
     role="region"
+    style={{ height: "120px" }} // hauteur visible
   >
-    {/* On duplique la liste pour un défilement continu */}
-    <div className="scroll-viewport" tabIndex={0}>
-      
+    <div
+      className="scroll-viewport flex flex-col gap-2"
+      tabIndex={0}
+      style={{
+        animation: "scroll-vertical 12s linear infinite",
+      }}
+    >
+      {/* Liste 1 */}
+      {lowStockProducts.map((p) => (
+        <div key={`1-${p.id}`} className="text-sm text-gray-700">
+          🔸 {p.name} — Stock : {p.stock}
+        </div>
+      ))}
+
+      {/* Liste 2 (dupliquée) */}
+      {lowStockProducts.map((p) => (
+        <div key={`2-${p.id}`} className="text-sm text-gray-700">
+          🔸 {p.name} — Stock : {p.stock}
+        </div>
+      ))}
     </div>
+
+    {/* PAUSE AU SURVOL */}
+    <style>
+      {`
+        .group:hover .scroll-viewport {
+          animation-play-state: paused;
+        }
+
+        @keyframes scroll-vertical {
+          0% {
+            transform: translateY(0);
+          }
+          100% {
+            transform: translateY(-50%);
+          }
+        }
+      `}
+    </style>
   </div>
 </div>
 
-              )}
+                  
+                </div>
+              </div>
             </div>
           </div>
-       
+        </>
       )}
     </div>
   );
