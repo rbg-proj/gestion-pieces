@@ -339,7 +339,8 @@ const filteredOrders = orders
                 customerName={selectedOrderInfo.customerName}
                 paymentMethod={selectedOrderInfo.paymentMethod}
                 date={selectedOrderInfo.date}
-                userName={user?.name || ''}
+              //  userName={user?.name || ''}
+                userName={selectedOrderInfo.agent}
               //  userName={sale.profiles.full_name}     // ⬅️ L’agent correct !
                 exchangeRate={selectedOrderInfo.exchange_rate} 
                 
