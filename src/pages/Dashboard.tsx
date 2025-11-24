@@ -247,21 +247,29 @@ const Dashboard: React.FC = () => {
               {lowStockProducts.length === 0 ? (
                 <p className="text-sm text-gray-500">Aucun produit en rupture de stock.</p>
               ) : (
-                <ul className="space-y-2">
-                  {lowStockProducts.map((product) => (
-                    <li key={product.id} className="flex justify-between border-b pb-1">
-                      <span className="flex items-center gap-1">
-                        {product.stock === 0 && (
-                          <span className="text-red-600 font-bold">⚠️</span>
-                        )}
-                        {product.name}
-                      </span>
-                      <span className={`font-semibold ${product.stock === 0 ? 'text-red-600' : ''}`}>
-                        {product.stock}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
+             
+          
+                <div className="relative h-64 overflow-hidden group">
+          <div className="animate-scroll group-hover:[animation-play-state:paused]">
+            <ul className="space-y-2">
+              {lowStockProducts.concat(lowStockProducts).map((product, index) => (
+                <li 
+                  key={product.id + '-' + index}
+                  className="flex justify-between items-center border-b pb-1"
+                >
+                  <div className="flex items-center gap-2">
+                    {product.stock === 0 && (
+                      <span className="text-red-600 text-lg">⚠️</span>
+                    )}
+                    <span>{product.name}</span>
+                  </div>
+                  <span className={`font-semibold ${product.stock === 0 ? "text-red-600" : "text-orange-500"}`}>
+                    {product.stock}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
               )}
             </div>
           </div>
