@@ -264,7 +264,6 @@ const Sales: React.FC = () => {
     try {
       if (cart.length === 0 || !selectedPayment) {
         // reset isSubmitting and exit early
-        
         toast.dismiss('sale-progress');
         toast.error('Ajoutez au moins un article et sélectionnez un mode de paiement.');
         setIsSubmitting(false);
