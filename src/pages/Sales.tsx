@@ -571,7 +571,6 @@ const Sales: React.FC = () => {
               required
             />
 
-           
 
             <button
                 onClick={handleCustomerLookup}
@@ -585,7 +584,7 @@ const Sales: React.FC = () => {
                 Trouver client
               </button>
             </div>
-          </div>
+          
           
 
           {isCustomerConfirmed && (
