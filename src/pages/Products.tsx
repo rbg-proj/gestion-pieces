@@ -150,6 +150,8 @@ const Products: React.FC = () => {
         }
 
         response = { data: updateData, error: updateError };
+        toast.success("Produit mis à jour avec succès !");
+
        
       } else {
         // // Vérification nom existant
@@ -181,6 +183,7 @@ const Products: React.FC = () => {
         response = await supabase.from('products').insert([dataToSend]);
         if (response.data && response.data[0]) {
           const newProduct = response.data[0];
+          toast.success("Produit ajouté avec succès !");
           await supabase.from('stock_history').insert([{
             product_id: newProduct.id,
             old_stock: 0,
