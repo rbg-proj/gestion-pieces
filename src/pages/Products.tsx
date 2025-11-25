@@ -258,64 +258,26 @@ const Products: React.FC = () => {
             }
           };
           
-         
+          const handleDeleteCategory = async (id: string) => {
+            if (!confirm("Supprimer cette catégorie ?")) return;
+          
+            try {
+              const { error } = await supabase
+                .from("categories")
+                .delete()
+                .eq("id", id);
+          
+              if (error) throw error;
+              toast.success("Catégorie supprimée !");
+          
+              fetchCategories();
+            } catch (error) {
+              console.error(error);
+               toast.error("Impossible de supprimer la catégorie.");
+            }
+          };
 
-          const handleDeleteCategory = async (id) => {
-                try {
-                  // Vérifier si la catégorie est utilisée par des produits
-                  const { count, error: countError } = await supabase
-                    .from("products")
-                    .select("*", { count: "exact", head: true })
-                    .eq("category_id", id);
-              
-                  if (countError) {
-                    toast({
-                      title: "Erreur",
-                      description: "Impossible de vérifier les produits associés.",
-                      variant: "destructive",
-                    });
-                    return;
-                  }
-              
-                  if (count > 0) {
-                    toast({
-                      title: "Suppression impossible",
-                      description: `Cette catégorie contient encore ${count} produit(s).`,
-                      variant: "destructive",
-                    });
-                    return;
-                  }
-              
-                  // Si aucun produit n'utilise cette catégorie → suppression autorisée
-                  const { error } = await supabase
-                    .from("categories")
-                    .delete()
-                    .eq("id", id);
-              
-                  if (error) {
-                    toast({
-                      title: "Erreur",
-                      description: "Impossible de supprimer la catégorie.",
-                      variant: "destructive",
-                    });
-                    return;
-                  }
-              
-                  toast({
-                    title: "Catégorie supprimée",
-                    description: "La catégorie a été supprimée avec succès.",
-                  });
-              
-                  fetchCategories(); // rafraîchir la liste
-              
-                } catch (e) {
-                  toast({
-                    title: "Erreur inattendue",
-                    description: e.message,
-                    variant: "destructive",
-                  });
-                }
-              };
+        
 
   
   // -------------------------
