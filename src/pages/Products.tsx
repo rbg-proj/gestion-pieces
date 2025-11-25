@@ -270,7 +270,8 @@ const Products: React.FC = () => {
           
               fetchCategories();
             } catch (error) {
-              console.error("Erreur suppression catégorie", error);
+              console.error(error);
+               toast.error("Impossible de supprimer la catégorie.");
             }
           };
 
