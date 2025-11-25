@@ -6,7 +6,6 @@ import { supabase } from '../lib/supabase';
 import toast from "react-hot-toast";
 
 
-
 // -------------------------
 // TYPES
 // -------------------------
@@ -236,6 +235,7 @@ const Products: React.FC = () => {
                   .eq("id", editingCategory.id);
           
                 if (error) throw error;
+                toast.success("Catégorie modifiée avec succès !");
               } else {
                 // Insert
                 const { error } = await supabase
