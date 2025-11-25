@@ -178,6 +178,12 @@ const Products: React.FC = () => {
             
             return;
           }
+        if (existing && existing.length > 0) {
+              toast.error("Un produit portant ce nom existe déjà");
+              setTimeout(() => nameInputRef.current?.focus(), 300);
+              return;
+            }
+
 
       // 🔵 Si tout est bon, on peut insérer
         response = await supabase.from('products').insert([dataToSend]);
