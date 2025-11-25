@@ -150,7 +150,7 @@ const Products: React.FC = () => {
         }
 
         response = { data: updateData, error: updateError };
-        toast.success("Produit mis à jour avec succès !");
+        toast.success("Article mis à jour avec succès !");
 
        
       } else {
