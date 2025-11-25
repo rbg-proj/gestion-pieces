@@ -212,12 +212,12 @@ const Products: React.FC = () => {
   // DELETE
   // -------------------------
   const handleDelete = async (id: string) => {
-    if (!confirm('Voulez-vous vraiment supprimer ce produit ?')) return;
+    if (!confirm('Voulez-vous vraiment supprimer cet article ?')) return;
     try {
       const { error } = await supabase.from('products').delete().eq('id', id);
       if (error) throw error;
       fetchProducts();
-      toast.success("Produit supprimé !");
+      toast.success("Article supprimé !");
     } catch (err) {
       console.error('Error deleting:', err);
       setError(err instanceof Error ? err.message : 'Une erreur est survenue !');
