@@ -784,6 +784,93 @@ return (
         </div>
       )}
 
+
+
+
+        {/* CATEGORY MODAL */}
+{isCategoryModalOpen && (
+  <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
+    <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md relative">
+
+      <button
+        onClick={() => setIsCategoryModalOpen(false)}
+        className="absolute top-2 right-2 text-gray-500"
+      >
+        <X size={24} />
+      </button>
+
+      <h2 className="text-xl font-semibold mb-4">
+        Gérer les Catégories
+      </h2>
+
+      {/* Input */}
+      <div className="mb-4">
+        <label className="font-medium">Nom catégorie</label>
+        <input
+          type="text"
+          value={categoryName}
+          onChange={(e) => setCategoryName(e.target.value)}
+          className="w-full border px-3 py-2 rounded mt-1"
+          placeholder="Ex : Boissons"
+        />
+      </div>
+
+      <div className="flex justify-end gap-2">
+        <button
+          onClick={() => setIsCategoryModalOpen(false)}
+          className="px-3 py-2 bg-gray-200 rounded"
+        >
+          Annuler
+        </button>
+
+        <button
+          onClick={handleSaveCategory}
+          className="px-4 py-2 bg-primary-600 text-white rounded hover:bg-primary-700"
+        >
+          {editingCategory ? "Modifier" : "Ajouter"}
+        </button>
+      </div>
+
+      {/* Liste catégories */}
+      <div className="mt-6">
+        <h3 className="font-semibold mb-2">Liste</h3>
+
+        <div className="max-h-64 overflow-y-auto divide-y">
+          {categories.map((cat) => (
+            <div key={cat.id} className="flex justify-between items-center py-2">
+              <span>{cat.name}</span>
+
+              <div className="flex gap-3">
+                <button
+                  className="text-blue-600"
+                  onClick={() => {
+                    setEditingCategory(cat);
+                    setCategoryName(cat.name);
+                  }}
+                >
+                  <Edit size={18} />
+                </button>
+
+                <button
+                  className="text-red-600"
+                  onClick={() => handleDeleteCategory(cat.id)}
+                >
+                  <Trash size={18} />
+                </button>
+              </div>
+            </div>
+          ))}
+
+          {categories.length === 0 && (
+            <p className="text-gray-500 text-center py-4">Aucune catégorie</p>
+          )}
+        </div>
+      </div>
+    </div>
+  </div>
+)}
+      
+
     </div>
   );
 };
