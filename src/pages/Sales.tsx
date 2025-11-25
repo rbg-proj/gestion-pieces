@@ -562,7 +562,7 @@ const Sales: React.FC = () => {
             <input
               type="tel"
               placeholder="Entrer le téléphone client"
-              className="flex-1 px-3 py-2 border rounded-md"
+              className="flex-1 px-3 py-2 border rounded-md h-[42px]"
               value={customerPhone}
               onChange={(e) => {
                 setCustomerPhone(e.target.value);
