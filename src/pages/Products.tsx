@@ -243,6 +243,7 @@ const Products: React.FC = () => {
                   .insert([{ name: categoryName.trim() }]);
           
                 if (error) throw error;
+                 toast.success("Catégorie ajoutée avec succès !");
               }
           
               setIsCategoryModalOpen(false);
