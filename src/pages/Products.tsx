@@ -167,17 +167,7 @@ const Products: React.FC = () => {
             return;
           }
         
-          if (existing && existing.length > 0) {
-            setToastMessage("Un produit portant ce nom existe déjà. Veuillez utiliser un autre nom !");
-            
-            // 🔥 Redonner le focus au champ du nom
-              setTimeout(() => {
-                              nameInputRef.current?.focus();
-                                }, 300); 
-            setTimeout(() => setToastMessage(null), 3000);
-            
-            return;
-          }
+       
         if (existing && existing.length > 0) {
               toast.error("Un produit portant ce nom existe déjà");
               setTimeout(() => nameInputRef.current?.focus(), 300);
@@ -454,16 +444,6 @@ const exportToPDF = async () => {
 
 return (
     <div className="space-y-6">
-
-      {/* Toast d'affichage message */}
-      {toastMessage && (
-      <div className="fixed top-10 left-1/2 -translate-x-1/2 z-[9999]">
-    <div className="bg-red-600 text-white px-6 py-4 rounded-lg shadow-xl text-lg animate-fade">
-        {toastMessage}
-          </div>
-          </div>
-        )}
-
 
       {/* HEADER + EXPORT BUTTONS */}
       <div className="flex justify-between items-center">
