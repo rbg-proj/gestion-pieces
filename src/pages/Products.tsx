@@ -222,7 +222,7 @@ const Products: React.FC = () => {
   // -------------------------
 // CATEGORY CRUD
 // -------------------------
-          const handleSaveCategory = async () => {
+  const handleSaveCategory = async () => {
             if (!categoryName.trim()) return;
           
             try {
