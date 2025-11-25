@@ -251,7 +251,8 @@ const Products: React.FC = () => {
               setCategoryName("");
               fetchCategories();
             } catch (error) {
-              console.error("Erreur sauvegarde catégorie", error);
+              console.error(error);
+              toast.error("Erreur survenue lors de l’enregistrement !");
             }
           };
           
