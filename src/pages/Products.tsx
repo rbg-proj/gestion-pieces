@@ -3,6 +3,8 @@ import {
   Search, PlusCircle, Edit, Trash, AlertTriangle, Loader2, X, Package
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import toast from "react-hot-toast";
+
 
 
 // -------------------------
