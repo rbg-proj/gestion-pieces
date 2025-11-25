@@ -273,7 +273,7 @@ const Products: React.FC = () => {
               fetchCategories();
             } catch (error) {
               console.error(error);
-               toast.error("Impossible de supprimer la catégorie.");
+               toast.error("Impossible de supprimer la catégorie. Elle contient encore d'Articles");
             }
           };
 
