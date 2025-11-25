@@ -39,6 +39,10 @@ const Products: React.FC = () => {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const nameInputRef = useRef<HTMLInputElement>(null);
+  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
+  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+  const [categoryName, setCategoryName] = useState("");
+
 
 
   // filtres stock
@@ -418,6 +422,18 @@ return (
           >
             <PlusCircle size={16} className="mr-2" /> Créer un Article
           </button>
+
+          <button
+            onClick={() => {
+              setIsCategoryModalOpen(true);
+              setEditingCategory(null);
+              setCategoryName("");
+            }}
+            className="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700"
+          >
+            <PlusCircle size={16} className="mr-2" /> Gérer les Catégories
+          </button>
+
         </div>
       </div>
 
