@@ -571,16 +571,22 @@ const Sales: React.FC = () => {
               required
             />
 
+           
+
             <button
-              onClick={handleCustomerLookup}
-              className={`px-4 py-2 text-white rounded-md ${
-                customerPhone.trim() === '' ? 'bg-gray-300 cursor-not-allowed' : 'bg-primary-500 hover:bg-primary-600'
-              }`}
-              disabled={customerPhone.trim() === ''}
-            >
-              Trouver client
-            </button>
+                onClick={handleCustomerLookup}
+                className={`px-4 h-[42px] flex items-center justify-center text-white rounded-md 
+                  ${customerPhone.trim() === '' 
+                    ? 'bg-gray-300 cursor-not-allowed' 
+                    : 'bg-primary-500 hover:bg-primary-600'
+                  }`}
+                disabled={customerPhone.trim() === ''}
+              >
+                Trouver client
+              </button>
+            </div>
           </div>
+          
 
           {isCustomerConfirmed && (
             <p className="text-sm text-green-600">Client trouvé ✅ {customerName && `: ${customerName}`}</p>
