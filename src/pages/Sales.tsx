@@ -381,7 +381,7 @@ const Sales: React.FC = () => {
   };
 
   return (
-    <div className="h-screen flex flex-col md:flex-row gap-6 p-4 bg-gray-50">
+    <div className="flex flex-col md:flex-row gap-6 p-4 bg-gray-50 min-h-screen">
       {/* Products Section */}
       <div className="md:w-2/3 bg-white rounded-lg shadow-sm p-4">
         {typeof exchangeRate === 'number' && exchangeRate > 0 && (
