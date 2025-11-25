@@ -571,7 +571,6 @@ const Sales: React.FC = () => {
               required
             />
 
-
             <button
                 onClick={handleCustomerLookup}
                 className={`px-4 h-[42px] flex items-center justify-center text-white rounded-md 
