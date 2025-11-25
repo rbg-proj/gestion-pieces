@@ -266,6 +266,7 @@ const Products: React.FC = () => {
                 .eq("id", id);
           
               if (error) throw error;
+              toast.success("Catégorie supprimée !");
           
               fetchCategories();
             } catch (error) {
