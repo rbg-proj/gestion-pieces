@@ -580,7 +580,7 @@ const Sales: React.FC = () => {
                   }`}
                 disabled={customerPhone.trim() === ''}
               >
-                Rechercher
+                Trouver
               </button>
             </div>
           
