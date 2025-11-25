@@ -218,6 +218,58 @@ const Products: React.FC = () => {
     }
   };
 
+
+  // -------------------------
+// CATEGORY CRUD
+// -------------------------
+          const handleSaveCategory = async () => {
+            if (!categoryName.trim()) return;
+          
+            try {
+              if (editingCategory) {
+                // Update
+                const { error } = await supabase
+                  .from("categories")
+                  .update({ name: categoryName.trim() })
+                  .eq("id", editingCategory.id);
+          
+                if (error) throw error;
+              } else {
+                // Insert
+                const { error } = await supabase
+                  .from("categories")
+                  .insert([{ name: categoryName.trim() }]);
+          
+                if (error) throw error;
+              }
+          
+              setIsCategoryModalOpen(false);
+              setEditingCategory(null);
+              setCategoryName("");
+              fetchCategories();
+            } catch (error) {
+              console.error("Erreur sauvegarde catégorie", error);
+            }
+          };
+          
+          const handleDeleteCategory = async (id: string) => {
+            if (!confirm("Supprimer cette catégorie ?")) return;
+          
+            try {
+              const { error } = await supabase
+                .from("categories")
+                .delete()
+                .eq("id", id);
+          
+              if (error) throw error;
+          
+              fetchCategories();
+            } catch (error) {
+              console.error("Erreur suppression catégorie", error);
+            }
+          };
+
+  
   // -------------------------
   // IMAGE UPLOAD
   // -------------------------
