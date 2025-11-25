@@ -485,7 +485,7 @@ const Sales: React.FC = () => {
           <h2 className="text-xl font-semibold">Articles sélectionnés</h2>
         </div>
 
-        <div className="overflow-y-auto mb-4 h-[380px]">
+        <div className="flex-1 overflow-y-auto mb-4 max-h-[380px]">
           {cart.map((item) => (
             <div key={item.id} className="flex items-center justify-between p-2 border-b">
               <div className="flex-1">
