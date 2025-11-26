@@ -21,12 +21,12 @@ Affichage du nom de l'agent sur le duplicata qui prenait par defaut le nom de l'
 Gestion de l'affichage d'une longue liste sur la facture afin de faciliter le scrolling sur l'écran.
 
 Version 22
-Intégration du CRUD des Catégories dans la page des Articles.
-Ajout des notifications après les CRUD.
-Gestion de doublon sur les noms des articles.
-Amélioration du Dashboard --> Affichage de la liste défilante des produits en rupture ou faible stock à côté du graphique des ventes.
-Un badge rouge ⚠️ pour les produits critiques (stock = 0).
-* Ajustement de la zone de sélection d'articles -- Hauteur plus large pour 5 à 6 articles visibles avant de scroller
+** Intégration du CRUD des Catégories dans la page des Articles.
+**Ajout des notifications après les CRUD.
+**Gestion de doublon sur les noms des articles.
+**Amélioration du Dashboard --> Affichage de la liste défilante des produits en rupture ou faible stock à côté du graphique des ventes.
+**Un badge rouge ⚠️ pour les produits critiques (stock = 0).
+** Ajustement de la zone de sélection d'articles -- Hauteur plus large pour 5 à 6 articles visibles avant de scroller
 
   Version 23 :
 
