@@ -15,7 +15,7 @@ import StockHistory from './pages/StockHistory';
 import ProfilePage from './pages/ProfilePage';
 import SettingsPage from './pages/SettingsPage';
 import ExchangeRatesPage from './pages/exchangeRates';
-import ProfilesPage from './pages/ProfilesPage';
+import ProfilesPagePage from './pages/ProfilesPage';
 
 const InactivityWarning = () => {
   const { showWarning } = useAuth();
