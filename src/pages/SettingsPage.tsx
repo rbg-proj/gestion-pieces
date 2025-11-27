@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from "@/hooks/useAuth";
+
 import { supabase } from '@/lib/supabase';
 
 const SettingsPage: React.FC = () => {
