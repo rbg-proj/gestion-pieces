@@ -38,8 +38,8 @@ export default function ProfilesPage() {
     setLoading(true);
     // exemple: selection simple ; si tu as relation vers auth.users et emails, jointure peut être ajoutée
     const from = (page - 1) * perPage;
-    let q = supabase.from('Profiles').select('*').order('name', { ascending: true }).range(from, from + perPage -1);
-    if (query.trim()) q = supabase.from('Profiles').select('*').ilike('name', `%${query}%`).order('name').range(from, from+perPage-1);
+    let q = supabase.from('profiles').select('*').order('name', { ascending: true }).range(from, from + perPage -1);
+    if (query.trim()) q = supabase.from('profiles').select('*').ilike('name', `%${query}%`).order('name').range(from, from+perPage-1);
     const { data, error } = await q;
     if (error) console.error(error);
     else setProfiles(data || []);
@@ -58,14 +58,14 @@ export default function ProfilesPage() {
 
   async function toggleStatus(p: Profile) {
     // inverse status
-    const { data, error } = await supabase.from('Profiles').update({ status: !p.status }).eq('id', p.id).select().single();
+    const { data, error } = await supabase.from('profiles').update({ status: !p.status }).eq('id', p.id).select().single();
     if (error) return alert('Erreur: ' + error.message);
     setProfiles((ps) => ps.map(x => x.id === p.id ? data : x));
   }
 
   async function deleteProfile(p: Profile) {
     if (!confirm('Supprimer ce profil ?')) return;
-    const { error } = await supabase.from('Profiles').delete().eq('id', p.id);
+    const { error } = await supabase.from('profiles').delete().eq('id', p.id);
     if (error) return alert('Erreur: ' + error.message);
     setProfiles(ps => ps.filter(x => x.id !== p.id));
   }
@@ -165,16 +165,16 @@ function ProfileForm({ editing, onClose, roles }:{ editing: any, onClose: ()=>vo
 
         if (avatarFile) {
           const avatarUrl = await uploadAvatar(avatarFile, editing.id);
-          await supabase.from('Profiles').update({ avatar: avatarUrl }).eq('id', editing.id);
+          await supabase.from('profiles').update({ avatar: avatarUrl }).eq('id', editing.id);
         }
       } else {
         // create new user: typically you also create auth user (signup), here we create Profiles only
         const id = crypto.randomUUID(); // or let supabase generate uuid in db
-        const { data, error } = await supabase.from('Profiles').insert({ id, name, phone, role, status }).select().single();
+        const { data, error } = await supabase.from('profiles').insert({ id, name, phone, role, status }).select().single();
         if (error) throw error;
         if (avatarFile) {
           const avatarUrl = await uploadAvatar(avatarFile, data.id);
-          await supabase.from('Profiles').update({ avatar: avatarUrl }).eq('id', data.id);
+          await supabase.from('profiles').update({ avatar: avatarUrl }).eq('id', data.id);
         }
       }
       onClose();
