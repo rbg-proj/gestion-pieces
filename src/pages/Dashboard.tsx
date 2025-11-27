@@ -11,7 +11,9 @@ import {
 } from 'lucide-react';
 import DashboardCard from '../components/dashboard/DashboardCard';
 import SalesChart from '../components/dashboard/SalesChart';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from "@/hooks/useAuth";
+
+
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
