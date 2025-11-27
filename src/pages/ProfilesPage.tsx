@@ -160,7 +160,7 @@ function ProfileForm({ editing, onClose, roles }:{ editing: any, onClose: ()=>vo
         // role: if you use user_roles table instead, call that endpoint
         updates.role = role;
 
-        const { data, error } = await supabase.from('Profiles').update(updates).eq('id', editing.id).select().single();
+        const { data, error } = await supabase.from('profiles').update(updates).eq('id', editing.id).select().single();
         if (error) throw error;
 
         if (avatarFile) {
