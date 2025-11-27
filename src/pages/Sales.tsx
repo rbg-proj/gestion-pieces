@@ -17,7 +17,7 @@ import { supabase } from '../lib/supabase';
 import toast from 'react-hot-toast';
 import { useReactToPrint } from 'react-to-print';
 import Receipt from '@/pages/Receipt';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from "@/hooks/useAuth";
 import { initOfflineDB } from '@/lib/offlineDB';
 
 // Génère un n° facture lisible
