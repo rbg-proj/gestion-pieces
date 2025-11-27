@@ -35,6 +35,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
     { name: 'Autres Rapports', path: '/reports', icon: <BarChartBig size={20} />, roles: ['admin', 'manager'] },
     { name: 'Historique Stock', path: '/stock-history', icon: <PieChart size={20} />, roles: ['admin', 'manager'] },
   { name: 'Taux de change', path: '/exchangeRates', icon: <DollarSign size={20} />, roles: ['admin', 'manager'] },
+    { name: 'Utilisateurs', path: '/ProfilePage', icon: <DollarSign size={20} />, roles: ['admin', 'manager'] },
   ];
 
   // Filtrage des liens selon le rôle de l'utilisateur
