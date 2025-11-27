@@ -46,6 +46,7 @@ function App() {
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/exchangeRates" element={<ExchangeRatesPage />} />
+            <Route path="/profilespage" element={<ProfilesPage />} />
           </Route>
         </Routes>
 
