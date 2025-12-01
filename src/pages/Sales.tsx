@@ -661,14 +661,7 @@ const Sales: React.FC = () => {
               total={printedTotal} // en CDF
               customerName={printedCustomerName}
               paymentMethod={printedPaymentMethod}
-              date={new Date().toLocaleString('fr-FR', {
-                                                        day: '2-digit',
-                                                        month: '2-digit',
-                                                        year: 'numeric',
-                                                        hour: '2-digit',
-                                                        minute: '2-digit',
-                                                        second: '2-digit'
-                                                      })}
+              date={new Date().toLocaleString()}
               invoiceNumber={generateInvoiceNumber(selectedSaleId)}
               userName={user?.name || ''}
               exchangeRate={printedRate ?? undefined}
