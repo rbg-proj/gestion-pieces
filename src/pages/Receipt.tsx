@@ -19,7 +19,20 @@ const Receipt = forwardRef<HTMLDivElement, ReceiptProps>(
   ({ cart, total, customerName, paymentMethod, date, invoiceNumber, userName,exchangeRate  }, ref) => {
     const totalHT = total / (1 + TAX_RATE);
     const taxAmount = total - totalHT;
-   
+
+  const formattedDate = (() => {
+  if (!date) return "";
+  const d = new Date(date);
+  const day = String(d.getDate()).padStart(2, "0");
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const year = d.getFullYear();
+  const hours = String(d.getHours()).padStart(2, "0");
+  const minutes = String(d.getMinutes()).padStart(2, "0");
+  const seconds = String(d.getSeconds()).padStart(2, "0");
+
+  return `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
+})();
+
 
     return (
       <div
@@ -30,7 +43,7 @@ const Receipt = forwardRef<HTMLDivElement, ReceiptProps>(
           <h1 className="font-bold text-base">REHOBOTH BUSINESS GROUP</h1>
           <p className="text-xs">RCCM 18-A-01715 - ID.NAT 01-93-N40495R</p>
           <p className="text-xs">45 BLVD LUMUMBA, MASINA, KINSHASA</p>
-          <p className="text-xs">Date/Heure : {date} </p>
+          <p className="text-xs">Date/Heure : {formattedDate} </p>
           <p className="text-xs">N° Facture : {invoiceNumber}</p>
         </div>
 
