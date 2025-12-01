@@ -21,7 +21,6 @@ const Receipt = forwardRef<HTMLDivElement, ReceiptProps>(
     const taxAmount = total - totalHT;
 
   
-
   const formattedDate = new Date(date).toLocaleString("fr-FR", {
   day: "2-digit",
   month: "2-digit",
