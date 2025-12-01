@@ -16,7 +16,7 @@ import toast from 'react-hot-toast';
 import { useRef } from 'react';
 import { useReactToPrint } from 'react-to-print';
 import Receipt from "@/pages/Receipt";
-import { useAuth } from '../contexts/AuthContext'; // Added import for useAuth
+import { useAuth } from "@/hooks/useAuth"; // Added import for useAuth
 import { initOfflineDB } from "@/lib/offlineDB";
 
 
