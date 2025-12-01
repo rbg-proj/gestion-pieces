@@ -256,7 +256,7 @@ const filteredOrders = orders
                 setSelectedOrderInfo({
                   customerName: order.customer,
                   paymentMethod: order.paymentMethod,
-                  date: order.date.toLocaleDateString(),
+                  date: order.date.toISOString(),
                   total: order.total,
                    exchange_rate: order.exchange_rate,
                   agent: order.agent,
