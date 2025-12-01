@@ -32,7 +32,6 @@ const Login: React.FC = () => {
  const validateEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const validatePassword = (password: string) => password.length >= 4;
   
-  
   const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
 
@@ -46,50 +45,18 @@ const Login: React.FC = () => {
   if (Object.keys(errors).length > 0) return;
 
   try {
-    // 1️⃣ Connexion Supabase (Auth)
-    const { data, error: loginError } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    if (loginError || !data.user) {
+    const success = await login(email, password);
+    if (success) {
+      setAttempts(0);
+      navigate('/');
+    } else {
       setAttempts(prev => prev + 1);
-      return;
     }
-
-    // 2️⃣ Récupérer le profil lié
-    const { data: profile, error: profileError } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("id", data.user.id)
-      .single();
-
-    if (profileError || !profile) {
-      setFormErrors({ email: "Votre profil utilisateur est introuvable." });
-      return;
-    }
-
-    // 3️⃣ Vérifier le statut
-    if (profile.status === "disabled") {
-      setFormErrors({ email: "Votre compte a été désactivé." });
-      return;
-    }
-
-    // 4️⃣ Vérifier le rôle si nécessaire
-    if (profile.role === "client") {
-      setFormErrors({ email: "Accès refusé pour ce type d'utilisateur." });
-      return;
-    }
-
-    // 5️⃣ Connexion OK → Redirection
-    setAttempts(0);
-    navigate("/");
   } catch (err) {
     console.error(err);
     setAttempts(prev => prev + 1);
   }
 };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-500 to-secondary-600 flex justify-center items-center p-4">
       <div className="w-full max-w-md animate-fade-in">
