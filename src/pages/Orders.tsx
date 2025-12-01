@@ -341,8 +341,6 @@ const filteredOrders = orders
                 customerName={selectedOrderInfo.customerName}
                 paymentMethod={selectedOrderInfo.paymentMethod}
                 date={selectedOrderInfo.date}
-                
-             
 
               //  userName={user?.name || ''}
                 userName={selectedOrderInfo.agent}
