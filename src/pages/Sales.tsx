@@ -301,7 +301,7 @@ const Sales: React.FC = () => {
             payment_method: selectedPayment,
             customer_id: selectedCustomerId,
             exchange_rate: rate,
-            sale_date: new Date().toISOString(),
+            sale_date: new Date().toISOString(), // ✅ ajout de la date système
             user_id: user?.id, // ✅ ajout de l’agent qui a fait la vente
           },
         ])
