@@ -1,5 +1,3 @@
-Sales.tsx du 23.11.25 à 14h50
-
 import React, { useState, useEffect } from 'react';
 import { 
   Search, 
