@@ -34,9 +34,15 @@ export default function OrdersPage() {
   const rowsPerPage = 10;
   const COLORS = ["#8884d8", "#82ca9d", "#ffc658", "#ff7f50", "#a0522d", "#d2691e", "#4682b4", "#9acd32", "#dc143c", "#20b2aa"];
   const { user } = useAuth();
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const todayISO = today.toISOString().split("T")[0]; // format YYYY-MM-DD
+  
+  
+
+  const todayLocal = new Date();
+  todayLocal.setHours(0, 0, 0, 0);
+
+  // → format YYYY-MM-DD en LOCAL
+  const todayISO = todayLocal.toLocaleDateString("fr-CA");
+  
 
 
   useEffect(() => {
