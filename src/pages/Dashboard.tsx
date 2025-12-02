@@ -194,13 +194,17 @@ const Dashboard: React.FC = () => {
               icon={<Banknote size={20} className="text-white" />}
               iconBgColor="bg-primary-500"
             />
-            <DashboardCard 
-              title="Bénéfice du Jour" 
-              value={formatCurrency(profitToday)}
-              change={0.0}
-              icon={<TrendingUp size={20} className="text-white" />}
-              iconBgColor="bg-success-500"
-            />
+            
+            {(user?.role === "admin" || user?.role === "manager") && (
+              <DashboardCard 
+                title="Bénéfice du Jour" 
+                value={formatCurrency(profitToday)}
+                change={0.0}
+                icon={<TrendingUp size={20} className="text-white" />}
+                iconBgColor="bg-success-500"
+              />
+            )}
+
             <DashboardCard 
               title="Taux du Jour (CDF → USD)"
               value={exchangeRate ? exchangeRate.toString() : "--"}
