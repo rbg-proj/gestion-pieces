@@ -32,6 +32,8 @@ export default function OrdersPage() {
   const [saleItems, setSaleItems] = useState<any[]>([]);
   const printRef = useRef(null);
   const handlePrint = useReactToPrint({ content: () => printRef.current });
+  const [selectedSaleDetails, setSelectedSaleDetails] = useState<any | null>(null);
+
 
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 10;
@@ -331,24 +333,16 @@ export default function OrdersPage() {
                 <div className="flex justify-end gap-3">
                   {/* Voir détails */}
                   <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setSelectedOrderId(order.rawId);
-                      fetchSaleItems(order.rawId);
-                      setSelectedOrderInfo({
-                        customerName: order.customer,
-                        paymentMethod: order.paymentMethod,
-                        date: order.date.toISOString(),
-                        total: order.total,
-                        exchange_rate: order.exchange_rate,
-                        agent: order.agent,
-                      });
-                    }}
-                    className="text-blue-600 hover:text-blue-800"
-                    title="Voir les détails"
-                  >
-                    <Eye size={18} />
-                  </button>
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedSaleDetails(order); // ⬅️ On stocke la vente complète
+                  }}
+                  className="text-blue-600 hover:text-blue-800"
+                  title="Voir les détails"
+                >
+                  <Eye size={18} />
+                </button>
+                 
               
                   {/* Supprimer */}
                   <button
