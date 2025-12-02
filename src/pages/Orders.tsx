@@ -182,6 +182,7 @@ export default function OrdersPage() {
           onChange={(e) => setStartDate(e.target.value)}
           className="w-40"
           placeholder="Date de début"
+          disabled={user?.role !== "admin" && user?.role !== "manager"}
         />
         <span className="flex items-center gap-2">Au</span>
         <Input
