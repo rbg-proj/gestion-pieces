@@ -288,6 +288,7 @@ export default function OrdersPage() {
           <TableHead>Nb Articles</TableHead>
           <TableHead>Statut</TableHead>
           <TableHead>Mode Paiement</TableHead>
+          <TableHead>Actions</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
