@@ -354,8 +354,9 @@ export default function OrdersPage() {
                   <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    setSelectedSale(sale);// ⬅️ On stocke la vente complète
-                    fetchSaleDetails(sale.id);
+                    setSelectedSale(order);
+                    fetchSaleDetails(order.rawId);
+                    
                     
                   }}
                   className="text-blue-600 hover:text-blue-800"
