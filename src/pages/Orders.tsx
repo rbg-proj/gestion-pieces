@@ -121,7 +121,6 @@ export default function OrdersPage() {
     
     const orderDateString = order.date.toLocaleDateString("fr-CA");
 
-
     // 🚫 ROLE EMPLOYEE : voir uniquement les ventes du jour
     if (user?.role !== "admin" && user?.role !== "manager") {
       return orderDateString === todayISO;
