@@ -416,7 +416,7 @@ export default function OrdersPage() {
       {/* Modal Détails Vente (style CRUD Clients) */}
       {selectedSaleDetails && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[200]">
-                <div className="bg-white rounded-lg max-w-2xl w-full p-6 shadow-xl animate-in zoom-in-50 duration-200">
+          <div className="bg-white rounded-lg max-w-2xl w-full p-6 shadow-xl animate-in zoom-in-50 duration-200">
                   
                   {/* Header */}
                   <div className="flex justify-between items-center mb-6">
