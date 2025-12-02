@@ -331,6 +331,7 @@ export default function OrdersPage() {
               <TableCell>{order.paymentMethod}</TableCell>
               <TableCell className="text-right">
                 <div className="flex justify-end gap-3">
+                  
                   {/* Voir détails */}
                   <button
                   onClick={(e) => {
