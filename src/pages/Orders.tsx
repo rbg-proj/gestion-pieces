@@ -348,9 +348,9 @@ export default function OrdersPage() {
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Produit</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Libellé</th>
                     <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Qté</th>
-                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Prix</th>
+                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Prix vente</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
