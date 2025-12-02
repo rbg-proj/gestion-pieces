@@ -1,15 +1,22 @@
 import { useEffect, useState, useRef } from "react";
 import Receipt from "@/pages/Receipt";
 import {
-  Search,
   ArrowUpDown,
-  MoreVertical,
   FileSpreadsheet,
-  Eye, Trash, X 
+  Eye,
+  Trash,
+  X,
 } from "lucide-react";
 import { supabase } from "../lib/supabase";
 import { Card, CardContent } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -17,42 +24,42 @@ import { useReactToPrint } from "react-to-print";
 import { Button } from "@/components/ui/button";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import { useAuth } from "@/hooks/useAuth";
-import * as XLSX from 'xlsx';
-
+import * as XLSX from "xlsx";
 
 export default function OrdersPage() {
-  const [orders, setOrders] = useState<any[]>([]);
+  const { user } = useAuth();
+
+  // Filters
   const [search, setSearch] = useState("");
   const [clientFilter, setClientFilter] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+
+  // Orders
+  const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [sortByDateAsc, setSortByDateAsc] = useState(false);
-  const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
-  const [saleItems, setSaleItems] = useState<any[]>([]);
-  const printRef = useRef(null);
-  const handlePrint = useReactToPrint({ content: () => printRef.current });
-  const [selectedSaleDetails, setSelectedSaleDetails] = useState<any | null>(null);
-  const [selectedSale, setSelectedSale] = useState<any | null>(null);
-  const [saleDetails, setSaleDetails] = useState<any[]>([]);
 
-
-
+  // Pagination
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 10;
-  const COLORS = ["#8884d8", "#82ca9d", "#ffc658", "#ff7f50", "#a0522d", "#d2691e", "#4682b4", "#9acd32", "#dc143c", "#20b2aa"];
-  const { user } = useAuth();
-  
-  
 
+  // Modal & Sale Details
+  const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
+  const [selectedOrderInfo, setSelectedOrderInfo] = useState<any | null>(null);
+  const [saleItems, setSaleItems] = useState<any[]>([]);
+  const [selectedSale, setSelectedSale] = useState<any | null>(null);
+  const [saleDetails, setSaleDetails] = useState<any[]>([]);
+  const printRef = useRef(null);
+  const handlePrint = useReactToPrint({ content: () => printRef.current });
+
+  const COLORS = ["#8884d8", "#82ca9d", "#ffc658", "#ff7f50", "#a0522d", "#d2691e", "#4682b4", "#9acd32", "#dc143c", "#20b2aa"];
+  
   const todayLocal = new Date();
   todayLocal.setHours(0, 0, 0, 0);
-
-  // → format YYYY-MM-DD en LOCAL
   const todayISO = todayLocal.toLocaleDateString("fr-CA");
-  
 
-
+  // Fetch Orders
   useEffect(() => {
     const fetchOrders = async () => {
       setLoading(true);
@@ -63,10 +70,10 @@ export default function OrdersPage() {
           sale_date,
           total_amount,
           payment_method,
-          customers ( full_name ),
-          sale_items ( id ),
+          customers(full_name),
+          sale_items(id),
           exchange_rate,
-          profiles:user_id ( name )
+          profiles:user_id(name)
         `);
 
       if (error) {
@@ -80,14 +87,10 @@ export default function OrdersPage() {
           total: sale.total_amount,
           items: sale.sale_items?.length || 0,
           paymentMethod: sale.payment_method || "Inconnu",
-          exchange_rate: sale.exchange_rate ?? 1,   // Récupération du Taux de change
+          exchange_rate: sale.exchange_rate ?? 1,
           agent: sale.profiles?.name || "Non trouvé",
-          status:
-          sale.payment_method === "cash" || sale.payment_method === "mobile_money"
-              ? "Payé"
-              : "A checker",
+          status: sale.payment_method === "cash" || sale.payment_method === "mobile_money" ? "Payé" : "A checker",
         }));
-
         setOrders(formattedOrders);
       }
       setLoading(false);
@@ -97,450 +100,267 @@ export default function OrdersPage() {
   }, []);
 
   const fetchSaleDetails = async (saleId: number) => {
-  const { data, error } = await supabase
-    .from("sale_items")
-    .select(`quantity, unit_price, products(name)`)
-    .eq("sale_id", saleId);
+    const { data, error } = await supabase
+      .from("sale_items")
+      .select(`quantity, unit_price, products(name)`)
+      .eq("sale_id", saleId);
 
-  if (error) {
-    console.error("Erreur chargement détails :", error.message);
-    return;
-  }
+    if (error) {
+      console.error("Erreur chargement détails :", error.message);
+      return;
+    }
 
-  setSaleDetails(data);
-};
-
+    setSaleDetails(data);
+  };
 
   const fetchSaleItems = async (orderId: number) => {
-    try {
-      const { data, error } = await supabase
-        .from("sale_items")
-        .select(`id, quantity, unit_price, products ( name )`)
-        .eq("sale_id", orderId);
+    const { data, error } = await supabase
+      .from("sale_items")
+      .select(`id, quantity, unit_price, products(name)`)
+      .eq("sale_id", orderId);
 
-      if (error) {
-        console.error("Erreur lors du chargement des articles :", error.message);
-      } else {
-        setSaleItems(data);
-      }
-    } catch (err) {
-      console.error("Erreur inattendue lors du chargement des articles", err);
+    if (error) {
+      console.error("Erreur chargement articles :", error.message);
+    } else {
+      setSaleItems(data);
     }
   };
 
-  const [selectedOrderInfo, setSelectedOrderInfo] = useState<{
-    customerName: string;
-    paymentMethod: string;
-    date: string;
-    total: number;
-    exchange_rate: number;
-    agent: string; 
-  } | null>(null);
-
-
-  
+  // Filter & sort orders
   const filteredOrders = orders
-  .filter((order) => {
-    
-    const orderDateString = order.date.toLocaleDateString("fr-CA");
+    .filter((order) => {
+      const orderDateString = order.date.toLocaleDateString("fr-CA");
 
-    // 🚫 ROLE EMPLOYEE : voir uniquement les ventes du jour
-    if (user?.role !== "admin" && user?.role !== "manager") {
-      return orderDateString === todayISO;
-    }
+      if (user?.role !== "admin" && user?.role !== "manager") {
+        return orderDateString === todayISO;
+      }
 
-    // ✅ POUR ADMIN + MANAGER → filtres normaux
-    const orderDate = new Date(order.date);
-    const start = startDate ? new Date(startDate) : null;
-    const end = endDate ? new Date(endDate) : null;
+      const orderDate = new Date(order.date);
+      const start = startDate ? new Date(startDate) : null;
+      const end = endDate ? new Date(endDate) : null;
 
-    if (start) start.setHours(0, 0, 0, 0);
-    if (end) end.setHours(23, 59, 59, 999);
+      if (start) start.setHours(0, 0, 0, 0);
+      if (end) end.setHours(23, 59, 59, 999);
 
-    const inDateRange =
-      (!start || orderDate >= start) &&
-      (!end || orderDate <= end);
+      const inDateRange = (!start || orderDate >= start) && (!end || orderDate <= end);
+      const matchesClient = order.customer.toLowerCase().includes(clientFilter.toLowerCase());
+      const searchTerm = search.toLowerCase();
+      const matchesSearch = order.customer.toLowerCase().includes(searchTerm) || order.id.toLowerCase().includes(searchTerm);
 
-    const customer = order.customer.toLowerCase();
-    const matchesClient = customer.includes(clientFilter.toLowerCase());
-
-    const orderId = order.id.toLowerCase();
-    const searchTerm = search.toLowerCase();
-    const matchesSearch =
-      customer.includes(searchTerm) ||
-      orderId.includes(searchTerm);
-
-    return inDateRange && matchesClient && matchesSearch;
-  })
-  .sort((a, b) => {
-    const aDate = new Date(a.date);
-    const bDate = new Date(b.date);
-    return sortByDateAsc ? aDate - bDate : bDate - aDate;
-  });
-
+      return inDateRange && matchesClient && matchesSearch;
+    })
+    .sort((a, b) => {
+      const aDate = new Date(a.date);
+      const bDate = new Date(b.date);
+      return sortByDateAsc ? aDate - bDate : bDate - aDate;
+    });
 
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
   const currentOrders = filteredOrders.slice(indexOfFirstRow, indexOfLastRow);
-  
   const totalPages = Math.ceil(filteredOrders.length / rowsPerPage);
-  
+
   const totalVente = filteredOrders.reduce((sum, order) => sum + order.total, 0);
   const ventesParClient = filteredOrders.reduce((acc, order) => {
     acc[order.customer] = (acc[order.customer] || 0) + order.total;
     return acc;
   }, {} as Record<string, number>);
+  const ventesData = Object.entries(ventesParClient).map(([client, total]) => ({ client, total }));
 
-  const ventesData = Object.entries(ventesParClient).map(([client, total]) => ({
-    client,
-    total,
-  }));
-
+  // Export Excel
   const exportToExcel = () => {
     const exportData = filteredOrders.map((order) => ({
-      'N° Vente': order.id,
-      'Date': order.date.toLocaleDateString('fr-FR'),
-      'Client': order.customer,
-      'Montant ($)': order.total,
-      'Nb Articles': order.items,
-      'Mode Paiement': order.paymentMethod,
-      'Statut': order.status,
-      'Agent': order.agent,
-      'Taux Change': order.exchange_rate
+      "N° Vente": order.id,
+      Date: order.date.toLocaleDateString("fr-FR"),
+      Client: order.customer,
+      "Montant ($)": order.total,
+      "Nb Articles": order.items,
+      "Mode Paiement": order.paymentMethod,
+      Statut: order.status,
+      Agent: order.agent,
+      "Taux Change": order.exchange_rate,
     }));
-
     const worksheet = XLSX.utils.json_to_sheet(exportData);
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Rapport Ventes');
-
-    const fileName = `Rapport_Ventes_${new Date().toLocaleDateString('fr-FR').replace(/\//g, '-')}.xlsx`;
-    XLSX.writeFile(workbook, fileName);
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Rapport Ventes");
+    XLSX.writeFile(workbook, `Rapport_Ventes_${new Date().toLocaleDateString("fr-FR").replace(/\//g, "-")}.xlsx`);
   };
 
   return (
     <div className="p-4 space-y-4">
+      {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <h1 className="text-2xl font-bold">Rapport des ventes</h1>
-
         <button
           onClick={exportToExcel}
           className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors duration-150 ease-in-out"
         >
-          <FileSpreadsheet size={16} className="mr-2" />
-          Export Excel
+          <FileSpreadsheet size={16} className="mr-2" /> Export Excel
         </button>
       </div>
 
+      {/* Filters */}
       <div className="flex flex-wrap gap-4">
         <span className="flex items-center gap-2">Vente Du</span>
-        <Input
-          type="date"
-          value={startDate}
-          onChange={(e) => setStartDate(e.target.value)}
-          className="w-40"
-          placeholder="Date de début"
-          disabled={user?.role !== "admin" && user?.role !== "manager"}
-        />
+        <Input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="w-40" disabled={user?.role !== "admin" && user?.role !== "manager"} />
         <span className="flex items-center gap-2">Au</span>
-        <Input
-          type="date"
-          value={endDate}
-          onChange={(e) => setEndDate(e.target.value)}
-          className="w-40"
-          placeholder="Date de fin"
-          disabled={user?.role !== "admin" && user?.role !== "manager"}
-        />
-        <Input
-          placeholder="Filtrer par client"
-          value={clientFilter}
-          onChange={(e) => setClientFilter(e.target.value)}
-          className="w-64"
-        />
+        <Input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="w-40" disabled={user?.role !== "admin" && user?.role !== "manager"} />
+        <Input placeholder="Filtrer par client" value={clientFilter} onChange={(e) => setClientFilter(e.target.value)} className="w-64" />
       </div>
 
+      {/* Pie chart */}
       <div className="h-64">
-  <ResponsiveContainer width="100%" height="100%">
-    <PieChart>
-      <Pie
-        data={ventesData.slice(0, 5)}
-        dataKey="total"
-        nameKey="client"
-        cx="30%"
-        cy="50%"
-        outerRadius={80}
-        fill="#8884d8"
-        label={({ name }) => name}
-      >
-        {ventesData.slice(0, 5).map((_, index) => (
-          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-        ))}
-      </Pie>
-      <Tooltip />
-    </PieChart>
-  </ResponsiveContainer>
-  {ventesData.length > 5 && (
-    <p className="text-xs text-gray-500 mt-1">Affichage des 5 premiers clients seulement</p>
-  )}
-         
-</div>
-
-<div>
-<div className="space-y-2">
-        <p className="text-sm font-medium">Nombre Total de ventes : {filteredOrders.length}</p>
-        <p className="text-sm font-medium">
-          Montant Total des ventes : {totalVente.toLocaleString("fr-FR")} $
-        </p>
-     </div>
-    </div>
-
-<Card>
-  <CardContent className="p-4">
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead
-            className="cursor-pointer select-none"
-            onClick={() => setSortByDateAsc(!sortByDateAsc)}
-          >
-            Date <ArrowUpDown className="inline ml-1 h-4 w-4" />
-          </TableHead>
-          <TableHead>Client</TableHead>
-          <TableHead>Total vente</TableHead>
-          <TableHead>Nb Articles</TableHead>
-          <TableHead>Statut</TableHead>
-          <TableHead>Mode Paiement</TableHead>
-          <TableHead>Actions</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {loading ? (
-          <TableRow>
-            <TableCell colSpan={6}>Chargement des ventes ...</TableCell>
-          </TableRow>
-        ) : currentOrders.length > 0 ? (
-          currentOrders.map((order) => (
-            <TableRow
-              key={order.rawId}
-              onClick={() => {
-                setSelectedOrderId(order.rawId);
-                fetchSaleItems(order.rawId);
-                setSelectedOrderInfo({
-                  customerName: order.customer,
-                  paymentMethod: order.paymentMethod,
-                  date: order.date.toISOString(),
-                  total: order.total,
-                   exchange_rate: order.exchange_rate,
-                  agent: order.agent,
-                });
-              }}
-              className={`cursor-pointer hover:bg-muted/50 ${
-                selectedOrderId === order.rawId ? "bg-muted/70" : ""
-              }`}
-            >
-              <TableCell>{order.date.toLocaleDateString()} </TableCell>
-              <TableCell>{order.customer}</TableCell>
-              <TableCell>{order.total.toLocaleString("fr-FR")} $</TableCell>
-              <TableCell>{order.items}</TableCell>
-              <TableCell>
-                <Badge variant={order.status === "Payé" ? "success" : "secondary"}>
-                  {order.status}
-                </Badge>
-              </TableCell>
-              <TableCell>{order.paymentMethod}</TableCell>
-              <TableCell className="text-center">
-                <div className="flex justify-end gap-3">
-                  
-                  {/* Voir détails */}
-                  <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setSelectedSale(order);
-                    fetchSaleDetails(order.rawId);
-                    
-                    
-                  }}
-                  className="text-blue-600 hover:text-blue-800"
-                  title="Voir les détails"
-                >
-                  <Eye size={18} />
-                </button>
-                 
-              
-                  {/* Supprimer */}
-                  <button
-                    onClick={async (e) => {
-                      e.stopPropagation();
-                      if (!confirm("Supprimer cette vente ?")) return;
-              
-                      const { error } = await supabase
-                        .from("sales")
-                        .delete()
-                        .eq("id", order.rawId);
-              
-                      if (error) {
-                        console.error("Erreur suppression de la vente :", error.message);
-                      } else {
-                        setOrders((prev) => prev.filter((o) => o.rawId !== order.rawId));
-                      }
-                    }}
-                    className="text-red-600 hover:text-red-800"
-                    title="Supprimer"
-                  >
-                    🗑️
-                  </button>
-              
-                </div>
-              </TableCell>
-
-            </TableRow>
-          ))
-        ) : (
-          <TableRow>
-            <TableCell colSpan={6}>Aucune vente trouvée.</TableCell>
-          </TableRow>
-        )}
-      </TableBody>
-    </Table>
-
-    {totalPages > 1 && (
-      <div className="flex justify-between items-center mt-4">
-        <button
-          className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50"
-          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-          disabled={currentPage === 1}
-        >
-          Précédent
-        </button>
-        <span className="text-sm text-gray-700">
-          Page {currentPage} / {totalPages}
-        </span>
-        <button
-          className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50"
-          onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-          disabled={currentPage === totalPages}
-        >
-          Suivant
-        </button>
+        <ResponsiveContainer width="100%" height="100%">
+          <PieChart>
+            <Pie data={ventesData.slice(0, 5)} dataKey="total" nameKey="client" cx="30%" cy="50%" outerRadius={80} fill="#8884d8" label={({ name }) => name}>
+              {ventesData.slice(0, 5).map((_, index) => (
+                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+              ))}
+            </Pie>
+            <Tooltip />
+          </PieChart>
+        </ResponsiveContainer>
+        {ventesData.length > 5 && <p className="text-xs text-gray-500 mt-1">Affichage des 5 premiers clients seulement</p>}
       </div>
-    )}
 
-      {filteredOrders.length > 0 && (
-        <div className="text-sm text-gray-600 mt-2">
-          Affichage de Ventes{" "}
-          {indexOfFirstRow + 1} à{" "}
-          {Math.min(indexOfLastRow, filteredOrders.length)} sur{" "}
-          {filteredOrders.length} Ventes totales
-        </div>
-      )}
+      {/* Stats */}
+      <div className="space-y-2">
+        <p className="text-sm font-medium">Nombre Total de ventes : {filteredOrders.length}</p>
+        <p className="text-sm font-medium">Montant Total des ventes : {totalVente.toLocaleString("fr-FR")} $</p>
+      </div>
+
+      {/* Orders Table */}
+      <Card>
+        <CardContent className="p-4">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="cursor-pointer select-none" onClick={() => setSortByDateAsc(!sortByDateAsc)}>Date <ArrowUpDown className="inline ml-1 h-4 w-4" /></TableHead>
+                <TableHead>Client</TableHead>
+                <TableHead>Total vente</TableHead>
+                <TableHead>Nb Articles</TableHead>
+                <TableHead>Statut</TableHead>
+                <TableHead>Mode Paiement</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {loading ? (
+                <TableRow><TableCell colSpan={7}>Chargement des ventes ...</TableCell></TableRow>
+              ) : currentOrders.length > 0 ? (
+                currentOrders.map((order) => (
+                  <TableRow key={order.rawId} className={`cursor-pointer hover:bg-muted/50`} onClick={() => {
+                    setSelectedOrderId(order.rawId);
+                    fetchSaleItems(order.rawId);
+                    setSelectedOrderInfo({
+                      customerName: order.customer,
+                      paymentMethod: order.paymentMethod,
+                      date: order.date.toISOString(),
+                      total: order.total,
+                      exchange_rate: order.exchange_rate,
+                      agent: order.agent,
+                    });
+                  }}>
+                    <TableCell>{order.date.toLocaleDateString()}</TableCell>
+                    <TableCell>{order.customer}</TableCell>
+                    <TableCell>{order.total.toLocaleString("fr-FR")} $</TableCell>
+                    <TableCell>{order.items}</TableCell>
+                    <TableCell><Badge variant={order.status === "Payé" ? "success" : "secondary"}>{order.status}</Badge></TableCell>
+                    <TableCell>{order.paymentMethod}</TableCell>
+                    <TableCell className="text-center">
+                      <div className="flex justify-end gap-3">
+                        <button onClick={(e) => { e.stopPropagation(); setSelectedSale(order); fetchSaleDetails(order.rawId); }} className="text-blue-600 hover:text-blue-800" title="Voir les détails"><Eye size={18} /></button>
+                        <button onClick={async (e) => {
+                          e.stopPropagation();
+                          if (!confirm("Supprimer cette vente ?")) return;
+                          const { error } = await supabase.from("sales").delete().eq("id", order.rawId);
+                          if (error) console.error("Erreur suppression de la vente :", error.message);
+                          else setOrders((prev) => prev.filter((o) => o.rawId !== order.rawId));
+                        }} className="text-red-600 hover:text-red-800" title="Supprimer">🗑️</button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : <TableRow><TableCell colSpan={7}>Aucune vente trouvée.</TableCell></TableRow>}
+            </TableBody>
+          </Table>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex justify-between items-center mt-4">
+              <button className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50" onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))} disabled={currentPage === 1}>Précédent</button>
+              <span className="text-sm text-gray-700">Page {currentPage} / {totalPages}</span>
+              <button className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50" onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))} disabled={currentPage === totalPages}>Suivant</button>
+            </div>
+          )}
         </CardContent>
       </Card>
 
-
-       {/* Sale Details Modal */}
-       {selectedSale &&  (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-                  <div className="bg-white rounded-lg max-w-2xl w-full p-6 shadow-lg animate-fadeIn">
-                    
-         {/* Header */}
-         <div className="flex justify-between items-center mb-6">
-         <div className="flex items-center">
-         <div className="h-12 w-12 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 font-semibold text-lg">
-          {selectedSale.customer_name?.charAt(0) || "?"}
-          </div>
-              
-                        <div className="ml-4">
-                          <h2 className="text-xl font-semibold">
-                            Vente #{selectedSale.id}
-                          </h2>
-                          <p className="text-sm text-gray-500">
-                            {formatDate(selectedSale.sale_date)}
-                          </p>
-                        </div>
-                      </div>
-              
-                      <button
-                        onClick={() => {
-                          setSelectedSale(null);
-                          setSaleDetails([]);
-                        }}
-                        className="text-gray-400 hover:text-gray-500"
-                      >
-                        <X size={20} />
-                      </button>
-                    </div>
-              
-                    {/* Payment + Total */}
-                    <div className="mb-4 grid grid-cols-2 gap-4">
-                      <div>
-                        <p className="text-sm text-gray-500">Client</p>
-                        <p className="font-medium">{selectedSale.customer_name || "—"}</p>
-                      </div>
-              
-                      <div className="text-right">
-                        <p className="text-sm text-gray-500">Montant total</p>
-                        <p className="font-semibold">{formatPrice(selectedSale.total_amount)}</p>
-                      </div>
-              
-                      <div>
-                        <p className="text-sm text-gray-500">Méthode Paiement</p>
-                        <p className="font-medium">{selectedSale.payment_method}</p>
-                      </div>
-                    </div>
-              
-                    {/* Items Table */}
-                    <h3 className="font-medium text-gray-900 mb-4">Détails de la vente</h3>
-              
-                    <div className="overflow-y-auto max-h-72 border rounded-md">
-                      <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gray-50">
-                          <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                              Produit
-                            </th>
-                            <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">
-                              Qté
-                            </th>
-                            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">
-                              Prix
-                            </th>
-                          </tr>
-                        </thead>
-              
-                        <tbody className="bg-white divide-y divide-gray-200">
-                          {saleDetails.length === 0 ? (
-                            <tr>
-                              <td colSpan={3} className="px-6 py-4 text-center text-sm text-gray-500">
-                                Chargement...
-                              </td>
-                            </tr>
-                          ) : (
-                            saleDetails.map((item, index) => (
-                              <tr key={index}>
-                                <td className="px-6 py-4 text-sm text-gray-900">
-                                  {item.product?.name}
-                                </td>
-                                <td className="px-6 py-4 text-center text-sm text-gray-500">
-                                  {item.quantity}
-                                </td>
-                                <td className="px-6 py-4 text-right text-sm text-gray-900">
-                                  {formatPrice(item.price)}
-                                </td>
-                              </tr>
-                            ))
-                          )}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
+      {/* Sale Details Modal */}
+      {selectedSale && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-w-2xl w-full p-6 shadow-lg animate-fadeIn">
+            <div className="flex justify-between items-center mb-6">
+              <div className="flex items-center">
+                <div className="h-12 w-12 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 font-semibold text-lg">
+                  {selectedSale.customer.charAt(0)}
                 </div>
-              )}
+                <div className="ml-4">
+                  <h2 className="text-xl font-semibold">Vente #{selectedSale.id}</h2>
+                  <p className="text-sm text-gray-500">{new Date(selectedSale.date).toLocaleDateString()}</p>
+                </div>
+              </div>
+              <button onClick={() => { setSelectedSale(null); setSaleDetails([]); }} className="text-gray-400 hover:text-gray-500"><X size={20} /></button>
+            </div>
 
-      
-      
-      <Dialog open={!!selectedOrderId} onOpenChange={() => {
-        setSelectedOrderId(null);
-        setSelectedOrderInfo(null);
-      }}>
+            {/* Payment + Total */}
+            <div className="mb-4 grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-sm text-gray-500">Client</p>
+                <p className="font-medium">{selectedSale.customer}</p>
+              </div>
+              <div className="text-right">
+                <p className="text-sm text-gray-500">Montant total</p>
+                <p className="font-semibold">{selectedSale.total.toLocaleString("fr-FR")} $</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Méthode Paiement</p>
+                <p className="font-medium">{selectedSale.paymentMethod}</p>
+              </div>
+            </div>
+
+            {/* Items Table */}
+            <h3 className="font-medium text-gray-900 mb-4">Détails de la vente</h3>
+            <div className="overflow-y-auto max-h-72 border rounded-md">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Produit</th>
+                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Qté</th>
+                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Prix</th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {saleDetails.length === 0 ? (
+                    <tr>
+                      <td colSpan={3} className="px-6 py-4 text-center text-sm text-gray-500">Chargement...</td>
+                    </tr>
+                  ) : saleDetails.map((item, index) => (
+                    <tr key={index}>
+                      <td className="px-6 py-4 text-sm text-gray-900">{item.products?.name}</td>
+                      <td className="px-6 py-4 text-center text-sm text-gray-500">{item.quantity}</td>
+                      <td className="px-6 py-4 text-right text-sm text-gray-900">{(item.unit_price * (selectedOrderInfo?.exchange_rate ?? 1)).toLocaleString("fr-FR")} $</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Receipt Dialog */}
+      <Dialog open={!!selectedOrderId} onOpenChange={() => { setSelectedOrderId(null); setSelectedOrderInfo(null); }}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Détails de la vente</DialogTitle>
@@ -554,17 +374,12 @@ export default function OrdersPage() {
                   quantity: item.quantity,
                   price: item.unit_price * (selectedOrderInfo.exchange_rate ?? 1)
                 }))}
-              
-                total={selectedOrderInfo.total * (selectedOrderInfo.exchange_rate ?? 1)}   //  conversion du total
+                total={selectedOrderInfo.total * (selectedOrderInfo.exchange_rate ?? 1)}
                 customerName={selectedOrderInfo.customerName}
                 paymentMethod={selectedOrderInfo.paymentMethod}
                 date={selectedOrderInfo.date}
-
-              //  userName={user?.name || ''}
                 userName={selectedOrderInfo.agent}
-              //  userName={sale.profiles.full_name}     // ⬅️ L’agent correct !
-                exchangeRate={selectedOrderInfo.exchange_rate} 
-                
+                exchangeRate={selectedOrderInfo.exchange_rate}
                 invoiceNumber={`Dupli Fac-${String(new Date().getFullYear()).slice(2)}${String(new Date().getMonth() + 1).padStart(2, '0')}-${String(selectedOrderId ?? '').slice(0, 6).toUpperCase()}`}
               />
             )}
