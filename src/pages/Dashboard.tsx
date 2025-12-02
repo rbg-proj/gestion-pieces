@@ -16,7 +16,7 @@ import { useAuth } from "@/hooks/useAuth";
 
 
 
-const Dashboard: React.FC = () => {
+  const Dashboard: React.FC = () => {
   const { user } = useAuth();
 
   const [salesToday, setSalesToday] = useState(0);
