@@ -118,8 +118,7 @@ export default function OrdersPage() {
   
   const filteredOrders = orders
   .filter((order) => {
-
-   
+    
     const orderDateString = order.date.toLocaleDateString("fr-CA");
 
 
