@@ -343,7 +343,7 @@ export default function OrdersPage() {
             </div>
 
             {/* Items Table */}
-            <h3 className="font-medium text-gray-900 mb-4">Détails de la vente</h3>
+            <h3 className="font-medium text-gray-900 mb-4">Articles vendus</h3>
             <div className="overflow-y-auto max-h-72 border rounded-md">
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
