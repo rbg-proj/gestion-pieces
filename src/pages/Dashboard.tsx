@@ -272,7 +272,7 @@ import { useAuth } from "@/hooks/useAuth";
                   title="Exporter en Excel"
                 >
                   <FileSpreadsheet size={18} />
-                  </button> Stocks critiques / Faibles
+                  </button> Stock critique / Faible
               
                 
             </h3>
