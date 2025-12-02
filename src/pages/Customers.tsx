@@ -42,7 +42,7 @@ const Customers: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const customersPerPage = 10;
   const formatPrice = (price: number) => 
-  new Intl.NumberFormat('fr-CD', { style: 'currency', currency: 'CDF' }).format(price);
+  new Intl.NumberFormat('fr-CD', { style: 'currency', currency: 'USD' }).format(price);
   
   const initialFormState = {
     full_name: '',
