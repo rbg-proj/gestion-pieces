@@ -7,6 +7,7 @@ import {
   Package, 
   TrendingUp,
   Wallet,
+  FileSpreadsheet,
   Banknote
 } from 'lucide-react';
 import DashboardCard from '../components/dashboard/DashboardCard';
