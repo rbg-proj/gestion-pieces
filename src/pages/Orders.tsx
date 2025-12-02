@@ -33,6 +33,9 @@ export default function OrdersPage() {
   const printRef = useRef(null);
   const handlePrint = useReactToPrint({ content: () => printRef.current });
   const [selectedSaleDetails, setSelectedSaleDetails] = useState<any | null>(null);
+  const [selectedSale, setSelectedSale] = useState<any | null>(null);
+  const [saleDetails, setSaleDetails] = useState<any[]>([]);
+
 
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -92,6 +95,21 @@ export default function OrdersPage() {
 
     fetchOrders();
   }, []);
+
+  const fetchSaleDetails = async (saleId: number) => {
+  const { data, error } = await supabase
+    .from("sale_items")
+    .select(`quantity, unit_price, products(name)`)
+    .eq("sale_id", saleId);
+
+  if (error) {
+    console.error("Erreur chargement détails :", error.message);
+    return;
+  }
+
+  setSaleDetails(data);
+};
+
 
   const fetchSaleItems = async (orderId: number) => {
     try {
