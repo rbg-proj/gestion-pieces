@@ -39,7 +39,6 @@ Version 22
   Version 24 :
 
 Gestion de l'application en OffLine sans connection internet et synchroniser une fois la connection retablie.
-
 Insertion de l'exportation Excel du Rapport de vente et Historique des stocks
 Affichage de l'heure sur le duplicata
 Insertion bouton Export de la liste des stocks faibles sur le tableau de bord
