@@ -21,6 +21,7 @@ Affichage du nom de l'agent sur le duplicata qui prenait par defaut le nom de l'
 Gestion de l'affichage d'une longue liste sur la facture afin de faciliter le scrolling sur l'écran.
 
 Version 22
+
 ** Intégration du CRUD des Catégories dans la page des Articles.
 **Ajout des notifications après les CRUD.
 **Gestion de doublon sur les noms des articles.
@@ -30,7 +31,7 @@ Version 22
 
   Version 23 :
 
-  Insertion module : Gestion des utilisateurs //EN COURS
+  Insertion module : Gestion des utilisateurs //EN COURS de finition
   Désactivation de filtres date dans le rapport de vente pour OPERATOR
   Affichage que des ventes du jour pour OPERATOR
   La section Bénéfice du jour est caché pour OPERATOR
