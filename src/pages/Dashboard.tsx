@@ -263,17 +263,18 @@ import { useAuth } from "@/hooks/useAuth";
 
             {/* Liste produits en rupture ou faible stock */}
             <div className="lg:col-span-1 bg-white rounded-lg shadow-sm p-6 overflow-y-auto h-80">
-            <h3 className="text-md font-bold text-red-700 mb-4 px-3 py-1 rounded-md border border-red-300 bg-red-50
-                transition transform hover:scale-105 hover:shadow-md duration-300">
-              Produits critiques / Faible stock
-              {/* Bouton Export Excel */}
-                <button
+              <button
                   onClick={exportLowStockToExcel}
                   className="text-green-600 hover:text-green-800 transition p-1"
                   title="Exporter en Excel"
                 >
                   <FileSpreadsheet size={18} />
                   </button>
+            <h3 className="text-md font-bold text-red-700 mb-4 px-3 py-1 rounded-md border border-red-300 bg-red-50
+                transition transform hover:scale-105 hover:shadow-md duration-300">
+              Produits critiques / Faible stock
+              {/* Bouton Export Excel */}
+                
             </h3>
               {lowStockProducts.length === 0 ? (
                 <p className="text-sm text-gray-500">Aucun produit en rupture de stock.</p>
