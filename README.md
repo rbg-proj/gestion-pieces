@@ -30,7 +30,10 @@ Version 22
 
   Version 23 :
 
-  Insertion module : Gestion des utilisateurs
+  Insertion module : Gestion des utilisateurs //EN COURS
+  Désactivation de filtres date dans le rapport de vente pour OPERATOR
+  Affichage que des ventes du jour pour OPERATOR
+  La section Bénéfice du jour est caché pour OPERATOR
 
   Version 24 :
 
