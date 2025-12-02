@@ -282,7 +282,9 @@ export default function OrdersPage() {
                           const { error } = await supabase.from("sales").delete().eq("id", order.rawId);
                           if (error) console.error("Erreur suppression de la vente :", error.message);
                           else setOrders((prev) => prev.filter((o) => o.rawId !== order.rawId));
-                        }} className="text-red-600 hover:text-red-800" title="Supprimer">🗑️</button>
+                        }} className="text-red-600 hover:text-red-800" title="Supprimer">
+                          🗑️
+                        </button>
                       </div>
                     </TableCell>
                   </TableRow>
