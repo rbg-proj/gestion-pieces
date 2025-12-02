@@ -317,7 +317,8 @@ export default function OrdersPage() {
                   {selectedSale.customer.charAt(0)}
                 </div>
                 <div className="ml-4">
-                  <h2 className="text-xl font-semibold">Vente #{selectedSale.id}</h2>
+                  <h2 className="text-xl font-semibold">Détails de la Vente</h2> 
+                  <p className="text-sm text-gray-500"># {selectedSale.id}</p>
                   <p className="text-sm text-gray-500">{new Date(selectedSale.date).toLocaleDateString()}</p>
                 </div>
               </div>
