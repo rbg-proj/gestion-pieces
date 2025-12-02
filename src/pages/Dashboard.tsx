@@ -30,6 +30,22 @@ import { useAuth } from "@/hooks/useAuth";
   // 💱 Ajout : stockage du taux de change
   const [exchangeRate, setExchangeRate] = useState<number | null>(null);
 
+  const exportLowStockToExcel = () => {
+  import("xlsx").then((xlsx) => {
+    const exportData = lowStockProducts.map((p) => ({
+      Nom: p.name,
+      Stock: p.stock,
+    }));
+
+    const worksheet = xlsx.utils.json_to_sheet(exportData);
+    const workbook = xlsx.utils.book_new();
+    xlsx.utils.book_append_sheet(workbook, worksheet, "Produits Critiques");
+
+    xlsx.writeFile(workbook, "produits_critiques.xlsx");
+    });
+    };
+  
+
   const formatCurrency = (amount: number) =>
     new Intl.NumberFormat('fr-CD', {
       style: 'currency',
