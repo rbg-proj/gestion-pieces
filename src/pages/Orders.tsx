@@ -5,7 +5,7 @@ import {
   ArrowUpDown,
   MoreVertical,
   FileSpreadsheet,
-  Eye, Trash 
+  Eye, Trash, X 
 } from "lucide-react";
 import { supabase } from "../lib/supabase";
 import { Card, CardContent } from "@/components/ui/card";
