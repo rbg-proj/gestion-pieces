@@ -268,7 +268,7 @@ export default function OrdersPage() {
                     <TableCell><Badge variant={order.status === "Payé" ? "success" : "secondary"}>{order.status}</Badge></TableCell>
                     <TableCell>{order.paymentMethod}</TableCell>
                     <TableCell className="text-center">
-                      <div className="flex justify-end gap-3">
+                      <div className="flex justify-center items-center gap-3">
                         
                         <button onClick={(e) => { e.stopPropagation();                                                 setSelectedSale(order); 
                           fetchSaleDetails(order.rawId); }} 
