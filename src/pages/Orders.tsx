@@ -268,6 +268,7 @@ export default function OrdersPage() {
                     <TableCell>{order.items}</TableCell>
                     <TableCell><Badge variant={order.status === "Payé" ? "success" : "secondary"}>{order.status}</Badge></TableCell>
                     <TableCell>{order.paymentMethod}</TableCell>
+                    {(user?.role === "admin" || user?.role === "manager") && (
                     <TableCell className="text-center">
                       <div className="flex justify-center items-center gap-3">
                         
@@ -288,6 +289,7 @@ export default function OrdersPage() {
                         </button>
                       </div>
                     </TableCell>
+                    )}
                   </TableRow>
                 ))
               ) : <TableRow><TableCell colSpan={7}>Aucune vente trouvée.</TableCell></TableRow>}
