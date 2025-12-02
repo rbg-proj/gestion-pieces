@@ -418,16 +418,16 @@ export default function OrdersPage() {
 
 
        {/* Sale Details Modal */}
-              {selectedSale && !isFormOpen && (
+       {selectedSale && !isFormOpen && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
                   <div className="bg-white rounded-lg max-w-2xl w-full p-6 shadow-lg animate-fadeIn">
                     
-                    {/* Header */}
-                    <div className="flex justify-between items-center mb-6">
-                      <div className="flex items-center">
-                        <div className="h-12 w-12 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 font-semibold text-lg">
-                          {selectedSale.customer_name?.charAt(0) || "?"}
-                        </div>
+         {/* Header */}
+         <div className="flex justify-between items-center mb-6">
+         <div className="flex items-center">
+         <div className="h-12 w-12 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 font-semibold text-lg">
+          {selectedSale.customer_name?.charAt(0) || "?"}
+          </div>
               
                         <div className="ml-4">
                           <h2 className="text-xl font-semibold">
