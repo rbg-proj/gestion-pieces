@@ -325,6 +325,55 @@ export default function OrdersPage() {
                 </Badge>
               </TableCell>
               <TableCell>{order.paymentMethod}</TableCell>
+              <TableCell className="text-right">
+                <div className="flex justify-end gap-3">
+                  {/* Voir détails */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedOrderId(order.rawId);
+                      fetchSaleItems(order.rawId);
+                      setSelectedOrderInfo({
+                        customerName: order.customer,
+                        paymentMethod: order.paymentMethod,
+                        date: order.date.toISOString(),
+                        total: order.total,
+                        exchange_rate: order.exchange_rate,
+                        agent: order.agent,
+                      });
+                    }}
+                    className="text-blue-600 hover:text-blue-800"
+                    title="Voir les détails"
+                  >
+                    <MoreVertical size={18} />
+                  </button>
+              
+                  {/* Supprimer */}
+                  <button
+                    onClick={async (e) => {
+                      e.stopPropagation();
+                      if (!confirm("Supprimer cette vente ?")) return;
+              
+                      const { error } = await supabase
+                        .from("sales")
+                        .delete()
+                        .eq("id", order.rawId);
+              
+                      if (error) {
+                        console.error("Erreur suppression :", error.message);
+                      } else {
+                        setOrders((prev) => prev.filter((o) => o.rawId !== order.rawId));
+                      }
+                    }}
+                    className="text-red-600 hover:text-red-800"
+                    title="Supprimer"
+                  >
+                    🗑️
+                  </button>
+              
+                </div>
+              </TableCell>
+
             </TableRow>
           ))
         ) : (
