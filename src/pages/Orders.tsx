@@ -108,19 +108,25 @@ export default function OrdersPage() {
     agent: string; 
   } | null>(null);
 
-  
-const filteredOrders = orders
+
+
+  const filteredOrders = orders
   .filter((order) => {
+
+    const orderDateString = order.date.toISOString().split("T")[0];
+
+    // 🚫 ROLE EMPLOYEE : voir uniquement les ventes du jour
+    if (user?.role !== "admin" && user?.role !== "manager") {
+      return orderDateString === todayISO;
+    }
+
+    // ✅ POUR ADMIN + MANAGER → filtres normaux
     const orderDate = new Date(order.date);
     const start = startDate ? new Date(startDate) : null;
     const end = endDate ? new Date(endDate) : null;
 
-    if (start) {
-      start.setHours(0, 0, 0, 0);
-    }
-    if (end) {
-      end.setHours(23, 59, 59, 999);
-    }
+    if (start) start.setHours(0, 0, 0, 0);
+    if (end) end.setHours(23, 59, 59, 999);
 
     const inDateRange =
       (!start || orderDate >= start) &&
@@ -142,6 +148,7 @@ const filteredOrders = orders
     const bDate = new Date(b.date);
     return sortByDateAsc ? aDate - bDate : bDate - aDate;
   });
+
 
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
