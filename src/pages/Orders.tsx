@@ -119,7 +119,9 @@ export default function OrdersPage() {
   const filteredOrders = orders
   .filter((order) => {
 
-    const orderDateString = order.date.toISOString().split("T")[0];
+   
+    const orderDateString = order.date.toLocaleDateString("fr-CA");
+
 
     // 🚫 ROLE EMPLOYEE : voir uniquement les ventes du jour
     if (user?.role !== "admin" && user?.role !== "manager") {
