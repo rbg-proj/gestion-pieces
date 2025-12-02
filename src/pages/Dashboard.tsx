@@ -277,7 +277,7 @@ import { useAuth } from "@/hooks/useAuth";
                 <FileSpreadsheet size={22} />
               </button>
             
-              <span>Stocks critiques / Faibles</span>
+              <span>Stock critique / Faible</span>
               
             </h3>
               {lowStockProducts.length === 0 ? (
