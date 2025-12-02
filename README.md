@@ -34,6 +34,7 @@ Version 22
   Désactivation de filtres date dans le rapport de vente pour OPERATOR
   Affichage que des ventes du jour pour OPERATOR
   La section Bénéfice du jour est caché pour OPERATOR
+  Affichage de l'heure sur le duplicata
 
   Version 24 :
 
@@ -42,5 +43,4 @@ Gestion de l'application en OffLine sans connection internet et synchroniser une
 Insertion de l'exportation Excel du Rapport de vente et Historique des stocks
 Affichage de l'heure sur le duplicata
 Insertion bouton Export de la liste des stocks faibles sur le tableau de bord
-Cacher la case bénéfice chez les opérateurs.
 Ajout module dépenses
