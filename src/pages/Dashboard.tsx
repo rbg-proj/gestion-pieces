@@ -271,7 +271,7 @@ import { useAuth } from "@/hooks/useAuth";
                   className="text-green-600 hover:text-green-800 transition p-1"
                   title="Exporter en Excel"
                 >
-                  <FileSpreadsheet size={24} />
+                  <FileSpreadsheet size={22} className="mr-2" />
                   </button> Stock critique / Faible
               
                 
