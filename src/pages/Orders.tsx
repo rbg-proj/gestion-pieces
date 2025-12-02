@@ -347,7 +347,7 @@ export default function OrdersPage() {
                     className="text-blue-600 hover:text-blue-800"
                     title="Voir les détails"
                   >
-                    <MoreVertical size={18} />
+                    <Eye size={18} />
                   </button>
               
                   {/* Supprimer */}
