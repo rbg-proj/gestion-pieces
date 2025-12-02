@@ -3,7 +3,8 @@ import Receipt from "@/pages/Receipt";
 import {
   Search,
   ArrowUpDown,
-  MoreVertical
+  MoreVertical,
+  FileSpreadsheet
 } from "lucide-react";
 import { supabase } from "../lib/supabase";
 import { Card, CardContent } from "@/components/ui/card";
@@ -15,6 +16,7 @@ import { useReactToPrint } from "react-to-print";
 import { Button } from "@/components/ui/button";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import { useAuth } from "@/hooks/useAuth";
+import * as XLSX from 'xlsx';
 
 
 export default function OrdersPage() {
@@ -172,12 +174,40 @@ export default function OrdersPage() {
     client,
     total,
   }));
-  
+
+  const exportToExcel = () => {
+    const exportData = filteredOrders.map((order) => ({
+      'N° Vente': order.id,
+      'Date': order.date.toLocaleDateString('fr-FR'),
+      'Client': order.customer,
+      'Montant ($)': order.total,
+      'Nb Articles': order.items,
+      'Mode Paiement': order.paymentMethod,
+      'Statut': order.status,
+      'Agent': order.agent,
+      'Taux Change': order.exchange_rate
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Rapport Ventes');
+
+    const fileName = `Rapport_Ventes_${new Date().toLocaleDateString('fr-FR').replace(/\//g, '-')}.xlsx`;
+    XLSX.writeFile(workbook, fileName);
+  };
+
   return (
     <div className="p-4 space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <h1 className="text-2xl font-bold">Rapport des ventes</h1>
-        
+
+        <button
+          onClick={exportToExcel}
+          className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors duration-150 ease-in-out"
+        >
+          <FileSpreadsheet size={16} className="mr-2" />
+          Export Excel
+        </button>
       </div>
 
       <div className="flex flex-wrap gap-4">
