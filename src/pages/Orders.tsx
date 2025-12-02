@@ -191,6 +191,7 @@ export default function OrdersPage() {
           onChange={(e) => setEndDate(e.target.value)}
           className="w-40"
           placeholder="Date de fin"
+          disabled={user?.role !== "admin" && user?.role !== "manager"}
         />
         <Input
           placeholder="Filtrer par client"
