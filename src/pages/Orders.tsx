@@ -269,7 +269,13 @@ export default function OrdersPage() {
                     <TableCell>{order.paymentMethod}</TableCell>
                     <TableCell className="text-center">
                       <div className="flex justify-end gap-3">
-                        <button onClick={(e) => { e.stopPropagation(); setSelectedSale(order); fetchSaleDetails(order.rawId); }} className="text-blue-600 hover:text-blue-800" title="Voir les détails"><Eye size={18} /></button>
+                        
+                        <button onClick={(e) => { e.stopPropagation();                                                 setSelectedSale(order); 
+                          fetchSaleDetails(order.rawId); }} 
+                          className="text-blue-600 hover:text-blue-800" 
+                          title="Voir les détails"><Eye size={18} />
+                        </button>
+                        
                         <button onClick={async (e) => {
                           e.stopPropagation();
                           if (!confirm("Supprimer cette vente ?")) return;
