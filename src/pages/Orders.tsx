@@ -108,8 +108,12 @@ export default function OrdersPage() {
     agent: string; 
   } | null>(null);
 
+  const todayLocal = new Date();
+  todayLocal.setHours(0, 0, 0, 0);
 
-
+  // → format YYYY-MM-DD en LOCAL
+  const todayISO = todayLocal.toLocaleDateString("fr-CA");
+  
   const filteredOrders = orders
   .filter((order) => {
 
