@@ -329,7 +329,7 @@ export default function OrdersPage() {
                 </Badge>
               </TableCell>
               <TableCell>{order.paymentMethod}</TableCell>
-              <TableCell className="text-right">
+              <TableCell className="text-center">
                 <div className="flex justify-end gap-3">
                   
                   {/* Voir détails */}
