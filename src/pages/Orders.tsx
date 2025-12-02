@@ -280,7 +280,7 @@ export default function OrdersPage() {
                         
                         <button onClick={async (e) => {
                           e.stopPropagation();
-                          if (!confirm("Supprimer cette vente ?")) return;
+                          if (!confirm("Supprimer DEFINITIVEMENT cette vente ?")) return;
                           const { error } = await supabase.from("sales").delete().eq("id", order.rawId);
                           if (error) console.error("Erreur suppression de la vente :", error.message);
                           else setOrders((prev) => prev.filter((o) => o.rawId !== order.rawId));
