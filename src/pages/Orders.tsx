@@ -335,7 +335,9 @@ export default function OrdersPage() {
                   <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    setSelectedSaleDetails(order); // ⬅️ On stocke la vente complète
+                    setSelectedSale(sale);// ⬅️ On stocke la vente complète
+                    fetchSaleDetails(sale.id);
+                    
                   }}
                   className="text-blue-600 hover:text-blue-800"
                   title="Voir les détails"
