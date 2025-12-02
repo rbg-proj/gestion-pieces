@@ -188,7 +188,7 @@ const Customers: React.FC = () => {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Les Clients</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Mes Clients</h1>
           <p className="text-sm text-gray-500">Gestion Rélation Clients</p>
         </div>
         <button 
