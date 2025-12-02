@@ -361,7 +361,7 @@ export default function OrdersPage() {
                         .eq("id", order.rawId);
               
                       if (error) {
-                        console.error("Erreur suppression :", error.message);
+                        console.error("Erreur suppression de la vente :", error.message);
                       } else {
                         setOrders((prev) => prev.filter((o) => o.rawId !== order.rawId));
                       }
