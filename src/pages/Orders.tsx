@@ -402,17 +402,108 @@ export default function OrdersPage() {
       </div>
     )}
 
-{filteredOrders.length > 0 && (
-  <div className="text-sm text-gray-600 mt-2">
-    Affichage de Ventes{" "}
-    {indexOfFirstRow + 1} à{" "}
-    {Math.min(indexOfLastRow, filteredOrders.length)} sur{" "}
-    {filteredOrders.length} Ventes totales
-  </div>
-)}
-  </CardContent>
-</Card>
+      {filteredOrders.length > 0 && (
+        <div className="text-sm text-gray-600 mt-2">
+          Affichage de Ventes{" "}
+          {indexOfFirstRow + 1} à{" "}
+          {Math.min(indexOfLastRow, filteredOrders.length)} sur{" "}
+          {filteredOrders.length} Ventes totales
+        </div>
+      )}
+        </CardContent>
+      </Card>
 
+      {/* Modal Détails Vente (style CRUD Clients) */}
+      {selectedSaleDetails && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[200]">
+                <div className="bg-white rounded-lg max-w-2xl w-full p-6 shadow-xl animate-in zoom-in-50 duration-200">
+                  
+                  {/* Header */}
+                  <div className="flex justify-between items-center mb-6">
+                    <div>
+                      <h2 className="text-xl font-semibold">Détails de la Vente</h2>
+                      <p className="text-sm text-gray-500">N° {selectedSaleDetails.id}</p>
+                    </div>
+            
+                    <button
+                      onClick={() => setSelectedSaleDetails(null)}
+                      className="text-gray-400 hover:text-gray-500"
+                    >
+                      <X size={20} />
+                    </button>
+                  </div>
+            
+                  {/* Infos principales */}
+                  <div className="grid grid-cols-2 gap-4 mb-6">
+                    <div>
+                      <p className="text-xs text-gray-500">Client</p>
+                      <p className="text-sm font-medium">{selectedSaleDetails.customer}</p>
+                    </div>
+            
+                    <div>
+                      <p className="text-xs text-gray-500">Date</p>
+                      <p className="text-sm font-medium">
+                        {selectedSaleDetails.date.toLocaleDateString()}
+                      </p>
+                    </div>
+            
+                    <div>
+                      <p className="text-xs text-gray-500">Total</p>
+                      <p className="text-sm font-medium">
+                        {selectedSaleDetails.total.toLocaleString("fr-FR")} $
+                      </p>
+                    </div>
+            
+                    <div>
+                      <p className="text-xs text-gray-500">Mode Paiement</p>
+                      <p className="text-sm font-medium">{selectedSaleDetails.paymentMethod}</p>
+                    </div>
+            
+                    <div>
+                      <p className="text-xs text-gray-500">Agent</p>
+                      <p className="text-sm font-medium">{selectedSaleDetails.agent}</p>
+                    </div>
+            
+                    <div>
+                      <p className="text-xs text-gray-500">Taux Change</p>
+                      <p className="text-sm font-medium">{selectedSaleDetails.exchange_rate}</p>
+                    </div>
+                  </div>
+            
+                  {/* Liste des articles */}
+                  <div>
+                    <h3 className="font-medium text-gray-900 mb-3">Articles de la vente</h3>
+            
+                    <div className="overflow-y-auto max-h-60 rounded border">
+                      <table className="min-w-full divide-y divide-gray-200 text-sm">
+                        <thead className="bg-gray-50">
+                          <tr>
+                            <th className="px-4 py-2 text-left text-gray-600 font-medium">Produit</th>
+                            <th className="px-4 py-2 text-left text-gray-600 font-medium">Qté</th>
+                            <th className="px-4 py-2 text-left text-gray-600 font-medium">Prix</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-200">
+            
+                          {saleItems.map((item) => (
+                            <tr key={item.id}>
+                              <td className="px-4 py-2">{item.products?.name ?? "—"}</td>
+                              <td className="px-4 py-2">{item.quantity}</td>
+                              <td className="px-4 py-2">
+                                {(item.unit_price * selectedSaleDetails.exchange_rate).toLocaleString("fr-FR")} $
+                              </td>
+                            </tr>
+                          ))}
+            
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+      
       <Dialog open={!!selectedOrderId} onOpenChange={() => {
         setSelectedOrderId(null);
         setSelectedOrderInfo(null);
