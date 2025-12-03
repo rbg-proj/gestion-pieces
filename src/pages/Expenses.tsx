@@ -49,19 +49,23 @@ export default function Expenses() {
   };
 
   const fetchExpenses = async (filter?: { from?: string; to?: string }) => {
-    const { data, error } = await supabase
-      .from("expenses")
-      .select("*")
-      .match({})
-      .gte(filter?.from ? "date" : undefined, filter?.from || undefined)
-      .lte(filter?.to ? "date" : undefined, filter?.to || undefined)
-      .order("date", { ascending: false });
+  let query = supabase.from("expenses").select("*");
 
-      console.log("Résultats Supabase:", data, error);
+  if (filter?.from) {
+    query = query.gte("date", filter.from);
+  }
 
-    if (!error && data) setExpenses(data);
-    setLoading(false);
-  };
+  if (filter?.to) {
+    query = query.lte("date", filter.to);
+  }
+
+  const { data, error } = await query.order("date", { ascending: false });
+
+  if (!error && data) setExpenses(data);
+  setLoading(false);
+};
+
+  
 
   const openModalForCreate = () => {
     setEditId(null);
