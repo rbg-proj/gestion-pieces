@@ -43,7 +43,9 @@ Ajout du CRUD sur le rapport de vente - Pour admin et manager seuls.
 Insertion bouton Export de la liste des stocks faibles sur le tableau de bord
 
 Version 27 :
-Ajout module dépenses
-Amélioration Gestion des utilisateurs
+Amélioration Gestion des utilisateurs OK
+
+Version 28
 Composant indépendant de gestion d'entrée et sortie en stock
+Ajout module dépenses
 
