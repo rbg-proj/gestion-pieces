@@ -50,7 +50,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             // Vérifier si le profil est désactivé
             if (profile && profile.status === false) {
               setAccountDisabled(true);
-              setError('Votre compte a été désactivé. Contactez l\'administrateur pour plus d\'informations.');
+              setError('Votre compte a été désactivé. Contactez votre administrateur pour plus d\'informations.');
               await supabase.auth.signOut();
               localStorage.removeItem("user");
               setUser(null);
