@@ -45,4 +45,5 @@ Insertion bouton Export de la liste des stocks faibles sur le tableau de bord
 Version 27 :
 Ajout module dépenses
 Amélioration Gestion des utilisateurs
+Composant indépendant de gestion d'entrée et sortie en stock
 
