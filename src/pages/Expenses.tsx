@@ -1,15 +1,9 @@
-// Fichier Expenses.tsx corrigé et complet
-// ------------------------------------------------------
-// ⚠️ Toutes les erreurs liées aux dates, filtres, pagination,
-//     undefined, etc. ont été corrigées.
-// ------------------------------------------------------
-
 import { useEffect, useState } from "react";
 import { supabase } from '../lib/supabase';
 import { Pencil, Trash2, PlusCircle, X } from "lucide-react";
-import ExpenseCategories from './Expenses-categories';
+import ExpenseCategories from './Expenses-categories'; // ⬅️ Import du composant Catégories
 import * as XLSX from "xlsx";
-import { saveAs } from "file-saver";
+
 
 interface Expense {
   id: number;
@@ -35,25 +29,18 @@ export default function Expenses() {
     date: new Date().toISOString().split("T")[0],
   });
 
-  // Modal Catégories
+  // ⬅️ Modal Gestion Catégories
   const [showCategoryManager, setShowCategoryManager] = useState(false);
-
-  // Filtres dates (correction : != undefined)
-  const [fromDate, setFromDate] = useState<string | null>(null);
-  const [toDate, setToDate] = useState<string | null>(null);
-
-  // Pagination
-  const [page, setPage] = useState(0);
-  const pageSize = 10;
-  const [totalCount, setTotalCount] = useState(0);
 
   useEffect(() => {
     fetchRole();
+    fetchExpenses();
   }, []);
 
-  useEffect(() => {
-    fetchExpenses(); // recharge lorsque page, fromDate ou toDate changent
-  }, [page, fromDate, toDate]);
+  // --- AJOUT Pagination ---
+const [page, setPage] = useState(0);
+const pageSize = 10;
+const [totalCount, setTotalCount] = useState(0);
 
   const fetchRole = async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -68,53 +55,46 @@ export default function Expenses() {
     setRole(data?.role || null);
   };
 
-  // Export Excel
-  const exportExcel = () => {
-    const worksheet = XLSX.utils.json_to_sheet(expenses);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Dépenses");
+  // --- AJOUT : export Excel ---
+const exportExcel = () => {
+  const worksheet = XLSX.utils.json_to_sheet(expenses);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Dépenses");
 
-    const excelBuffer = XLSX.write(workbook, {
-      bookType: "xlsx",
-      type: "array"
-    });
+  const excelBuffer = XLSX.write(workbook, {
+    bookType: "xlsx",
+    type: "array"
+  });
 
-    const blob = new Blob([excelBuffer], {
-      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    });
+  const blob = new Blob([excelBuffer], {
+    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+  });
 
-    saveAs(blob, "depenses.xlsx");
-  };
+  saveAs(blob, "depenses.xlsx");
+};
+  
 
   const fetchExpenses = async () => {
-    setLoading(true);
+  const from = page * pageSize;
+  const to = from + pageSize - 1;
 
-    const from = page * pageSize;
-    const to = from + pageSize - 1;
+  let query = supabase
+    .from("expenses")
+    .select("*", { count: "exact" })
+    .order("date", { ascending: false })
+    .range(from, to);
 
-    let query = supabase
-      .from("expenses")
-      .select("*", { count: "exact" })
-      .order("date", { ascending: false })
-      .range(from, to);
+  if (fromDate) query = query.gte("date", fromDate);
+  if (toDate) query = query.lte("date", toDate);
 
-    // Application correcte des filtres
-    if (fromDate) query = query.gte("date", fromDate);
-    if (toDate) query = query.lte("date", toDate);
+  const { data, count, error } = await query;
 
-    const { data, count, error } = await query;
-
-    if (error) {
-      console.error("Supabase Error:", error);
-      setExpenses([]);
-      setLoading(false);
-      return;
-    }
-
+  if (!error) {
     setExpenses(data || []);
     setTotalCount(count || 0);
-    setLoading(false);
-  };
+  }
+};
+  
 
   const openModalForCreate = () => {
     setEditId(null);
@@ -157,14 +137,14 @@ export default function Expenses() {
 
   const handleDelete = async (id: number) => {
     if (!confirm("Supprimer cette dépense ?")) return;
+
     await supabase.from("expenses").delete().eq("id", id);
     fetchExpenses();
   };
 
   return (
     <div className="p-6">
-
-      {/* Filtres Dates corrigés */}
+      {/* ⬅️ Filtres dates */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
           <div className="flex flex-col">
@@ -172,10 +152,9 @@ export default function Expenses() {
             <input
               type="date"
               className="border p-2 rounded"
-              value={fromDate || ""}
               onChange={(e) => {
-                setFromDate(e.target.value);
-                setPage(0);
+                const from = e.target.value;
+                fetchExpenses({ from });
               }}
             />
           </div>
@@ -185,10 +164,9 @@ export default function Expenses() {
             <input
               type="date"
               className="border p-2 rounded"
-              value={toDate || ""}
               onChange={(e) => {
-                setToDate(e.target.value);
-                setPage(0);
+                const to = e.target.value;
+                fetchExpenses({ to });
               }}
             />
           </div>
@@ -198,7 +176,7 @@ export default function Expenses() {
 
         {(role === "admin" || role === "manager") && (
           <div className="flex gap-2">
-            {/* Bouton Gérer Catégories */}
+            {/* ⬅️ Bouton Gestion Catégories */}
             <button
               onClick={() => setShowCategoryManager(true)}
               className="flex items-center gap-2 px-3 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 transition"
@@ -206,7 +184,7 @@ export default function Expenses() {
               <PlusCircle size={18} /> Gérer Catégories
             </button>
 
-            {/* Ajouter Dépense */}
+            {/* ⬅️ Bouton Ajouter Dépense */}
             <button
               onClick={openModalForCreate}
               className="flex items-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition"
@@ -217,15 +195,13 @@ export default function Expenses() {
         )}
       </div>
 
-      {/* Export Excel */}
+      {/* Table Expenses */}
       <button
         onClick={exportExcel}
-        className="px-3 py-2 bg-green-600 text-white rounded mb-3"
+        className="px-3 py-2 bg-green-600 text-white rounded"
       >
         📤 Exporter Excel
       </button>
-
-      {/* Tableau */}
       <div className="overflow-x-auto shadow rounded-lg border border-gray-200">
         <table className="min-w-full bg-white">
           <thead className="bg-gray-100 text-gray-600 uppercase text-sm">
@@ -242,9 +218,13 @@ export default function Expenses() {
 
           <tbody>
             {loading ? (
-              <tr><td colSpan={5} className="py-6 text-center text-gray-500">Chargement...</td></tr>
+              <tr>
+                <td colSpan={5} className="py-6 text-center text-gray-500">Chargement...</td>
+              </tr>
             ) : expenses.length === 0 ? (
-              <tr><td colSpan={5} className="py-6 text-center text-gray-500">Aucune dépense enregistrée</td></tr>
+              <tr>
+                <td colSpan={5} className="py-6 text-center text-gray-500">Aucune dépense enregistrée</td>
+              </tr>
             ) : (
               expenses.map((exp) => (
                 <tr key={exp.id} className="border-b hover:bg-gray-50 transition">
@@ -255,5 +235,106 @@ export default function Expenses() {
 
                   {(role === "admin" || role === "manager") && (
                     <td className="py-3 px-4 flex items-center justify-center gap-4">
-                      <button onClick={() => openModalForEdit(exp)} className="text-blue-600 hover:text-blue-800 transition"><Pencil size={18} /></button>
-                      <button onClick={()
+                      <button onClick={() => openModalForEdit(exp)} className="text-blue-600 hover:text-blue-800 transition">
+                        <Pencil size={18} />
+                      </button>
+                      <button onClick={() => handleDelete(exp.id)} className="text-red-600 hover:text-red-800 transition">
+                        <Trash2 size={18} />
+                      </button>
+                    </td>
+                  )}
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+
+        <div className="flex items-center justify-between mt-4">
+          <button
+            disabled={page === 0}
+            onClick={() => setPage(page - 1)}
+            className="px-3 py-1 border rounded disabled:opacity-40"
+          >
+            ◀ Précédent
+          </button>
+        
+          <span>
+            Page {page + 1} / {Math.ceil(totalCount / pageSize)}
+          </span>
+        
+          <button
+            disabled={(page + 1) * pageSize >= totalCount}
+            onClick={() => setPage(page + 1)}
+            className="px-3 py-1 border rounded disabled:opacity-40"
+          >
+            Suivant ▶
+          </button>
+        </div>
+
+        
+      </div>
+
+      {/* ⬅️ Modal Dépense */}
+      {showModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-96 relative animate-fadeIn">
+            <button className="absolute top-3 right-3 text-gray-500 hover:text-gray-700" onClick={() => setShowModal(false)}>
+              <X size={20} />
+            </button>
+
+            <h3 className="text-lg font-bold mb-4">
+              {editId ? "Modifier la dépense" : "Ajouter une dépense"}
+            </h3>
+
+            <div className="flex flex-col gap-3">
+              <input
+                className="border p-2 rounded"
+                placeholder="Catégorie"
+                value={form.category}
+                onChange={(e) => setForm({ ...form, category: e.target.value })}
+              />
+
+              <input
+                className="border p-2 rounded"
+                placeholder="Description"
+                value={form.description}
+                onChange={(e) => setForm({ ...form, description: e.target.value })}
+              />
+
+              <input
+                type="number"
+                className="border p-2 rounded"
+                placeholder="Montant"
+                value={form.amount}
+                onChange={(e) => setForm({ ...form, amount: e.target.value })}
+              />
+
+              <input
+                type="date"
+                className="border p-2 rounded"
+                value={form.date}
+                onChange={(e) => setForm({ ...form, date: e.target.value })}
+              />
+            </div>
+
+            <button onClick={handleSave} className="mt-4 w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">
+              Enregistrer
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* ⬅️ Modal Gestion Catégories */}
+      {showCategoryManager && (
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-2/3 relative">
+            <button className="absolute top-3 right-3 text-gray-500 hover:text-gray-700" onClick={() => setShowCategoryManager(false)}>
+              <X size={20} />
+            </button>
+            <ExpenseCategories /> {/* ⬅️ Appel du composant ExpenseCategories */}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
