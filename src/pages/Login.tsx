@@ -15,7 +15,7 @@ const Login: React.FC = () => {
   const [formErrors, setFormErrors] = useState<{ email?: string; password?: string }>({});
   const [attempts, setAttempts] = useState(0);
   const [isLocked, setIsLocked] = useState(false);
-  const { login, error, loading } = useAuth();
+  const { login, error, loading, accountDisabled, clearError } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -73,14 +73,39 @@ const Login: React.FC = () => {
               Connectez-vous pour continuer...
             </p>
 
-            {(error || isLocked) && (
-              <div className="mb-4 p-3 bg-error-50 border border-error-200 rounded-md flex items-start">
-                <AlertCircle size={16} className="text-error-500 mt-0.5 mr-2 flex-shrink-0" />
-                <p className="text-sm text-error-700">
-                  {isLocked
-                    ? "Trop de tentatives. Réessayez dans quelques secondes."
-                    : error}
-                </p>
+            {(error || isLocked || accountDisabled) && (
+              <div className={`mb-4 p-4 border rounded-md flex items-start ${
+                accountDisabled
+                  ? 'bg-orange-50 border-orange-200'
+                  : 'bg-red-50 border-red-200'
+              }`}>
+                <AlertCircle size={16} className={`mt-0.5 mr-2 flex-shrink-0 ${
+                  accountDisabled
+                    ? 'text-orange-600'
+                    : 'text-red-600'
+                }`} />
+                <div>
+                  <p className={`text-sm font-medium ${
+                    accountDisabled
+                      ? 'text-orange-800'
+                      : 'text-red-800'
+                  }`}>
+                    {isLocked
+                      ? "Trop de tentatives. Réessayez dans quelques secondes."
+                      : accountDisabled
+                      ? "Compte désactivé"
+                      : "Erreur d'authentification"}
+                  </p>
+                  {(error || accountDisabled) && (
+                    <p className={`text-sm mt-1 ${
+                      accountDisabled
+                        ? 'text-orange-700'
+                        : 'text-red-700'
+                    }`}>
+                      {error}
+                    </p>
+                  )}
+                </div>
               </div>
             )}
 

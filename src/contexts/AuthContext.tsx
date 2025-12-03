@@ -20,6 +20,8 @@ export type AuthContextType = {
   isAuthenticated: boolean;
   refreshUser: () => Promise<void>;
   showWarning: boolean;
+  accountDisabled: boolean;
+  clearError: () => void;
 };
 
 // IMPORTANT : export du contexte pour compatibilité HMR
@@ -29,6 +31,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [accountDisabled, setAccountDisabled] = useState<boolean>(false);
   const [lastActivity, setLastActivity] = useState<number>(Date.now());
   const [showWarning, setShowWarning] = useState<boolean>(false);
   const [warningTimer, setWarningTimer] = useState<NodeJS.Timeout | null>(null);
@@ -36,27 +39,45 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Charger la session si elle existe
   useEffect(() => {
     const restoreSession = async () => {
-      const session = await supabase.auth.getSession();
-      const authUser = session.data.session?.user;
+      try {
+        const session = await supabase.auth.getSession();
+        const authUser = session.data.session?.user;
 
-      if (authUser) {
-        try {
-          const profile = await getProfile(authUser.id);
-          const refreshedUser: User = {
-            id: authUser.id,
-            email: authUser.email || "",
-            name: profile?.name || "",
-            role: profile?.role || "employee",
-            phone: profile?.phone || "",
-            avatar: profile?.avatar || "",
-          };
-          setUser(refreshedUser);
-        } catch (err) {
-          console.error("Erreur chargement du profil:", err);
+        if (authUser) {
+          try {
+            const profile = await getProfile(authUser.id);
+
+            // Vérifier si le profil est désactivé
+            if (profile && profile.status === false) {
+              setAccountDisabled(true);
+              setError('Votre compte a été désactivé. Contactez l\'administrateur pour plus d\'informations.');
+              await supabase.auth.signOut();
+              localStorage.removeItem("user");
+              setUser(null);
+              setLoading(false);
+              return;
+            }
+
+            const refreshedUser: User = {
+              id: authUser.id,
+              email: authUser.email || "",
+              name: profile?.name || "",
+              role: profile?.role || "employee",
+              phone: profile?.phone || "",
+              avatar: profile?.avatar || "",
+              status: profile?.status ?? true,
+            };
+            setUser(refreshedUser);
+            setAccountDisabled(false);
+          } catch (err) {
+            console.error("Erreur chargement du profil:", err);
+          }
         }
+      } catch (err) {
+        console.error("Erreur lors de la restauration de la session:", err);
+      } finally {
+        setLoading(false);
       }
-
-      setLoading(false);
     };
 
     restoreSession();
@@ -69,6 +90,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     if (authUser) {
       const profile = await getProfile(authUser.id);
+
+      // Vérifier si le profil a été désactivé
+      if (profile && profile.status === false) {
+        setAccountDisabled(true);
+        setError('Votre compte a été désactivé. Contactez l\'administrateur pour plus d\'informations.');
+        await supabase.auth.signOut();
+        localStorage.removeItem("user");
+        setUser(null);
+        return;
+      }
+
       const updatedUser: User = {
         id: authUser.id,
         email: authUser.email || "",
@@ -76,8 +108,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         role: profile?.role || "employee",
         phone: profile?.phone || "",
         avatar: profile?.avatar || "",
+        status: profile?.status ?? true,
       };
       setUser(updatedUser);
+      setAccountDisabled(false);
       localStorage.setItem("user", JSON.stringify(updatedUser));
     }
   }, []);
@@ -87,8 +121,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       setLoading(true);
       setError(null);
+      setAccountDisabled(false);
 
-      const { user: loggedInUser, error } = await loginWithSupabase(email, password);
+      const { user: loggedInUser, error, accountDisabled: isDisabled } = await loginWithSupabase(email, password);
+
+      if (isDisabled) {
+        setAccountDisabled(true);
+        setError(error);
+        return false;
+      }
+
       if (error) {
         setError(error);
         return false;
@@ -96,6 +138,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (loggedInUser) {
         setUser(loggedInUser);
+        setAccountDisabled(false);
         localStorage.setItem("user", JSON.stringify(loggedInUser));
         return true;
       }
@@ -111,6 +154,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     await supabase.auth.signOut();
     localStorage.removeItem("user");
     setUser(null);
+    setAccountDisabled(false);
+    setError(null);
+  }, []);
+
+  // Effacer les erreurs
+  const clearError = useCallback(() => {
+    setError(null);
+    setAccountDisabled(false);
   }, []);
 
   // Gestion de l'inactivité (POS friendly)
@@ -167,6 +218,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isAuthenticated: !!user,
         refreshUser,
         showWarning,
+        accountDisabled,
+        clearError,
       }}
     >
       {children}

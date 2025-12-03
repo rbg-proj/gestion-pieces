@@ -7,13 +7,14 @@ export type User = {
   role: 'admin' | 'manager' | 'employee';
   phone?: string;
   avatar?: string;
+  status?: boolean;
 };
 
 // Connexion et récupération du profil depuis la table "profiles"
 export async function loginWithSupabase(
   email: string,
   password: string
-): Promise<{ user: User | null; error: string | null }> {
+): Promise<{ user: User | null; error: string | null; accountDisabled?: boolean }> {
   try {
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
@@ -25,7 +26,7 @@ export async function loginWithSupabase(
     }
 
     if (!data.user) {
-      return { user: null, error: 'No user data returned' };
+      return { user: null, error: 'Aucune donnée utilisateur retournée' };
     }
 
     const authUser = data.user;
@@ -33,9 +34,20 @@ export async function loginWithSupabase(
     // 🔁 Récupération des infos depuis la table "profiles"
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
-      .select('name, role, phone, avatar')
+      .select('name, role, phone, avatar, status')
       .eq('id', authUser.id)
       .maybeSingle();
+
+    // Vérifier si le profil est désactivé
+    if (profile && profile.status === false) {
+      // Déconnecter immédiatement l'utilisateur
+      await supabase.auth.signOut();
+      return {
+        user: null,
+        error: 'Votre compte a été désactivé. Contactez l\'administrateur pour plus d\'informations.',
+        accountDisabled: true
+      };
+    }
 
     // If profile doesn't exist, create one with default values
     if (!profile && !profileError) {
@@ -47,11 +59,12 @@ export async function loginWithSupabase(
         .insert({
           id: authUser.id,
           name: defaultName,
-          role: defaultRole
+          role: defaultRole,
+          status: true
         });
 
       if (createError) {
-        console.error('Error creating profile:', createError);
+        console.error('Erreur lors de la création du profil:', createError);
       }
     }
 
@@ -61,14 +74,15 @@ export async function loginWithSupabase(
       email: authUser.email || '',
       role: profile?.role || authUser.user_metadata?.role || 'employee',
       phone: profile?.phone || '',
-      avatar: profile?.avatar || ''
+      avatar: profile?.avatar || '',
+      status: profile?.status ?? true
     };
 
     return { user, error: null };
   } catch (err) {
     return {
       user: null,
-      error: err instanceof Error ? err.message : 'An unexpected error occurred'
+      error: err instanceof Error ? err.message : 'Une erreur inattendue s\'est produite'
     };
   }
 }
@@ -77,7 +91,7 @@ export async function loginWithSupabase(
 export async function getProfile(userId: string) {
   const { data, error } = await supabase
     .from('profiles')
-    .select('name, role, phone, avatar')
+    .select('name, role, phone, avatar, status')
     .eq('id', userId)
     .maybeSingle();
 
