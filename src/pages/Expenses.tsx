@@ -3,6 +3,7 @@ import { supabase } from '../lib/supabase';
 import { Pencil, Trash2, PlusCircle, X } from "lucide-react";
 import ExpenseCategories from './Expenses-categories'; // ⬅️ Import du composant Catégories
 import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 
 
 interface Expense {
