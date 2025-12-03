@@ -57,6 +57,8 @@ export default function Expenses() {
       .lte(filter?.to ? "date" : undefined, filter?.to || undefined)
       .order("date", { ascending: false });
 
+      console.log("Résultats Supabase:", data, error);
+
     if (!error && data) setExpenses(data);
     setLoading(false);
   };
