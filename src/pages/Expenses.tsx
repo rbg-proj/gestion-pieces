@@ -36,10 +36,11 @@ export default function Expenses() {
   const [toDate, setToDate] = useState("");
 
 
+ 
   useEffect(() => {
     fetchRole();
-    fetchExpenses();
-  }, []);
+  fetchExpenses();
+}, [page, fromDate, toDate]);
 
   // --- AJOUT Pagination ---
 const [page, setPage] = useState(0);
