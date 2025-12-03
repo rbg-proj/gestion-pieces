@@ -17,6 +17,7 @@ import ProfilePage from './pages/ProfilePage';
 import SettingsPage from './pages/SettingsPage';
 import ExchangeRatesPage from './pages/exchangeRates';
 import ProfilesPage from './pages/ProfilesPage';
+import Expenses from './pages/Expenses';
 
 const InactivityWarning = () => {
   const { showWarning } = useAuth();
