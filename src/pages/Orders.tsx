@@ -271,7 +271,7 @@ export default function OrdersPage() {
                     
                     {(user?.role === "admin" || user?.role === "manager") && (
                     <TableCell className="text-center">
-                      <div className="py-3 px-2 flex items-center justify-start gap-2">
+                      <div className="py-3 px-0 flex items-center justify-start gap-2">
                         
                         <button onClick={(e) => { e.stopPropagation();                                                 setSelectedSale(order); 
                           fetchSaleDetails(order.rawId); }} 
