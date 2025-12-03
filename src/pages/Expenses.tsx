@@ -32,6 +32,10 @@ export default function Expenses() {
   // ⬅️ Modal Gestion Catégories
   const [showCategoryManager, setShowCategoryManager] = useState(false);
 
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
+
+
   useEffect(() => {
     fetchRole();
     fetchExpenses();
