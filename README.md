@@ -37,10 +37,12 @@ Version 22
   La section Bénéfice du jour est caché pour OPERATOR
   Affichage de Date/Heure sur le duplicata
 
-  Version 24 :
-
-Gestion de l'application en OffLine sans connection internet et synchroniser une fois la connection retablie.
+  Version 26 :
 Insertion de l'exportation Excel du Rapport de vente et Historique des stocks
 Ajout du CRUD sur le rapport de vente - Pour admin et manager seuls.
 Insertion bouton Export de la liste des stocks faibles sur le tableau de bord
+
+Version 27 :
 Ajout module dépenses
+Amélioration Gestion des utilisateurs
+
