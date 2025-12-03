@@ -47,7 +47,7 @@ export default function Expenses() {
   
   // Total Dépenses
   const [expenses, setExpenses] = useState([]);
-  const totalExpenses = expenses.reduce((sum, exp) => sum + Number(exp.amount || 0), 0);
+  
 
   useEffect(() => {
     fetchRole();
