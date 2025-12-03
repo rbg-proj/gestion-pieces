@@ -476,7 +476,10 @@ const Reports: React.FC = () => {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <div className="flex-shrink-0 h-8 w-8 rounded-full bg-primary-100 flex items-center justify-center text-primary-700">
-                          {customer.name.chart(0)}
+                         <div className="flex-shrink-0 h-8 w-8 rounded-full bg-primary-100 flex items-center justify-center text-primary-700">
+                            {customer.name?.charAt(0)?.toUpperCase() || "?"}
+                          </div>
+                         
                         </div>
                         <div className="ml-4 text-sm text-gray-900">{customer.name}</div>
                       </div>
