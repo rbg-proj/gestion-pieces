@@ -4,7 +4,7 @@ import {
   ArrowUpDown,
   FileSpreadsheet,
   Eye,
-  Trash,
+  Trash2,
   X,
 } from "lucide-react";
 import { supabase } from "../lib/supabase";
