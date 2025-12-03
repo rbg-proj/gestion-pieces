@@ -35,6 +35,11 @@ export default function Expenses() {
     fetchExpenses();
   }, []);
 
+  // --- AJOUT Pagination ---
+const [page, setPage] = useState(0);
+const pageSize = 10;
+const [totalCount, setTotalCount] = useState(0);
+
   const fetchRole = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
