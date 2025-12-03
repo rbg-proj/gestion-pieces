@@ -289,18 +289,12 @@ const exportExcel = () => {
             </h3>
 
             <div className="flex flex-col gap-3">
-
-              {/* Category Dropdown */}
-              <select
+              <input
                 className="border p-2 rounded"
+                placeholder="Catégorie"
                 value={form.category}
                 onChange={(e) => setForm({ ...form, category: e.target.value })}
-              >
-                <option value="">Sélectionner une catégorie</option>
-                {categories.map((c) => (
-                  <option key={c.id} value={c.name}>{c.name}</option>
-                ))}
-              </select>
+              />
 
               <input
                 className="border p-2 rounded"
@@ -324,8 +318,8 @@ const exportExcel = () => {
                 onChange={(e) => setForm({ ...form, date: e.target.value })}
               />
             </div>
-            
-            
+
+
             
 
             <button onClick={handleSave} className="mt-4 w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">
