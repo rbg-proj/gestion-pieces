@@ -268,9 +268,10 @@ export default function OrdersPage() {
                     <TableCell>{order.items}</TableCell>
                     <TableCell><Badge variant={order.status === "Payé" ? "success" : "secondary"}>{order.status}</Badge></TableCell>
                     <TableCell>{order.paymentMethod}</TableCell>
+                    
                     {(user?.role === "admin" || user?.role === "manager") && (
                     <TableCell className="text-center">
-                      <div className="py-3 px-4 flex items-center justify-center gap-4">
+                      <div className="py-3 px-4 flex items-center justify-left gap-4">
                         
                         <button onClick={(e) => { e.stopPropagation();                                                 setSelectedSale(order); 
                           fetchSaleDetails(order.rawId); }} 
