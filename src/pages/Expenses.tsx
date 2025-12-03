@@ -196,6 +196,12 @@ const exportExcel = () => {
       </div>
 
       {/* Table Expenses */}
+      <button
+        onClick={exportExcel}
+        className="px-3 py-2 bg-green-600 text-white rounded"
+      >
+        📤 Exporter Excel
+      </button>
       <div className="overflow-x-auto shadow rounded-lg border border-gray-200">
         <table className="min-w-full bg-white">
           <thead className="bg-gray-100 text-gray-600 uppercase text-sm">
