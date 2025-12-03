@@ -52,24 +52,29 @@ const [totalCount, setTotalCount] = useState(0);
 
     setRole(data?.role || null);
   };
+  
+  
 
-  const fetchExpenses = async (filter?: { from?: string; to?: string }) => {
-  let query = supabase.from("expenses").select("*");
+  const fetchExpenses = async () => {
+  const from = page * pageSize;
+  const to = from + pageSize - 1;
 
-  if (filter?.from) {
-    query = query.gte("date", filter.from);
+  let query = supabase
+    .from("expenses")
+    .select("*", { count: "exact" })
+    .order("date", { ascending: false })
+    .range(from, to);
+
+  if (fromDate) query = query.gte("date", fromDate);
+  if (toDate) query = query.lte("date", toDate);
+
+  const { data, count, error } = await query;
+
+  if (!error) {
+    setExpenses(data || []);
+    setTotalCount(count || 0);
   }
-
-  if (filter?.to) {
-    query = query.lte("date", filter.to);
-  }
-
-  const { data, error } = await query.order("date", { ascending: false });
-
-  if (!error && data) setExpenses(data);
-  setLoading(false);
 };
-
   
 
   const openModalForCreate = () => {
@@ -218,6 +223,30 @@ const [totalCount, setTotalCount] = useState(0);
             )}
           </tbody>
         </table>
+
+        <div className="flex items-center justify-between mt-4">
+          <button
+            disabled={page === 0}
+            onClick={() => setPage(page - 1)}
+            className="px-3 py-1 border rounded disabled:opacity-40"
+          >
+            ◀ Précédent
+          </button>
+        
+          <span>
+            Page {page + 1} / {Math.ceil(totalCount / pageSize)}
+          </span>
+        
+          <button
+            disabled={(page + 1) * pageSize >= totalCount}
+            onClick={() => setPage(page + 1)}
+            className="px-3 py-1 border rounded disabled:opacity-40"
+          >
+            Suivant ▶
+          </button>
+        </div>
+
+        
       </div>
 
       {/* ⬅️ Modal Dépense */}
