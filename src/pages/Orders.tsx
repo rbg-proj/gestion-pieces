@@ -241,7 +241,7 @@ export default function OrdersPage() {
                 <TableHead>Nb Articles</TableHead>
                 <TableHead>Statut</TableHead>
                 <TableHead>Mode Paiement</TableHead>
-                {(user?.role === "admin" || user?.role === "manager") && <TableHead>Actions</TableHead>}
+                {(user?.role === "admin" || user?.role === "manager") &&                                   <TableHead>Actions</TableHead>}
                 
               </TableRow>
             </TableHeader>
