@@ -46,7 +46,6 @@ export default function Expenses() {
   const [showCategoryManager, setShowCategoryManager] = useState(false);
   
 
-
   useEffect(() => {
     fetchRole();
     fetchCategories();
