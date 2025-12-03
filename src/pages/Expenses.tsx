@@ -176,6 +176,14 @@ const exportExcel = () => {
 
         {(role === "admin" || role === "manager") && (
           <div className="flex gap-2">
+           {/* ⬅️ Bouton Ajouter Dépense */}
+            <button
+              onClick={openModalForCreate}
+              className="flex items-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition"
+            >
+              <PlusCircle size={18} /> Ajouter une dépense
+            </button>
+            
             {/* ⬅️ Bouton Gestion Catégories */}
             <button
               onClick={() => setShowCategoryManager(true)}
@@ -184,13 +192,7 @@ const exportExcel = () => {
               <PlusCircle size={18} /> Gérer Catégories
             </button>
 
-            {/* ⬅️ Bouton Ajouter Dépense */}
-            <button
-              onClick={openModalForCreate}
-              className="flex items-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition"
-            >
-              <PlusCircle size={18} /> Ajouter une dépense
-            </button>
+            
           </div>
         )}
       </div>
