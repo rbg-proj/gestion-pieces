@@ -11,8 +11,14 @@ interface Expense {
   user_id: string | null;
 }
 
+interface ExpenseCategory {
+  id: number;
+  name: string;
+}
+
 export default function Expenses() {
   const [expenses, setExpenses] = useState<Expense[]>([]);
+  const [categories, setCategories] = useState<ExpenseCategory[]>([]);
   const [loading, setLoading] = useState(true);
   const [role, setRole] = useState<string | null>(null);
 
@@ -28,6 +34,7 @@ export default function Expenses() {
 
   useEffect(() => {
     fetchRole();
+    fetchCategories();
     fetchExpenses();
   }, []);
 
@@ -44,22 +51,34 @@ export default function Expenses() {
     setRole(data?.role || null);
   };
 
-  const fetchExpenses = async (filter?: { from?: string; to?: string }) => {
-    const { data, error } = await supabase
-      .from("expenses")
+  const fetchCategories = async () => {
+    const { data } = await supabase
+      .from("expense_categories")
       .select("*")
-      .match({})
-      .gte(filter?.from ? "date" : undefined, filter?.from || undefined)
-      .lte(filter?.to ? "date" : undefined, filter?.to || undefined)
-      .order("date", { ascending: false });
+      .order("name", { ascending: true });
+    if (data) setCategories(data);
+  };
 
+  const fetchExpenses = async (filter?: { from?: string; to?: string }) => {
+    const query = supabase.from("expenses").select("*").order("date", { ascending: false });
+
+    if (filter?.from) query.gte("date", filter.from);
+    if (filter?.to) query.lte("date", filter.to);
+
+    const { data, error } = await query;
     if (!error && data) setExpenses(data);
+
     setLoading(false);
   };
 
   const openModalForCreate = () => {
     setEditId(null);
-    setForm({ category: "", description: "", amount: "", date: new Date().toISOString().split("T")[0] });
+    setForm({
+      category: "",
+      description: "",
+      amount: "",
+      date: new Date().toISOString().split("T")[0],
+    });
     setShowModal(true);
   };
 
@@ -105,17 +124,17 @@ export default function Expenses() {
 
   return (
     <div className="p-6">
+
+      {/* Filters */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
+
           <div className="flex flex-col">
             <label className="text-sm text-gray-600">Du</label>
             <input
               type="date"
               className="border p-2 rounded"
-              onChange={(e) => {
-                const from = e.target.value;
-                fetchExpenses({ from });
-              }}
+              onChange={(e) => fetchExpenses({ from: e.target.value })}
             />
           </div>
 
@@ -124,13 +143,11 @@ export default function Expenses() {
             <input
               type="date"
               className="border p-2 rounded"
-              onChange={(e) => {
-                const to = e.target.value;
-                fetchExpenses({ to });
-              }}
+              onChange={(e) => fetchExpenses({ to: e.target.value })}
             />
           </div>
         </div>
+
         <h2 className="text-xl font-bold text-gray-700">Dépenses / Sorties Caisse</h2>
 
         {(role === "admin" || role === "manager") && (
@@ -170,7 +187,7 @@ export default function Expenses() {
               </tr>
             ) : (
               expenses.map((exp) => (
-                <tr key={exp.id} className="border-b hover:bg-gray-50 transition">
+                <tr key={exp.id} className="border-b hover:bg-gray-50">
                   <td className="py-3 px-4">{exp.date}</td>
                   <td className="py-3 px-4">{exp.category}</td>
                   <td className="py-3 px-4">{exp.description}</td>
@@ -208,14 +225,19 @@ export default function Expenses() {
               {editId ? "Modifier la dépense" : "Ajouter une dépense"}
             </h3>
 
-            {/* Inputs */}
             <div className="flex flex-col gap-3">
-              <input
+
+              {/* Category Dropdown */}
+              <select
                 className="border p-2 rounded"
-                placeholder="Catégorie"
                 value={form.category}
                 onChange={(e) => setForm({ ...form, category: e.target.value })}
-              />
+              >
+                <option value="">Sélectionner une catégorie</option>
+                {categories.map((c) => (
+                  <option key={c.id} value={c.name}>{c.name}</option>
+                ))}
+              </select>
 
               <input
                 className="border p-2 rounded"
