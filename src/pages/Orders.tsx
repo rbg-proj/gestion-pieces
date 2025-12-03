@@ -270,7 +270,7 @@ export default function OrdersPage() {
                     <TableCell>{order.paymentMethod}</TableCell>
                     {(user?.role === "admin" || user?.role === "manager") && (
                     <TableCell className="text-center">
-                      <div className="flex justify-center items-center gap-3">
+                      <div className="py-3 px-4 flex items-center justify-center gap-4">
                         
                         <button onClick={(e) => { e.stopPropagation();                                                 setSelectedSale(order); 
                           fetchSaleDetails(order.rawId); }} 
@@ -280,7 +280,7 @@ export default function OrdersPage() {
                         
                         <button onClick={async (e) => {
                           e.stopPropagation();
-                          if (!confirm("Voulez-vous Supprimer DEFINITIVEMENT cette vente ?")) return;
+                          if (!confirm("Voulez-vous SUPPRIMER DEFINITIVEMENT cette vente ?")) return;
                           const { error } = await supabase.from("sales").delete().eq("id", order.rawId);
                           if (error) console.error("Erreur suppression de la vente :", error.message);
                           else setOrders((prev) => prev.filter((o) => o.rawId !== order.rawId));
