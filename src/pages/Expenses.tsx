@@ -97,6 +97,7 @@ const exportExcel = () => {
   if (!error) {
     setExpenses(data || []);
     setTotalCount(count || 0);
+    setLoading(false); 
   }
 };
   
