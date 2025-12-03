@@ -12,7 +12,7 @@ import {
   Settings,
   X,
   FileBarChart,
-  WalletMinus,
+  Wallet,
   DollarSign
 } from 'lucide-react';
 import { useAuth } from "@/hooks/useAuth";
