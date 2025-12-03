@@ -7,7 +7,8 @@ import { saveAs } from "file-saver";
 
 interface Expense {
   id: number;
-  category: string;
+  category_id: number;
+  category_name?: string;
   description: string;
   amount: number;
   date: string;
@@ -24,7 +25,7 @@ export default function Expenses() {
   const pageSize = 10;
   const [totalCount, setTotalCount] = useState(0);
 
-  // Filtres de dates
+  // Filtres dates
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
 
@@ -32,23 +33,28 @@ export default function Expenses() {
   const [showModal, setShowModal] = useState(false);
   const [editId, setEditId] = useState<number | null>(null);
   const [form, setForm] = useState({
-    category: "",
+    category_id: "",
     description: "",
     amount: "",
     date: new Date().toISOString().split("T")[0],
   });
+
+  // Catégories
+  const [categories, setCategories] = useState<any[]>([]);
 
   // Modal Gestion Catégories
   const [showCategoryManager, setShowCategoryManager] = useState(false);
 
   useEffect(() => {
     fetchRole();
+    fetchCategories();
   }, []);
 
   useEffect(() => {
     fetchExpenses();
   }, [page, fromDate, toDate]);
 
+  // Fetch rôle utilisateur
   const fetchRole = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
@@ -62,6 +68,17 @@ export default function Expenses() {
     setRole(data?.role || null);
   };
 
+  // Fetch catégories
+  const fetchCategories = async () => {
+    const { data, error } = await supabase
+      .from("expense_categories")
+      .select("*")
+      .order("name", { ascending: true });
+
+    if (!error) setCategories(data || []);
+  };
+
+  // Fetch dépenses
   const fetchExpenses = async () => {
     setLoading(true);
 
@@ -70,7 +87,15 @@ export default function Expenses() {
 
     let query = supabase
       .from("expenses")
-      .select("*", { count: "exact" })
+      .select(`
+        id,
+        description,
+        amount,
+        date,
+        user_id,
+        category_id,
+        category:expense_categories(name)
+      `, { count: "exact" })
       .order("date", { ascending: false })
       .range(from, to);
 
@@ -80,15 +105,28 @@ export default function Expenses() {
     const { data, count, error } = await query;
 
     if (!error) {
-      setExpenses(data || []);
+      setExpenses(
+        (data || []).map((exp: any) => ({
+          ...exp,
+          category_name: exp.category?.name || "Non défini",
+        }))
+      );
       setTotalCount(count || 0);
     }
 
     setLoading(false);
   };
 
+  // Export Excel
   const exportExcel = () => {
-    const worksheet = XLSX.utils.json_to_sheet(expenses);
+    const cleaned = expenses.map((e) => ({
+      Date: e.date,
+      Catégorie: e.category_name,
+      Description: e.description,
+      Montant: e.amount,
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(cleaned);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Dépenses");
 
@@ -97,17 +135,17 @@ export default function Expenses() {
       type: "array",
     });
 
-    const blob = new Blob([excelBuffer], {
-      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    });
-
-    saveAs(blob, "depenses.xlsx");
+    saveAs(
+      new Blob([excelBuffer], { type: "application/octet-stream" }),
+      "depenses.xlsx"
+    );
   };
 
+  // Ouvrir modal création
   const openModalForCreate = () => {
     setEditId(null);
     setForm({
-      category: "",
+      category_id: "",
       description: "",
       amount: "",
       date: new Date().toISOString().split("T")[0],
@@ -115,10 +153,11 @@ export default function Expenses() {
     setShowModal(true);
   };
 
+  // Ouvrir modal édition
   const openModalForEdit = (exp: Expense) => {
     setEditId(exp.id);
     setForm({
-      category: exp.category,
+      category_id: String(exp.category_id),
       description: exp.description,
       amount: String(exp.amount),
       date: exp.date,
@@ -126,12 +165,13 @@ export default function Expenses() {
     setShowModal(true);
   };
 
+  // Sauvegarde
   const handleSave = async () => {
     const user = (await supabase.auth.getUser()).data.user;
     if (!user) return;
 
     const payload = {
-      category: form.category,
+      category_id: Number(form.category_id),
       description: form.description,
       amount: Number(form.amount),
       date: form.date,
@@ -150,7 +190,6 @@ export default function Expenses() {
 
   const handleDelete = async (id: number) => {
     if (!confirm("Supprimer cette dépense ?")) return;
-
     await supabase.from("expenses").delete().eq("id", id);
     fetchExpenses();
   };
@@ -245,7 +284,7 @@ export default function Expenses() {
                   className="border-b hover:bg-gray-50 transition"
                 >
                   <td className="py-3 px-4">{exp.date}</td>
-                  <td className="py-3 px-4">{exp.category}</td>
+                  <td className="py-3 px-4">{exp.category_name}</td>
                   <td className="py-3 px-4">{exp.description}</td>
                   <td className="py-3 px-4 font-semibold text-red-600">
                     {exp.amount} $
@@ -314,14 +353,21 @@ export default function Expenses() {
             </h3>
 
             <div className="flex flex-col gap-3">
-              <input
+              {/* SELECT CATEGORIES */}
+              <select
                 className="border p-2 rounded"
-                placeholder="Catégorie"
-                value={form.category}
+                value={form.category_id}
                 onChange={(e) =>
-                  setForm({ ...form, category: e.target.value })
+                  setForm({ ...form, category_id: e.target.value })
                 }
-              />
+              >
+                <option value="">-- Sélectionner une catégorie --</option>
+                {categories.map((cat) => (
+                  <option key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </option>
+                ))}
+              </select>
 
               <input
                 className="border p-2 rounded"
