@@ -46,6 +46,7 @@ Version 27 :
 Amélioration Gestion des utilisateurs OK
 
 Version 28
-Composant indépendant de gestion d'entrée et sortie en stock
 Ajout module dépenses
 
+Version 29
+Composant indépendant de gestion d'entrée et sortie en stock
