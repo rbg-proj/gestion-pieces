@@ -199,6 +199,11 @@ export default function Expenses() {
     fetchExpenses();
   };
 
+  const totalExpenses = expenses.reduce((sum, exp) => {
+  return sum + Number(exp.amount || 0);
+}, 0);
+
+  
   return (
     <div className="p-6">
       {/* Filtres dates */}
