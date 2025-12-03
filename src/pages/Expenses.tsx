@@ -254,6 +254,16 @@ export default function Expenses() {
         📤 Exporter Excel
       </button>
 
+      <div className="flex justify-end mb-3">
+        <div className="text-right bg-gray-100 px-4 py-2 rounded-lg shadow-sm">
+          <p className="text-sm text-gray-500">Total des dépenses :</p>
+          <p className="text-xl font-bold text-red-600">
+            {totalExpenses.toLocaleString("fr-FR")} $
+          </p>
+        </div>
+      </div>
+
+      
       {/* Table Expenses */}
       <div className="overflow-x-auto shadow rounded-lg border border-gray-200">
         <table className="min-w-full bg-white">
