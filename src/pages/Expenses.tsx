@@ -44,7 +44,6 @@ export default function Expenses() {
 
   // Modal Gestion Catégories
   const [showCategoryManager, setShowCategoryManager] = useState(false);
-  
 
   useEffect(() => {
     fetchRole();
@@ -88,7 +87,8 @@ export default function Expenses() {
 
     let query = supabase
       .from("expenses")
-      .select(`
+      .select(
+        `
         id,
         description,
         amount,
@@ -96,7 +96,9 @@ export default function Expenses() {
         user_id,
         category_id,
         category:expense_categories(name)
-      `, { count: "exact" })
+      `,
+        { count: "exact" }
+      )
       .order("date", { ascending: false })
       .range(from, to);
 
@@ -195,9 +197,15 @@ export default function Expenses() {
     fetchExpenses();
   };
 
-  
+  // ✅ CALCUL TOTAL DÉPENSES (dynamique selon les filtres)
+  const totalExpenses = expenses.reduce(
+    (sum, exp) => sum + Number(exp.amount || 0),
+    0
+  );
+
   return (
     <div className="p-6">
+
       {/* Filtres dates */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
@@ -243,6 +251,16 @@ export default function Expenses() {
         )}
       </div>
 
+      {/* ✅ TOTAL DÉPENSES */}
+      <div className="flex justify-end mb-4">
+        <div className="bg-gray-100 px-4 py-2 rounded-lg shadow text-right">
+          <div className="text-sm text-gray-500">Total des dépenses :</div>
+          <div className="text-xl font-bold text-red-600">
+            {totalExpenses.toLocaleString("fr-FR")} $
+          </div>
+        </div>
+      </div>
+
       {/* Export Excel */}
       <button
         onClick={exportExcel}
@@ -251,7 +269,6 @@ export default function Expenses() {
         📤 Exporter Excel
       </button>
 
-      
       {/* Table Expenses */}
       <div className="overflow-x-auto shadow rounded-lg border border-gray-200">
         <table className="min-w-full bg-white">
@@ -282,10 +299,7 @@ export default function Expenses() {
               </tr>
             ) : (
               expenses.map((exp) => (
-                <tr
-                  key={exp.id}
-                  className="border-b hover:bg-gray-50 transition"
-                >
+                <tr key={exp.id} className="border-b hover:bg-gray-50 transition">
                   <td className="py-3 px-4">{exp.date}</td>
                   <td className="py-3 px-4">{exp.category_name}</td>
                   <td className="py-3 px-4">{exp.description}</td>
