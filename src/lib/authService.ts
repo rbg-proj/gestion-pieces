@@ -44,7 +44,7 @@ export async function loginWithSupabase(
       await supabase.auth.signOut();
       return {
         user: null,
-        error: 'Votre compte a été désactivé. Contactez l\'administrateur pour plus d\'informations.',
+        error: 'Votre compte a été désactivé. Contactez votre administrateur pour plus d\'informations.',
         accountDisabled: true
       };
     }
