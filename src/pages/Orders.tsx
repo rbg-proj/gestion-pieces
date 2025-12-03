@@ -274,7 +274,7 @@ export default function OrdersPage() {
                         
                         <button onClick={(e) => { e.stopPropagation();                                                 setSelectedSale(order); 
                           fetchSaleDetails(order.rawId); }} 
-                          className="text-blue-600 hover:text-blue-800" 
+                          className="p-2 rounded-full hover:bg-blue-100 transition-colors duration-200 text-blue-600 hover:text-blue-800" 
                           title="Voir les détails"><Eye size={18} />
                         </button>
                         
