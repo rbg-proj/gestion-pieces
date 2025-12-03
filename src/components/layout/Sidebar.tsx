@@ -38,7 +38,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
     { name: 'Autres Rapports', path: '/reports', icon: <BarChartBig size={20} />, roles: ['admin', 'manager'] },
     { name: 'Historique Stock', path: '/stock-history', icon: <PieChart size={20} />, roles: ['admin', 'manager'] },
   { name: 'Taux de change', path: '/exchangeRates', icon: <DollarSign size={20} />, roles: ['admin', 'manager'] },
-     { name: 'Sortie Caisse', path: '/Expenses', icon: <Wallet size={20} />, roles: ['admin', 'manager', 'employee'] },
+     { name: 'Sortie Caisse', path: '/Expenses', icon: <Wallet size={20} />, roles: ['admin', 'manager'] },
   
     { name: 'Utilisateurs', path: '/Profiles', icon: <Users size={20} />, roles: ['admin'] },
   ];
