@@ -116,7 +116,7 @@ export default function Expenses() {
   };
 
   const handleDelete = async (id: number) => {
-    if (!confirm("Supprimer cette dépense ?")) return;
+    if (!confirm("Voulez-vous vraiment SUPPRIMER cette dépense ?")) return;
 
     await supabase.from("expenses").delete().eq("id", id);
     fetchExpenses();
