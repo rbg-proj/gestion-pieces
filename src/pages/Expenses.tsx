@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { supabase } from '../lib/supabase';
 import { Pencil, Trash2, PlusCircle, X } from "lucide-react";
 import ExpenseCategories from './Expenses-categories'; // ⬅️ Import du composant Catégories
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 
 interface Expense {
   id: number;
@@ -52,7 +54,24 @@ const [totalCount, setTotalCount] = useState(0);
 
     setRole(data?.role || null);
   };
-  
+
+  // --- AJOUT : export Excel ---
+const exportExcel = () => {
+  const worksheet = XLSX.utils.json_to_sheet(expenses);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Dépenses");
+
+  const excelBuffer = XLSX.write(workbook, {
+    bookType: "xlsx",
+    type: "array"
+  });
+
+  const blob = new Blob([excelBuffer], {
+    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+  });
+
+  saveAs(blob, "depenses.xlsx");
+};
   
 
   const fetchExpenses = async () => {
