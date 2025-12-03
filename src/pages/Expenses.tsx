@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from '../lib/supabase';
 import { Pencil, Trash2, PlusCircle, X } from "lucide-react";
+import ExpenseCategories from './Expenses-categories'; // ⬅️ Import du composant Catégories
 
 interface Expense {
   id: number;
@@ -11,18 +12,12 @@ interface Expense {
   user_id: string | null;
 }
 
-interface ExpenseCategory {
-  id: number;
-  name: string;
-}
-
 export default function Expenses() {
   const [expenses, setExpenses] = useState<Expense[]>([]);
-  const [categories, setCategories] = useState<ExpenseCategory[]>([]);
   const [loading, setLoading] = useState(true);
   const [role, setRole] = useState<string | null>(null);
 
-  // Modal
+  // Modal Dépense
   const [showModal, setShowModal] = useState(false);
   const [editId, setEditId] = useState<number | null>(null);
   const [form, setForm] = useState({
@@ -32,9 +27,11 @@ export default function Expenses() {
     date: new Date().toISOString().split("T")[0],
   });
 
+  // ⬅️ Modal Gestion Catégories
+  const [showCategoryManager, setShowCategoryManager] = useState(false);
+
   useEffect(() => {
     fetchRole();
-    fetchCategories();
     fetchExpenses();
   }, []);
 
@@ -51,34 +48,22 @@ export default function Expenses() {
     setRole(data?.role || null);
   };
 
-  const fetchCategories = async () => {
-    const { data } = await supabase
-      .from("expense_categories")
-      .select("*")
-      .order("name", { ascending: true });
-    if (data) setCategories(data);
-  };
-
   const fetchExpenses = async (filter?: { from?: string; to?: string }) => {
-    const query = supabase.from("expenses").select("*").order("date", { ascending: false });
+    const { data, error } = await supabase
+      .from("expenses")
+      .select("*")
+      .match({})
+      .gte(filter?.from ? "date" : undefined, filter?.from || undefined)
+      .lte(filter?.to ? "date" : undefined, filter?.to || undefined)
+      .order("date", { ascending: false });
 
-    if (filter?.from) query.gte("date", filter.from);
-    if (filter?.to) query.lte("date", filter.to);
-
-    const { data, error } = await query;
     if (!error && data) setExpenses(data);
-
     setLoading(false);
   };
 
   const openModalForCreate = () => {
     setEditId(null);
-    setForm({
-      category: "",
-      description: "",
-      amount: "",
-      date: new Date().toISOString().split("T")[0],
-    });
+    setForm({ category: "", description: "", amount: "", date: new Date().toISOString().split("T")[0] });
     setShowModal(true);
   };
 
@@ -116,7 +101,7 @@ export default function Expenses() {
   };
 
   const handleDelete = async (id: number) => {
-    if (!confirm("Voulez-vous vraiment SUPPRIMER cette dépense ?")) return;
+    if (!confirm("Supprimer cette dépense ?")) return;
 
     await supabase.from("expenses").delete().eq("id", id);
     fetchExpenses();
@@ -124,17 +109,18 @@ export default function Expenses() {
 
   return (
     <div className="p-6">
-
-      {/* Filters */}
+      {/* ⬅️ Filtres dates */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-
           <div className="flex flex-col">
             <label className="text-sm text-gray-600">Du</label>
             <input
               type="date"
               className="border p-2 rounded"
-              onChange={(e) => fetchExpenses({ from: e.target.value })}
+              onChange={(e) => {
+                const from = e.target.value;
+                fetchExpenses({ from });
+              }}
             />
           </div>
 
@@ -143,7 +129,10 @@ export default function Expenses() {
             <input
               type="date"
               className="border p-2 rounded"
-              onChange={(e) => fetchExpenses({ to: e.target.value })}
+              onChange={(e) => {
+                const to = e.target.value;
+                fetchExpenses({ to });
+              }}
             />
           </div>
         </div>
@@ -151,17 +140,27 @@ export default function Expenses() {
         <h2 className="text-xl font-bold text-gray-700">Dépenses / Sorties Caisse</h2>
 
         {(role === "admin" || role === "manager") && (
-          <button
-            onClick={openModalForCreate}
-            className="flex items-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition"
-          >
-            <PlusCircle size={18} />
-            Ajouter une dépense
-          </button>
+          <div className="flex gap-2">
+            {/* ⬅️ Bouton Gestion Catégories */}
+            <button
+              onClick={() => setShowCategoryManager(true)}
+              className="flex items-center gap-2 px-3 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 transition"
+            >
+              <PlusCircle size={18} /> Gérer Catégories
+            </button>
+
+            {/* ⬅️ Bouton Ajouter Dépense */}
+            <button
+              onClick={openModalForCreate}
+              className="flex items-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition"
+            >
+              <PlusCircle size={18} /> Ajouter une dépense
+            </button>
+          </div>
         )}
       </div>
 
-      {/* Table */}
+      {/* Table Expenses */}
       <div className="overflow-x-auto shadow rounded-lg border border-gray-200">
         <table className="min-w-full bg-white">
           <thead className="bg-gray-100 text-gray-600 uppercase text-sm">
@@ -187,7 +186,7 @@ export default function Expenses() {
               </tr>
             ) : (
               expenses.map((exp) => (
-                <tr key={exp.id} className="border-b hover:bg-gray-50">
+                <tr key={exp.id} className="border-b hover:bg-gray-50 transition">
                   <td className="py-3 px-4">{exp.date}</td>
                   <td className="py-3 px-4">{exp.category}</td>
                   <td className="py-3 px-4">{exp.description}</td>
@@ -210,14 +209,11 @@ export default function Expenses() {
         </table>
       </div>
 
-      {/* Modal */}
+      {/* ⬅️ Modal Dépense */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg w-96 relative animate-fadeIn">
-            <button
-              className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
-              onClick={() => setShowModal(false)}
-            >
+            <button className="absolute top-3 right-3 text-gray-500 hover:text-gray-700" onClick={() => setShowModal(false)}>
               <X size={20} />
             </button>
 
@@ -226,18 +222,12 @@ export default function Expenses() {
             </h3>
 
             <div className="flex flex-col gap-3">
-
-              {/* Category Dropdown */}
-              <select
+              <input
                 className="border p-2 rounded"
+                placeholder="Catégorie"
                 value={form.category}
                 onChange={(e) => setForm({ ...form, category: e.target.value })}
-              >
-                <option value="">Sélectionner une catégorie</option>
-                {categories.map((c) => (
-                  <option key={c.id} value={c.name}>{c.name}</option>
-                ))}
-              </select>
+              />
 
               <input
                 className="border p-2 rounded"
@@ -262,12 +252,21 @@ export default function Expenses() {
               />
             </div>
 
-            <button
-              onClick={handleSave}
-              className="mt-4 w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
-            >
+            <button onClick={handleSave} className="mt-4 w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">
               Enregistrer
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* ⬅️ Modal Gestion Catégories */}
+      {showCategoryManager && (
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-2/3 relative">
+            <button className="absolute top-3 right-3 text-gray-500 hover:text-gray-700" onClick={() => setShowCategoryManager(false)}>
+              <X size={20} />
+            </button>
+            <ExpenseCategories /> {/* ⬅️ Appel du composant ExpenseCategories */}
           </div>
         </div>
       )}
