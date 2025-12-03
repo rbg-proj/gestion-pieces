@@ -140,7 +140,7 @@ export default function Expenses() {
 
     saveAs(
       new Blob([excelBuffer], { type: "application/octet-stream" }),
-      "depenses.xlsx"
+      "RBG_depenses.xlsx"
     );
   };
 
