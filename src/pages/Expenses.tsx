@@ -270,7 +270,8 @@ export default function Expenses() {
         {/* EXPORT */}
             <button
               onClick={exportExcel}
-              className="px-4 py-2 bg-green-600 text-white rounded mb-4 hover:bg-green-700 transition"
+                className="text-green-600 hover:text-green-800 transition p-1"
+                title="Exporter en Excel"
             >
             <FileSpreadsheet size={18} />
             </button>
