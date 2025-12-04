@@ -257,6 +257,22 @@ const Sales: React.FC = () => {
   const handleCompleteSale = async () => {
     if (isSubmitting) return;
 
+    // --- Vérification des prix trop bas ---
+      const lowPriceItems = cart.filter(item => item.price <= 100);
+      
+      if (lowPriceItems.length > 0) {
+        const list = lowPriceItems.map(i => `${i.name} (${i.price} Fc)`).join('\n - ');
+        const confirmLow = window.confirm(
+          `⚠️ Certains articles ont un prix très bas (0 ou ≤ 100 Fc) :\n\n - ${list}\n\n` +
+          "Voulez-vous vraiment continuer ?"
+        );
+      
+        if (!confirmLow) {
+          toast.error("Vente annulée.");
+          return; // ⛔ stop la vente
+        }
+      }
+
     setIsSubmitting(true);
     setSaleCompleted(false);
     toast.loading('Validation de la vente en cours… Veuillez patienter.', { id: 'sale-progress' });
