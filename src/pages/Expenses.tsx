@@ -4,6 +4,7 @@ import { Pencil, Trash2, PlusCircle, X } from "lucide-react";
 import ExpenseCategories from "./Expenses-categories";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
+import { useNavigate } from "react-router-dom";
 
 interface Expense {
   id: number;
@@ -16,6 +17,7 @@ interface Expense {
 }
 
 export default function Expenses() {
+  const navigate = useNavigate();
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [loading, setLoading] = useState(true);
   const [role, setRole] = useState<string | null>(null);
@@ -205,7 +207,7 @@ export default function Expenses() {
 
   return (
     <div className="p-6">
-
+     
       {/* Filtres dates */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
@@ -245,7 +247,15 @@ export default function Expenses() {
               onClick={() => setShowCategoryManager(true)}
               className="flex items-center gap-2 px-3 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 transition"
             >
-              <PlusCircle size={18} /> Gérer Catégories
+              <Pencil size={18} /> Gérer Catégories
+            </button>
+
+              {/* Bouton fermer */}
+            <button
+              onClick={() => navigate("/cashledger")}
+              className="flex items-center gap-2 px-3 py-2 bg-yellow-600 text-white rounded-lg shadow hover:bg-red-700 transition"
+            >
+              X
             </button>
           </div>
         )}

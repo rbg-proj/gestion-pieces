@@ -18,6 +18,8 @@ import SettingsPage from './pages/SettingsPage';
 import ExchangeRatesPage from './pages/exchangeRates';
 import ProfilesPage from './pages/ProfilesPage';
 import Expenses from './pages/Expenses';
+import Cashledger from './pages/Cashledger';
+import AddCashEntry from './pages/addCashEntry';
 
 const InactivityWarning = () => {
   const { showWarning } = useAuth();
@@ -49,6 +51,9 @@ function App() {
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/exchangeRates" element={<ExchangeRatesPage />} />
             <Route path="/expenses" element={<Expenses />} />
+            <Route path="/Cashledger" element={<Cashledger />} />
+            <Route path="/addcashentry" element={<AddCashEntry />} />
+            <Route path="/addcashentry/:id" element={<AddCashEntry />} />
             <Route path="/profiles" element={<ProfilesPage />} />
           </Route>
         </Routes>
