@@ -225,9 +225,7 @@ export default function Expenses() {
           </div>
         </div>
 
-        <h2 className="text-lg md:text-xl font-bold text-gray-700 text-center">
-          Dépenses / Sorties Caisse
-        </h2>
+       
 
         {(role === "admin" || role === "manager") && (
           <div className="flex flex-wrap gap-2 justify-center">
