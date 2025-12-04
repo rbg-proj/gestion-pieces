@@ -268,7 +268,7 @@ const Sales: React.FC = () => {
         );
       
         if (!confirmLow) {
-          toast.error("Vente annulée.");
+          toast.error("Vente annulée. Veuillez corriger les prix");
           return; // ⛔ stop la vente
         }
       }
