@@ -50,3 +50,6 @@ Ajout module dépenses
 
 Version 29
 Composant indépendant de gestion d'entrée et sortie en stock
+Composant de Gestion caisse réelle / Entrées - Sorties
+Refactorisation
+Responsive
