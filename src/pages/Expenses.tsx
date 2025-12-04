@@ -199,12 +199,13 @@ export default function Expenses() {
   return (
     <div className="p-4 md:p-6">
 
+      <h2 className="text-lg md:text-xl font-bold text-gray-700 text-center">
+          Dépenses / Sorties Caisse
+      </h2>
       {/* ===== HEADER + FILTRES ===== */}
       <div className="flex flex-col gap-4 md:gap-0 md:flex-row md:items-center md:justify-between mb-6">
 
-         <h2 className="text-lg md:text-xl font-bold text-gray-700 text-center">
-          Dépenses / Sorties Caisse
-        </h2>
+         
 
         
         {/* Filtres */}
