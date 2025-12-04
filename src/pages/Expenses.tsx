@@ -266,13 +266,7 @@ export default function Expenses() {
           <div className="text-xl font-bold text-red-600">
             {totalExpenses.toLocaleString("fr-FR")} $
           </div>
-          {/* EXPORT */}
-            <button
-              onClick={exportExcel}
-              className="px-4 py-2 bg-green-600 text-white rounded mb-4 hover:bg-green-700 transition"
-            >
-            <FileSpreadsheet size={18} />Excel
-            </button>
+          
         </div>
       </div>
 
