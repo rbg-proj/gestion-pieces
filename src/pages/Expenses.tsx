@@ -201,8 +201,7 @@ export default function Expenses() {
 
       <h2 className="text-lg md:text-xl font-bold text-gray-700 text-start">
           Dépenses / Sorties Caisse
-      </h2>
-      {/* EXPORT */}
+        {/* EXPORT */}
             <button
               onClick={exportExcel}
                 className="text-green-600 hover:text-green-800 transition p-1"
@@ -210,6 +209,8 @@ export default function Expenses() {
             >
             <FileSpreadsheet size={18} />
             </button>
+      </h2>
+      
       
       {/* ===== HEADER + FILTRES ===== */}
       <div className="flex flex-col gap-4 md:gap-0 md:flex-row md:items-center md:justify-between mb-6">
