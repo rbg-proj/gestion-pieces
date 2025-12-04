@@ -261,7 +261,7 @@ export default function Expenses() {
 
       {/* TOTAL */}
       <div className="flex justify-end mb-4">
-        <div className="bg-gray-100 px-4 py-2 rounded-lg shadow text-right w-full sm:w-auto">
+        <div className="bg-gray-100 px-4 py-2 rounded-lg shadow text-start w-full sm:w-auto">
           <div className="text-sm text-gray-500">Total des dépenses :</div>
           <div className="text-xl font-bold text-red-600">
             {totalExpenses.toLocaleString("fr-FR")} $
