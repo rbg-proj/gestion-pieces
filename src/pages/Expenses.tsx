@@ -202,6 +202,11 @@ export default function Expenses() {
       {/* ===== HEADER + FILTRES ===== */}
       <div className="flex flex-col gap-4 md:gap-0 md:flex-row md:items-center md:justify-between mb-6">
 
+         <h2 className="text-lg md:text-xl font-bold text-gray-700 text-center">
+          Dépenses / Sorties Caisse
+        </h2>
+
+        
         {/* Filtres */}
         <div className="flex flex-wrap gap-3">
           <div className="flex flex-col w-full sm:w-auto">
