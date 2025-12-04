@@ -1,3 +1,5 @@
+/* ======= VERSION OPTIMISÉE ET RESPONSIVE ======= */
+
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 import { Pencil, Trash2, PlusCircle, X } from "lucide-react";
@@ -27,11 +29,11 @@ export default function Expenses() {
   const pageSize = 10;
   const [totalCount, setTotalCount] = useState(0);
 
-  // Filtres dates
+  // Filtres
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
 
-  // Modal Dépenses
+  // Modals
   const [showModal, setShowModal] = useState(false);
   const [editId, setEditId] = useState<number | null>(null);
   const [form, setForm] = useState({
@@ -41,10 +43,7 @@ export default function Expenses() {
     date: new Date().toISOString().split("T")[0],
   });
 
-  // Catégories
   const [categories, setCategories] = useState<any[]>([]);
-
-  // Modal Gestion Catégories
   const [showCategoryManager, setShowCategoryManager] = useState(false);
 
   useEffect(() => {
@@ -56,7 +55,6 @@ export default function Expenses() {
     fetchExpenses();
   }, [page, fromDate, toDate]);
 
-  // Fetch rôle utilisateur
   const fetchRole = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
@@ -70,7 +68,6 @@ export default function Expenses() {
     setRole(data?.role || null);
   };
 
-  // Fetch catégories
   const fetchCategories = async () => {
     const { data, error } = await supabase
       .from("expense_categories")
@@ -80,7 +77,6 @@ export default function Expenses() {
     if (!error) setCategories(data || []);
   };
 
-  // Fetch dépenses
   const fetchExpenses = async () => {
     setLoading(true);
 
@@ -122,7 +118,6 @@ export default function Expenses() {
     setLoading(false);
   };
 
-  // Export Excel
   const exportExcel = () => {
     const cleaned = expenses.map((e) => ({
       Date: e.date,
@@ -146,7 +141,6 @@ export default function Expenses() {
     );
   };
 
-  // Ouvrir modal création
   const openModalForCreate = () => {
     setEditId(null);
     setForm({
@@ -158,7 +152,6 @@ export default function Expenses() {
     setShowModal(true);
   };
 
-  // Ouvrir modal édition
   const openModalForEdit = (exp: Expense) => {
     setEditId(exp.id);
     setForm({
@@ -170,7 +163,6 @@ export default function Expenses() {
     setShowModal(true);
   };
 
-  // Sauvegarde
   const handleSave = async () => {
     const user = (await supabase.auth.getUser()).data.user;
     if (!user) return;
@@ -199,71 +191,73 @@ export default function Expenses() {
     fetchExpenses();
   };
 
-  // ✅ CALCUL TOTAL DÉPENSES (dynamique selon les filtres)
   const totalExpenses = expenses.reduce(
     (sum, exp) => sum + Number(exp.amount || 0),
     0
   );
 
   return (
-    <div className="p-6">
-     
-      {/* Filtres dates */}
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-3">
-          <div className="flex flex-col">
+    <div className="p-4 md:p-6">
+
+      {/* ===== HEADER + FILTRES ===== */}
+      <div className="flex flex-col gap-4 md:gap-0 md:flex-row md:items-center md:justify-between mb-6">
+
+        {/* Filtres */}
+        <div className="flex flex-wrap gap-3">
+          <div className="flex flex-col w-full sm:w-auto">
             <label className="text-sm text-gray-600">Du</label>
             <input
               type="date"
-              className="border p-2 rounded"
+              className="border p-2 rounded w-full"
               value={fromDate}
               onChange={(e) => setFromDate(e.target.value)}
             />
           </div>
 
-          <div className="flex flex-col">
+          <div className="flex flex-col w-full sm:w-auto">
             <label className="text-sm text-gray-600">Au</label>
             <input
               type="date"
-              className="border p-2 rounded"
+              className="border p-2 rounded w-full"
               value={toDate}
               onChange={(e) => setToDate(e.target.value)}
             />
           </div>
         </div>
 
-        <h2 className="text-xl font-bold text-gray-700">Dépenses / Sorties Caisse</h2>
+        <h2 className="text-lg md:text-xl font-bold text-gray-700 text-center">
+          Dépenses / Sorties Caisse
+        </h2>
 
         {(role === "admin" || role === "manager") && (
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2 justify-center">
             <button
               onClick={openModalForCreate}
-              className="flex items-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition"
+              className="flex items-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
             >
-              <PlusCircle size={18} /> Ajouter une dépense
+              <PlusCircle size={18} /> Ajouter
             </button>
 
             <button
               onClick={() => setShowCategoryManager(true)}
-              className="flex items-center gap-2 px-3 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 transition"
+              className="flex items-center gap-2 px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
             >
-              <Pencil size={18} /> Gérer Catégories
+              <Pencil size={18} /> Catégories
             </button>
 
-              {/* Bouton fermer */}
             <button
               onClick={() => navigate("/cashledger")}
-              className="flex items-center gap-2 px-3 py-2 bg-yellow-600 text-white rounded-lg shadow hover:bg-red-700 transition"
+              className="flex items-center gap-2 px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
             >
-              X
+              <X size={18} />
             </button>
           </div>
         )}
       </div>
 
-      {/* ✅ TOTAL DÉPENSES */}
+      {/* TOTAL */}
       <div className="flex justify-end mb-4">
-        <div className="bg-gray-100 px-4 py-2 rounded-lg shadow text-right">
+        <div className="bg-gray-100 px-4 py-2 rounded-lg shadow text-right w-full sm:w-auto">
           <div className="text-sm text-gray-500">Total des dépenses :</div>
           <div className="text-xl font-bold text-red-600">
             {totalExpenses.toLocaleString("fr-FR")} $
@@ -271,17 +265,17 @@ export default function Expenses() {
         </div>
       </div>
 
-      {/* Export Excel */}
+      {/* EXPORT */}
       <button
         onClick={exportExcel}
-        className="px-3 py-2 bg-green-600 text-white rounded mb-3"
+        className="px-4 py-2 bg-green-600 text-white rounded mb-4 hover:bg-green-700 transition"
       >
         📤 Exporter Excel
       </button>
 
-      {/* Table Expenses */}
+      {/* ===== TABLE ===== */}
       <div className="overflow-x-auto shadow rounded-lg border border-gray-200">
-        <table className="min-w-full bg-white">
+        <table className="min-w-full text-sm sm:text-base">
           <thead className="bg-gray-100 text-gray-600 uppercase text-sm">
             <tr>
               <th className="py-3 px-4 text-left">Date</th>
@@ -310,15 +304,15 @@ export default function Expenses() {
             ) : (
               expenses.map((exp) => (
                 <tr key={exp.id} className="border-b hover:bg-gray-50 transition">
-                  <td className="py-3 px-4">{exp.date}</td>
+                  <td className="py-3 px-4 whitespace-nowrap">{exp.date}</td>
                   <td className="py-3 px-4">{exp.category_name}</td>
-                  <td className="py-3 px-4">{exp.description}</td>
+                  <td className="py-3 px-4 break-words max-w-xs">{exp.description}</td>
                   <td className="py-3 px-4 font-semibold text-red-600">
                     {exp.amount} $
                   </td>
 
                   {(role === "admin" || role === "manager") && (
-                    <td className="py-3 px-4 flex items-center justify-center gap-4">
+                    <td className="py-3 px-4 flex justify-center gap-3">
                       <button
                         onClick={() => openModalForEdit(exp)}
                         className="text-blue-600 hover:text-blue-800 transition"
@@ -340,8 +334,8 @@ export default function Expenses() {
           </tbody>
         </table>
 
-        {/* Pagination */}
-        <div className="flex items-center justify-between mt-4 px-4 py-2">
+        {/* PAGINATION */}
+        <div className="flex flex-col sm:flex-row items-center justify-between mt-4 px-4 py-2 gap-3">
           <button
             disabled={page === 0}
             onClick={() => setPage(page - 1)}
@@ -364,10 +358,10 @@ export default function Expenses() {
         </div>
       </div>
 
-      {/* Modal Dépenses */}
+      {/* ===== MODAL DÉPENSE ===== */}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-96 relative animate-fadeIn">
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-2">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md relative">
             <button
               className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
               onClick={() => setShowModal(false)}
@@ -380,7 +374,6 @@ export default function Expenses() {
             </h3>
 
             <div className="flex flex-col gap-3">
-              {/* SELECT CATEGORIES */}
               <select
                 className="border p-2 rounded"
                 value={form.category_id}
@@ -433,10 +426,10 @@ export default function Expenses() {
         </div>
       )}
 
-      {/* Modal Catégories */}
+      {/* ===== MODAL CATÉGORIES ===== */}
       {showCategoryManager && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-2/3 relative">
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-3">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-3xl relative">
             <button
               className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
               onClick={() => setShowCategoryManager(false)}
