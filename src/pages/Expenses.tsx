@@ -270,7 +270,7 @@ export default function Expenses() {
         onClick={exportExcel}
         className="px-4 py-2 bg-green-600 text-white rounded mb-4 hover:bg-green-700 transition"
       >
-        📤 Exporter Excel
+      Export Excel
       </button>
 
       {/* ===== TABLE ===== */}
