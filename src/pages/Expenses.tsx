@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
-import { Pencil, Trash2, PlusCircle, X } from "lucide-react";
+import { Pencil, Trash2, PlusCircle, FileSpreadsheet, X } from "lucide-react";
 import ExpenseCategories from "./Expenses-categories";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
@@ -270,7 +270,7 @@ export default function Expenses() {
         onClick={exportExcel}
         className="px-4 py-2 bg-green-600 text-white rounded mb-4 hover:bg-green-700 transition"
       >
-      Export Excel
+      <FileSpreadsheet size={22} />Export Excel
       </button>
 
       {/* ===== TABLE ===== */}
