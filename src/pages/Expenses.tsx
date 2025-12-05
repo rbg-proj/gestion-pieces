@@ -212,8 +212,8 @@ export default function Expenses() {
     amount: Number(data.amount), // ← montant déjà converti
     date: data.date,
     user_id: user.id,
-    currency: data.currency,
-    exchange_rate_used: data.exchange_rate_used,
+    //currency: data.currency,
+    //exchange_rate_used: data.exchange_rate_used,
   };
 
   if (editId) {
