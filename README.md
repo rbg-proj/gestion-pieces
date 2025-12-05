@@ -56,3 +56,4 @@ Composant indépendant de gestion d'entrée et sortie en stock
 Refactorisation Expenses.tsx
 Responsive OK
 Ajout fonction saisie CDF/USD dans Dépenses, avec detection automatique CDF
+Ajout Filtre recherche par Type de mouvement dans Cashledger (Livre de caisse)
