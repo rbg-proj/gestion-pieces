@@ -53,5 +53,6 @@ Composant de Gestion caisse réelle / Entrées - Sorties
 
 Version 30 à 31
 Composant indépendant de gestion d'entrée et sortie en stock
-Refactorisation
+Refactorisation Expenses.tsx
 Responsive OK
+Ajout fonction saisie CDF/USD dans Dépenses, avec detection automatique CDF
