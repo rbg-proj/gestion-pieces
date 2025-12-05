@@ -146,6 +146,11 @@ export default function CashLedger() {
         e.description.toLowerCase().includes(search.toLowerCase())
       );
     }
+    
+    // Filtre par type de mouvement
+    if (movementFilter !== "all") {
+      result = result.filter((e) => e.type === movementFilter);
+    }
 
     // Filtre par date
     if (startDate) result = result.filter((e) => e.date >= startDate);
