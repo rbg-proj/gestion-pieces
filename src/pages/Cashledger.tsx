@@ -116,6 +116,11 @@ export default function CashLedger() {
           return { ...row, balance };
         });
 
+        // On remet dans le sens normal (du plus récent au plus ancien)
+      const finalRows = withBalance.reverse();
+      
+      setLedger(finalRows);
+      setFiltered(finalRows);
       
       const finalRows = combined.map((row) => {
         balance += row.entry - row.exit;
