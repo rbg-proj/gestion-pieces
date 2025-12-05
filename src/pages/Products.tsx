@@ -448,133 +448,136 @@ const exportToPDF = async () => {
 return (
     <div className="space-y-6">
 
-      
-
       {/* HEADER + EXPORT BUTTONS */}
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Tous nos Articles</h1>
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-3">
 
-        <div className="flex gap-3">
-          <button
-            onClick={exportToExcel}
-            className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
-          >
-            Export Excel
-          </button>
-
-          <button
-            onClick={exportToPDF}
-            className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
-          >
-            Export PDF
-          </button>
-
-          <button
-            onClick={() => {
-              setIsFormOpen(true);
-              setEditingProduct(null);
-              setFormData(initialFormState);
-            }}
-            className="inline-flex items-center px-4 py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600"
-          >
-            <PlusCircle size={16} className="mr-2" /> Créer un Article
-          </button>
-
-          <button
-            onClick={() => {
-              setIsCategoryModalOpen(true);
-              setEditingCategory(null);
-              setCategoryName("");
-            }}
-            className="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700"
-          >
-            <PlusCircle size={16} className="mr-2" /> Gérer les Catégories
-          </button>
-
-        </div>
+      <h1 className="text-xl sm:text-2xl font-bold">Tous nos Articles</h1>
+    
+      <div className="flex flex-wrap gap-3">
+    
+        <button
+          onClick={exportToExcel}
+          className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 shadow-sm active:scale-95"
+        >
+          Export Excel
+        </button>
+    
+        <button
+          onClick={exportToPDF}
+          className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 shadow-sm active:scale-95"
+        >
+          Export PDF
+        </button>
+    
+        <button
+          onClick={() => {
+            setIsFormOpen(true);
+            setEditingProduct(null);
+            setFormData(initialFormState);
+          }}
+          className="inline-flex items-center px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 shadow-sm active:scale-95"
+        >
+          <PlusCircle size={18} className="mr-2" />
+          Créer un Article
+        </button>
+    
+        <button
+          onClick={() => {
+            setIsCategoryModalOpen(true);
+            setEditingCategory(null);
+            setCategoryName("");
+          }}
+          className="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 shadow-sm active:scale-95"
+        >
+          <PlusCircle size={18} className="mr-2" />
+          Gérer les Catégories
+        </button>
+    
       </div>
+    </div>
 
       {error && (
         <div className="bg-red-100 text-red-700 p-3 rounded">{error}</div>
       )}
 
       {/* FILTERS */}
-      <div className="flex gap-4 mb-4 flex-wrap">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
         <input
           type="text"
-          placeholder="Recherche par nom ou barcode"
+          placeholder="Recherche..."
           value={searchTerm}
           onChange={(e) => {
             setSearchTerm(e.target.value);
             setCurrentPage(1);
           }}
-          className="flex-1 min-w-[200px] border rounded-md px-3 py-2"
+          className="border rounded-lg px-3 py-2 text-sm w-full"
         />
-
+      
         <select
           value={selectedCategory}
           onChange={(e) => {
             setSelectedCategory(e.target.value);
             setCurrentPage(1);
           }}
-          className="border rounded-md px-3 py-2"
+          className="border rounded-lg px-3 py-2 text-sm w-full"
         >
-          <option value="all">Toutes</option>
+          <option value="all">Toutes les catégories</option>
           {categories.map((cat) => (
             <option key={cat.id} value={cat.id}>{cat.name}</option>
           ))}
         </select>
-
+      
         <input
           type="number"
-          placeholder="Tri Stock min"
+          placeholder="Stock min"
           value={minStock}
           onChange={(e) => {
-            const val = e.target.value;
-            setMinStock(val === '' ? '' : Number(val));
+            const v = e.target.value;
+            setMinStock(v === '' ? '' : Number(v));
             setCurrentPage(1);
           }}
-          className="w-32 border rounded-md px-2 py-2"
+          className="border rounded-lg px-3 py-2 text-sm w-full"
         />
-
+      
         <input
           type="number"
-          placeholder="Tri Stock max"
+          placeholder="Stock max"
           value={maxStock}
           onChange={(e) => {
-            const val = e.target.value;
-            setMaxStock(val === '' ? '' : Number(val));
+            const v = e.target.value;
+            setMaxStock(v === '' ? '' : Number(v));
             setCurrentPage(1);
           }}
-          className="w-32 border rounded-md px-2 py-2"
+          className="border rounded-lg px-3 py-2 text-sm w-full"
         />
-
+      
         <button
           onClick={() => {
             setMinStock('');
             setMaxStock('');
             setCurrentPage(1);
           }}
-          className="border rounded-md px-3 py-2 bg-gray-100"
+          className="border rounded-lg px-3 py-2 text-sm bg-gray-100 hover:bg-gray-200 active:scale-95"
         >
-          Réinitialiser Stock
+          Réinitialiser
         </button>
+      
       </div>
 
-      {/* TABLE */}
-      <div className="overflow-x-auto bg-white rounded shadow">
-        <table className="min-w-full">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="px-4 py-2">N°</th>
-              <th className="px-4 py-2 text-left">Nom</th>
-              <th className="px-4 py-2 text-left">Catégorie</th>
-              <th className="px-4 py-2 text-right">Prix Achat</th>
-              <th className="px-4 py-2 text-right">Prix Vente</th>
-              <th className="px-4 py-2 text-right">Stock</th>
-              <th className="px-4 py-2 text-right">Actions</th>
-            </tr>
-          </thead>
+     {/* TABLE */}
+      <div className="overflow-x-auto bg-white rounded-lg shadow-sm">
+      <table className="min-w-full text-sm">
+        <thead className="bg-gray-100">
+          <tr>
+            <th className="px-3 py-2">N°</th>
+            <th className="px-3 py-2 text-left">Nom</th>
+            <th className="px-3 py-2 text-left">Catégorie</th>
+            <th className="px-3 py-2 text-right">Achat</th>
+            <th className="px-3 py-2 text-right">Vente</th>
+            <th className="px-3 py-2 text-right">Stock</th>
+            <th className="px-3 py-2 text-right">Actions</th>
+          </tr>
+        </thead>
           <tbody>
             {currentProducts.map((product, index) => (
               <tr key={product.id} className="border-b">
@@ -671,8 +674,8 @@ return (
 
       {/* FORM MODAL */}
       {isFormOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-30 flex justify-center items-center z-50">
-          <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg relative">
+      <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center p-4 z-50">
+  <div className="bg-white w-full max-w-lg rounded-xl shadow-lg p-6 relative">
 
             <button
               onClick={() => setIsFormOpen(false)}
@@ -684,10 +687,8 @@ return (
             <h2 className="text-xl font-semibold mb-4">
               {editingProduct ? 'Modifier l’article' : 'Nouvel article'}
             </h2>
-
-            <form onSubmit={handleFormSubmit} className="space-y-4">
-
-              <div>
+            <form onSubmit={handleFormSubmit} className="space-y-4 text-sm">
+                <div>
                 <label>Nom</label>
                 <input
                   ref={nameInputRef}

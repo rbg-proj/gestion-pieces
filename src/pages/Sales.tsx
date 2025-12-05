@@ -495,177 +495,204 @@ const Sales: React.FC = () => {
         </div>
       </div>
 
+
+
       {/* Section Panier */}
-      <div className="md:w-1/3 bg-white rounded-lg shadow-sm p-4 flex flex-col">
-        <div className="flex items-center mb-4">
-          <ShoppingCart className="text-primary-500 mr-2" size={26} />
-          <h2 className="text-xl font-semibold">Articles sélectionnés</h2>
-        </div>
+<div className="md:w-1/3 bg-white rounded-lg shadow-sm p-4 flex flex-col">
 
-        <div className="flex-1 overflow-y-auto mb-4 max-h-[380px]">
-          {cart.map((item) => (
-            <div key={item.id} className="flex items-center justify-between p-2 border-b">
-              <div className="flex-1">
-                <h6 className="font-medium">{item.name}</h6>
+  {/* HEADER */}
+  <div className="flex items-center mb-4">
+    <ShoppingCart className="text-primary-500 mr-2" size={26} />
+    <h2 className="text-xl font-semibold">Articles sélectionnés</h2>
+  </div>
 
-                {/* Zone de saisie - prix unitaire modifiable (en CDF)*/}
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-gray-500">Prix:</span>
-                  <input
-                    type="number"
-                    min="0"
-                    step="1"
-                    value={item.price}
-                    onChange={(e) => {
-                      const newPrice = parseFloat(e.target.value);
-                      if (!isNaN(newPrice) && newPrice >= 0) {
-                        setCart((prevCart) => prevCart.map((i) => (i.id === item.id ? { ...i, price: newPrice } : i)));
-                      }
-                    }}
-                    className="w-28 text-center border border-gray-300 rounded px-1 py-0.5 text-sm"
-                  />
-                  <span>Fc</span>
-                </div>
-              </div>
+  {/* LISTE PANIER */}
+  <div className="flex-1 overflow-y-auto mb-4 max-h-[380px] pr-1">
+    {cart.map((item) => (
+      <div key={item.id} className="flex items-center justify-between p-2 border-b">
 
-              <div className="flex items-center space-x-2">
-                <button onClick={() => updateQuantity(item.id, -1)} className="p-1 rounded-full hover:bg-gray-100">
-                  <Minus size={16} />
-                </button>
+        {/* Infos + Prix */}
+        <div className="flex-1">
+          <h6 className="font-medium break-words">{item.name}</h6>
 
-                <input
-                  type="number"
-                  min="1"
-                  value={item.quantity}
-                  onChange={(e) => {
-                    const newQuantity = parseInt(e.target.value, 10);
-                    if (!isNaN(newQuantity) && newQuantity > 0) {
-                      updateQuantity(item.id, newQuantity - item.quantity);
-                    }
-                  }}
-                  className="w-12 text-center border border-gray-300 rounded px-1 py-0.5 text-sm"
-                />
+          <div className="flex items-center gap-2 mt-1">
+            <span className="text-sm text-gray-500">Prix:</span>
 
-                <button onClick={() => updateQuantity(item.id, 1)} className="p-1 rounded-full hover:bg-gray-100">
-                  <Plus size={16} />
-                </button>
-                <button onClick={() => removeFromCart(item.id)} className="p-1 text-error-500 rounded-full hover:bg-error-50">
-                  <Trash2 size={16} />
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="border-t pt-4 space-y-2">
-          <div className="flex justify-between text-sm">
-            <span>Sous Total</span>
-            <span>{Number(subtotal ?? 0).toFixed(0)} Fc</span>
-          </div>
-          <div className="flex justify-between text-sm">
-            <span>TVA (0%)</span>
-            <span>{Number(tax ?? 0).toFixed(0)} Fc</span>
-          </div>
-          <div className="flex justify-between font-bold text-lg">
-            <span>Total Général</span>
-            <span>{Number(total ?? 0).toFixed(0)} Fc</span>
-          </div>
-        </div>
-
-        {/* Bas de la Section Panier */}
-        <div className="mt-4 space-y-2">
-          <h3 className="font-medium mb-2">Phone Client (0 pour Client Standard)</h3>
-          <div className="flex items-center gap-2">
             <input
-              type="tel"
-              placeholder="Entrer le téléphone client"
-              className="flex-1 px-3 py-2 border rounded-md h-[42px]"
-              value={customerPhone}
+              type="number"
+              min="0"
+              step="1"
+              value={item.price}
               onChange={(e) => {
-                setCustomerPhone(e.target.value);
-                setIsCustomerConfirmed(false);
+                const newPrice = parseFloat(e.target.value);
+                if (!isNaN(newPrice) && newPrice >= 0) {
+                  setCart((prev) =>
+                    prev.map((i) => (i.id === item.id ? { ...i, price: newPrice } : i))
+                  );
+                }
               }}
-              required
+              className="w-24 h-8 text-center border border-gray-300 rounded px-1 text-sm"
             />
 
-            <button
-                onClick={handleCustomerLookup}
-                className={`px-4 h-[42px] flex items-center justify-center text-white rounded-md 
-                  ${customerPhone.trim() === '' 
-                    ? 'bg-gray-300 cursor-not-allowed' 
-                    : 'bg-primary-500 hover:bg-primary-600'
-                  }`}
-                disabled={customerPhone.trim() === ''}
-              >
-                Retrouver
-              </button>
-            </div>
-          
-          
-
-          {isCustomerConfirmed && (
-            <p className="text-sm text-green-600">Client trouvé ✅ {customerName && `: ${customerName}`}</p>
-          )}
-
-          {customerNotFound && (
-            <p className="text-sm text-red-600">❌ Aucun client trouvé avec ce numéro.</p>
-          )}
-        </div>
-
-        <div className="mt-4 space-y-2">
-          <h3 className="font-medium mb-2">Methode de Paiement</h3>
-          <div className="grid grid-cols-3 gap-2">
-            <button
-              onClick={() => setSelectedPayment('card')}
-              className={`p-2 flex flex-col items-center rounded-lg border ${
-                selectedPayment === 'card' ? 'border-primary-500 bg-primary-50' : 'border-gray-200'
-              }`}
-              disabled
-            >
-              <CreditCard size={20} className={selectedPayment === 'card' ? 'text-primary-500' : 'text-gray-500'} />
-              <span className="text-sm mt-1">Card</span>
-            </button>
-            <button
-              onClick={() => setSelectedPayment('cash')}
-              className={`p-2 flex flex-col items-center rounded-lg border ${
-                selectedPayment === 'cash' ? 'border-primary-500 bg-primary-50' : 'border-gray-200'
-              }`}
-            >
-              <Banknote size={20} className={selectedPayment === 'cash' ? 'text-primary-500' : 'text-gray-500'} />
-              <span className="text-sm mt-1">Cash</span>
-            </button>
-            <button
-              onClick={() => setSelectedPayment('mobile')}
-              className={`p-2 flex flex-col items-center rounded-lg border ${
-                selectedPayment === 'mobile' ? 'border-primary-500 bg-primary-50' : 'border-gray-200'
-              }`}
-              disabled
-            >
-              <Smartphone size={20} className={selectedPayment === 'mobile' ? 'text-primary-500' : 'text-gray-500'} />
-              <span className="text-sm mt-1">Mobile</span>
-            </button>
+            <span>Fc</span>
           </div>
         </div>
 
-        <button
-          onClick={handleCompleteSale}
-          className={`mt-4 w-full py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed ${
-            isSubmitting ? 'opacity-60 cursor-wait' : ''
-          }`}
-          disabled={isSubmitting || cart.length === 0 || !selectedPayment || !isCustomerConfirmed}
-          data-tip={
-            isSubmitting
-              ? 'Validation en cours...'
-              : cart.length === 0 || !selectedPayment || !isCustomerConfirmed
-              ? 'Veuillez ajouter un article, trouver le client et/ou sélectionner un mode de paiement'
-              : ''
-          }
-        >
-          {isSubmitting ? '⏳ Validation...' : 'Valider'}
-        </button>
+        {/* Quantité + Delete */}
+        <div className="flex items-center space-x-2 ml-3">
+          <button onClick={() => updateQuantity(item.id, -1)} className="p-1 rounded hover:bg-gray-100">
+            <Minus size={16} />
+          </button>
 
-        <ReactTooltip place="top" effect="solid" />
+          <input
+            type="number"
+            min="1"
+            value={item.quantity}
+            onChange={(e) => {
+              const newQ = parseInt(e.target.value, 10);
+              if (!isNaN(newQ) && newQ > 0) updateQuantity(item.id, newQ - item.quantity);
+            }}
+            className="w-12 h-8 text-center border border-gray-300 rounded px-1 text-sm"
+          />
+
+          <button onClick={() => updateQuantity(item.id, 1)} className="p-1 rounded hover:bg-gray-100">
+            <Plus size={16} />
+          </button>
+
+          <button
+            onClick={() => removeFromCart(item.id)}
+            className="p-1 text-error-500 rounded hover:bg-error-50"
+          >
+            <Trash2 size={16} />
+          </button>
+        </div>
       </div>
+    ))}
+  </div>
+
+  {/* TOTALS */}
+  <div className="border-t pt-4 space-y-2">
+    <div className="flex justify-between text-sm">
+      <span>Sous Total</span>
+      <span>{Number(subtotal ?? 0).toFixed(0)} Fc</span>
+    </div>
+
+    <div className="flex justify-between text-sm">
+      <span>TVA (0%)</span>
+      <span>{Number(tax ?? 0).toFixed(0)} Fc</span>
+    </div>
+
+    <div className="flex justify-between font-bold text-lg">
+      <span>Total Général</span>
+      <span>{Number(total ?? 0).toFixed(0)} Fc</span>
+    </div>
+  </div>
+
+  {/* CLIENT */}
+  <div className="mt-4 space-y-2">
+    <h3 className="font-medium mb-2">Phone Client (0 pour Client Standard)</h3>
+
+    <div className="flex flex-col sm:flex-row items-stretch gap-2">
+
+      <input
+        type="tel"
+        placeholder="Entrer le téléphone client"
+        className="flex-1 px-3 py-2 border rounded-md h-11"
+        value={customerPhone}
+        onChange={(e) => {
+          setCustomerPhone(e.target.value);
+          setIsCustomerConfirmed(false);
+        }}
+        required
+      />
+
+      <button
+        onClick={handleCustomerLookup}
+        className={`px-4 h-11 rounded-md text-white flex items-center justify-center
+          ${customerPhone.trim() === ""
+            ? "bg-gray-300 cursor-not-allowed"
+            : "bg-primary-500 hover:bg-primary-600"}
+        `}
+        disabled={customerPhone.trim() === ""}
+      >
+        Retrouver
+      </button>
+
+    </div>
+
+    {isCustomerConfirmed && (
+      <p className="text-sm text-green-600">
+        Client trouvé ✅ {customerName && `: ${customerName}`}
+      </p>
+    )}
+
+    {customerNotFound && (
+      <p className="text-sm text-red-600">❌ Aucun client trouvé avec ce numéro.</p>
+    )}
+  </div>
+
+  {/* PAIEMENT */}
+  <div className="mt-4 space-y-2">
+    <h3 className="font-medium mb-2">Méthode de Paiement</h3>
+
+    <div className="grid grid-cols-3 gap-2">
+
+      <button
+        onClick={() => setSelectedPayment("card")}
+        className={`p-2 flex flex-col items-center rounded-lg border h-20
+          ${selectedPayment === "card" ? "border-primary-500 bg-primary-50" : "border-gray-200"}
+        `}
+        disabled
+      >
+        <CreditCard size={20} className={selectedPayment === "card" ? "text-primary-500" : "text-gray-500"} />
+        <span className="text-sm mt-1">Card</span>
+      </button>
+
+      <button
+        onClick={() => setSelectedPayment("cash")}
+        className={`p-2 flex flex-col items-center rounded-lg border h-20
+          ${selectedPayment === "cash" ? "border-primary-500 bg-primary-50" : "border-gray-200"}
+        `}
+      >
+        <Banknote size={20} className={selectedPayment === "cash" ? "text-primary-500" : "text-gray-500"} />
+        <span className="text-sm mt-1">Cash</span>
+      </button>
+
+      <button
+        onClick={() => setSelectedPayment("mobile")}
+        className={`p-2 flex flex-col items-center rounded-lg border h-20
+          ${selectedPayment === "mobile" ? "border-primary-500 bg-primary-50" : "border-gray-200"}
+        `}
+        disabled
+      >
+        <Smartphone size={20} className={selectedPayment === "mobile" ? "text-primary-500" : "text-gray-500"} />
+        <span className="text-sm mt-1">Mobile</span>
+      </button>
+
+    </div>
+  </div>
+
+  {/* VALIDATION */}
+  <button
+    onClick={handleCompleteSale}
+    className={`mt-4 w-full py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 
+      transition-colors duration-200 h-11
+      disabled:opacity-50 disabled:cursor-not-allowed
+      ${isSubmitting ? "opacity-60 cursor-wait" : ""}`}
+    disabled={isSubmitting || cart.length === 0 || !selectedPayment || !isCustomerConfirmed}
+    data-tip={
+      isSubmitting
+        ? "Validation en cours..."
+        : cart.length === 0 || !selectedPayment || !isCustomerConfirmed
+        ? "Veuillez ajouter un article, trouver le client et/ou sélectionner un mode de paiement"
+        : ""
+    }
+  >
+    {isSubmitting ? "⏳ Validation..." : "Valider"}
+  </button>
+
+  <ReactTooltip place="top" effect="solid" />
+</div>
 
       {/* Modal reçu / facture */}
       {showReceiptModal && (
