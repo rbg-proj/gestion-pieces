@@ -335,7 +335,11 @@ export default function OrdersPage() {
               </div>
               <div className="text-right">
                 <p className="text-sm text-gray-500">Montant total</p>
-                <p className="font-semibold">{selectedSale.total.toLocaleString("fr-FR")} $</p>
+                <p className="font-semibold">       
+                {selectedSale.total.toLocaleString("fr-FR", {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2
+                })} $ </p> 
               </div>
               <div>
                 <p className="text-sm text-gray-500">Méthode Paiement</p>
