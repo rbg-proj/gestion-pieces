@@ -136,7 +136,7 @@ export default function CashLedger() {
     setLoading(false);
   };
 
-  // Apply search, date filter, sort
+  // Apply search, date filter, mouvement type, sort
   useEffect(() => {
     let result = [...ledger];
 
