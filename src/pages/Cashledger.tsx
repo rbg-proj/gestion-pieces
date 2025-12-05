@@ -3,7 +3,7 @@ import { supabase } from "../lib/supabase";
 import { useNavigate } from "react-router-dom";
 import { Plus, Minus, Eye, Search } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { formatCurrency } from "@/utils";
+import { formatCurrency } from "@/utils/formatCurrency";
 
 interface LedgerItem {
   id?: string;        // ⬅️ UUID de l’entrée ou dépense
