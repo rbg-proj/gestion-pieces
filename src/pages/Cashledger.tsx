@@ -105,8 +105,7 @@ export default function CashLedger() {
       // Tri initial par date
       combined.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
       
-      // Calcul du solde depuis le bas du tableau
-      let balance = 0;
+      
 
       // Solde cumulatif
       let balance = 0;
