@@ -300,7 +300,6 @@ export default function CashLedger() {
                         {item.exit > 0 ? formatCurrency(item.exit,"USD")}
                       </td>
                       <td className="p-3 text-right">
-                       
                         {formatCurrency(item.balance, "USD")}
                       </td>
                       <td className="p-3 text-center">
