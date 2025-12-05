@@ -205,10 +205,12 @@ export default function Expenses() {
     if (!user) return;
 
     const payload = {
-      category_id: Number(form.category_id),
-      description: form.description,
-      amount: Number(form.amount),
-      date: form.date,
+      amount: Number(data.amount),
+      date: data.date,
+      description: data.description,
+      category_id: Number(data.category_id),
+      currency: data.currency,
+      exchange_rate_used: data.exchange_rate_used,
       user_id: user.id,
     };
 
