@@ -361,7 +361,7 @@ export default function CashLedger() {
                   </td>
 
                   <td className="p-3 text-right font-bold">
-                    {formatCurrency(totalBalance, "USD")}
+                    {/*formatCurrency(totalBalance, "USD")*/}
                   </td>
                 </tr>
               </tbody>
