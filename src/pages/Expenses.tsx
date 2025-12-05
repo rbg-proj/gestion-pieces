@@ -148,6 +148,7 @@ export default function Expenses() {
       description: "",
       amount: "",
       date: new Date().toISOString().split("T")[0],
+      currency: "USD", // par défaut
     });
     setShowModal(true);
   };
