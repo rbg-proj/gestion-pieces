@@ -182,7 +182,6 @@ export default function CashLedger() {
       
       result = withBal.reverse();
 
-   
 
     setFiltered(result);
     setPage(1);
@@ -267,6 +266,20 @@ export default function CashLedger() {
               onChange={(e) => setEndDate(e.target.value)}
             />
           </div>
+          <div>
+            <label className="text-sm font-medium">Type de mouvement</label>
+            <select
+              className="w-full border rounded-md p-2"
+              value={movementFilter}
+              onChange={(e) => setMovementFilter(e.target.value)}
+            >
+              <option value="all">Tous</option>
+              <option value="cashin">Entrée caisse</option>
+              <option value="sale">Vente journalière</option>
+              <option value="expense">Sortie (Dépense)</option>
+            </select>
+          </div>
+
         </CardContent>
       </Card>
 
