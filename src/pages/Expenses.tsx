@@ -53,6 +53,22 @@ export default function Expenses() {
   }, []);
 
   useEffect(() => {
+  const fetchRate = async () => {
+    const { data, error } = await supabase
+      .from("exchange_rates")
+      .select("rate")
+      .order("created_at", { ascending: false })
+      .limit(1);
+
+    if (!error && data && data.length > 0) {
+      setExchangeRate(data[0].rate);
+    }
+  };
+
+  if (showModal) fetchRate();
+}, [showModal]);
+
+  useEffect(() => {
     fetchExpenses();
   }, [page, fromDate, toDate]);
 
