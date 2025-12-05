@@ -341,7 +341,8 @@ export default function CashLedger() {
                   </td>
                    
                   <td className="p-3 text-right text-red-600 font-bold">
-                    {totalExit.toLocaleString("fr-FR")} $
+                    {formatCurrency(totalExit, "USD")}
+                  
                   </td>
 
                   <td className="p-3 text-right font-bold">
