@@ -25,6 +25,8 @@ export default function CashLedger() {
   const [search, setSearch] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [movementFilter, setMovementFilter] = useState("all");
+
 
   // Pagination
   const [page, setPage] = useState(1);
