@@ -99,6 +99,7 @@ export default function CashLedger() {
           description: `Appro caisse - ${c.description}`,
           entry: Number(c.amount),
           exit: 0,
+          type: "cashin", 
           editable: true, // ⬅️ modifiable
         })) || [];
 
