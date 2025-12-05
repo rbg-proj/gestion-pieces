@@ -203,28 +203,28 @@ export default function Expenses() {
   };
 
   const handleSave = async (data) => {
-    const user = (await supabase.auth.getUser()).data.user;
-    if (!user) return;
+  const user = (await supabase.auth.getUser()).data.user;
+  if (!user) return;
 
-    const payload = {
-      amount: Number(data.amount),
-      date: data.date,
-      description: data.description,
-      category_id: Number(data.category_id),
-      currency: data.currency,
-      exchange_rate_used: data.exchange_rate_used,
-      user_id: user.id,
-    };
-
-    if (editId) {
-      await supabase.from("expenses").update(payload).eq("id", editId);
-    } else {
-      await supabase.from("expenses").insert([payload]);
-    }
-
-    setShowModal(false);
-    fetchExpenses();
+  const payload = {
+    category_id: Number(data.category_id),
+    description: data.description,
+    amount: Number(data.amount), // ← montant déjà converti
+    date: data.date,
+    user_id: user.id,
+    currency: data.currency,
+    exchange_rate_used: data.exchange_rate_used,
   };
+
+  if (editId) {
+    await supabase.from("expenses").update(payload).eq("id", editId);
+  } else {
+    await supabase.from("expenses").insert([payload]);
+  }
+
+  setShowModal(false);
+  fetchExpenses();
+};
 
   const handleDelete = async (id: number) => {
     if (!confirm("Voulez-vous vraiment SUPPRIMER cette dépense ?")) return;
