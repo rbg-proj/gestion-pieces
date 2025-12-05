@@ -401,22 +401,28 @@ export default function Expenses() {
         </div>
       </div>
 
+
       {/* ===== MODAL DÉPENSE ===== */}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-2">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md relative">
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-start justify-center z-50 p-2 overflow-y-auto">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md relative max-h-[90vh] overflow-y-auto mt-10">
+      
+            {/* === BOUTON FERMER === */}
             <button
               className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
               onClick={() => setShowModal(false)}
             >
               <X size={20} />
             </button>
-
+      
             <h3 className="text-lg font-bold mb-4">
               {editId ? "Modifier la dépense" : "Ajouter une dépense"}
             </h3>
-
+      
+            {/* === FORMULAIRE === */}
             <div className="flex flex-col gap-3">
+      
+              {/* Catégorie */}
               <select
                 className="border p-2 rounded"
                 value={form.category_id}
@@ -431,7 +437,8 @@ export default function Expenses() {
                   </option>
                 ))}
               </select>
-
+      
+              {/* Description */}
               <input
                 className="border p-2 rounded"
                 placeholder="Description"
@@ -440,27 +447,63 @@ export default function Expenses() {
                   setForm({ ...form, description: e.target.value })
                 }
               />
-
-              <input
-                type="number"
-                className="border p-2 rounded"
-                placeholder="Montant"
-                value={form.amount}
-                onChange={(e) =>
-                  setForm({ ...form, amount: e.target.value })
-                }
-              />
-
+      
+              {/* Montant + Devise */}
+              <div className="flex gap-2">
+      
+                {/* Montant */}
+                <input
+                  type="number"
+                  className="border p-2 rounded w-full"
+                  placeholder="Montant"
+                  value={form.amount}
+                  onChange={(e) => {
+                    const value = e.target.value;
+      
+                    // Détection automatique : montant >= 4000 => probablement FC
+                    const autoCurrency =
+                      parseFloat(value) >= 4000 ? "FC" : form.currency;
+      
+                    setForm({
+                      ...form,
+                      amount: value,
+                      currency: autoCurrency,
+                    });
+                  }}
+                />
+      
+                {/* Devise */}
+                <select
+                  className="border p-2 rounded w-24"
+                  value={form.currency}
+                  onChange={(e) =>
+                    setForm({ ...form, currency: e.target.value })
+                  }
+                >
+                  <option value="USD">$</option>
+                  <option value="FC">Fc</option>
+                </select>
+              </div>
+      
+              {/* Taux du jour (affichage seulement) */}
+              <p className="text-xs text-gray-500">
+                Taux du jour : <span className="font-bold">{exchangeRate}</span> Fc / 1$
+              </p>
+      
+              {/* Date */}
               <input
                 type="date"
                 className="border p-2 rounded"
                 value={form.date}
-                onChange={(e) => setForm({ ...form, date: e.target.value })}
+                onChange={(e) =>
+                  setForm({ ...form, date: e.target.value })
+                }
               />
             </div>
-
+      
+            {/* === BOUTON === */}
             <button
-              onClick={handleSave}
+              onClick={handleSaveWithConversion}
               className="mt-4 w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
             >
               Enregistrer
@@ -469,6 +512,7 @@ export default function Expenses() {
         </div>
       )}
 
+      
      {/* ===== MODAL CATÉGORIES ===== */}
       {showCategoryManager && (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex items-start justify-center z-50 p-4 overflow-y-auto">
