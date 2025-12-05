@@ -169,7 +169,7 @@ export default function Expenses() {
   const finalData = {
     ...form,
     amount: amountUSD,
-    currency: form.currency,
+    //currency: form.currency,
     exchange_rate_used: exchangeRate, // optionnel, mais utile en audit
   };
 
@@ -184,7 +184,7 @@ export default function Expenses() {
       description: "",
       amount: "",
       date: new Date().toISOString().split("T")[0],
-      currency: "USD", // par défaut
+    //  currency: "USD", // par défaut
     });
     setShowModal(true);
   };
