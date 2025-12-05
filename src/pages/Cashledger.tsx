@@ -294,10 +294,10 @@ export default function CashLedger() {
                       <td className="p-3">{item.date}</td>
                       <td className="p-3">{item.description}</td>
                       <td className="p-3 text-right text-green-600">
-                        {item.entry > 0 ? item.entry.toLocaleString("fr-FR") : ""}
+                         {item.entry > 0 ? formatCurrency(item.entry,"USD") :""}
                       </td>
                       <td className="p-3 text-right text-red-600">
-                        {item.exit > 0 ? formatCurrency(item.exit,"USD"):""}
+                        {item.exit > 0 ? formatCurrency(item.exit,"USD") :""}
                       </td>
                       <td className="p-3 text-right">
                         {formatCurrency(item.balance, "USD")}
