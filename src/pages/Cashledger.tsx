@@ -84,6 +84,7 @@ export default function CashLedger() {
           description: `Dépense - ${e.description || "Non spécifiée"}`,
           entry: 0,
           exit: Number(e.amount),
+          type: "expense",
           editable: false, // ⬅️ modifiable
         })) || [];
 
