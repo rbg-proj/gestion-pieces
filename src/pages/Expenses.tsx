@@ -432,20 +432,19 @@ export default function Expenses() {
         </div>
       )}
 
-      {/* ===== MODAL CATÉGORIES ===== */}
-      {showCategoryManager && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-3">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-3xl relative">
-            <button
-              className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
-              onClick={() => setShowCategoryManager(false)}
-            >
-              <X size={20} />
-            </button>
-            <ExpenseCategories />
-          </div>
-        </div>
-      )}
+     {/* ===== MODAL CATÉGORIES ===== */}
+{showCategoryManager && (
+  <div className="fixed inset-0 bg-black bg-opacity-40 flex items-start justify-center z-50 p-4 overflow-y-auto">
+    <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-3xl relative max-h-[90vh] overflow-y-auto mt-10 mb-10">
+
+      <button
+        className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
+        onClick={() => setShowCategoryManager(false)}
+      >
+        <X size={20} />
+      </button>
+
+      <ExpenseCategories />
     </div>
-  );
-}
+  </div>
+)}
