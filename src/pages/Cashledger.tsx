@@ -13,6 +13,7 @@ interface LedgerItem {
   exit: number;
   balance?: number;
   editable?: boolean; // ⬅️ Modif ou Suppr Appro caisse & Dépenses
+   type: "sale" | "cashin" | "expense"; // Filtres Entrées - Sorties
 }
 
 export default function CashLedger() {
