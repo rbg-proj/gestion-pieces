@@ -158,6 +158,25 @@ export default function Expenses() {
     );
   };
 
+  const handleSaveWithConversion = () => {
+  let amountUSD = parseFloat(form.amount);
+
+  // Conversion FC → USD avec taux en DB
+  if (form.currency === "FC") {
+    amountUSD = amountUSD / exchangeRate;
+  }
+
+  const finalData = {
+    ...form,
+    amount: amountUSD,
+    currency: form.currency,
+    exchange_rate_used: exchangeRate, // optionnel, mais utile en audit
+  };
+
+  handleSave(finalData);
+};
+
+  
   const openModalForCreate = () => {
     setEditId(null);
     setForm({
