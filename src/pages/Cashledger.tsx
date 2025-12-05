@@ -104,11 +104,13 @@ export default function CashLedger() {
 
       // Tri initial par date
       combined.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-      
-      
 
       // Solde cumulatif
       let balance = 0;
+      
+      // On inverse temporairement
+      const reversed = [...combined].reverse();
+      
       const finalRows = combined.map((row) => {
         balance += row.entry - row.exit;
         return { ...row, balance };
