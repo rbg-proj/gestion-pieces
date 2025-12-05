@@ -122,13 +122,7 @@ export default function CashLedger() {
       setLedger(finalRows);
       setFiltered(finalRows);
       
-      const finalRows = combined.map((row) => {
-        balance += row.entry - row.exit;
-        return { ...row, balance };
-      });
-
-      setLedger(finalRows);
-      setFiltered(finalRows);
+      
     } catch (error) {
       console.error("Erreur chargement ledger :", error);
     }
