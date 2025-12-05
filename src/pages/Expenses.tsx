@@ -23,6 +23,7 @@ export default function Expenses() {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [loading, setLoading] = useState(true);
   const [role, setRole] = useState<string | null>(null);
+  const [exchangeRate, setExchangeRate] = useState(1); // Par défaut 1 pour éviter division par 0
 
   // Pagination
   const [page, setPage] = useState(0);
