@@ -110,6 +110,12 @@ export default function CashLedger() {
       
       // On inverse temporairement
       const reversed = [...combined].reverse();
+
+      const withBalance = reversed.map((row) => {
+          balance += row.entry - row.exit;
+          return { ...row, balance };
+        });
+
       
       const finalRows = combined.map((row) => {
         balance += row.entry - row.exit;
