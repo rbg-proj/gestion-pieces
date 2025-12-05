@@ -69,6 +69,7 @@ export default function CashLedger() {
               description: "Vente journalière",
               entry: Number(s.total),
               exit: 0,
+              type: "sale",
               editable: false, // ⬅️ impossible à modifier/supprimer
             })) || [];
 
