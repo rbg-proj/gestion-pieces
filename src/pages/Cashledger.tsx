@@ -342,7 +342,7 @@ export default function CashLedger() {
                     </tr>
                   ))
                 )}
-                {/* 🔹 Totaux dynamiques */}
+                {/* 🔹Affichage Totaux dynamiques */}
                 <tr>
                   <td>
                   </td>
