@@ -160,12 +160,18 @@ export default function CashLedger() {
       return 0;
     });
 
-    // Recalcul solde cumulatif
+// Recalcul solde cumulatif
     let balance = 0;
-    result = result.map((row) => {
-      balance += row.entry - row.exit;
-      return { ...row, balance };
-    });
+      const rev = [...result].reverse();
+      
+      const withBal = rev.map((row) => {
+        balance += row.entry - row.exit;
+        return { ...row, balance };
+      });
+      
+      result = withBal.reverse();
+
+   
 
     setFiltered(result);
     setPage(1);
