@@ -200,7 +200,7 @@ export default function Expenses() {
     setShowModal(true);
   };
 
-  const handleSave = async () => {
+  const handleSave = async (data) => {
     const user = (await supabase.auth.getUser()).data.user;
     if (!user) return;
 
