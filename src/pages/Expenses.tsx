@@ -1,4 +1,4 @@
-/* ======= VERSION OPTIMISÉE ET RESPONSIVE ======= */
+/* ======= VERSION OPTIMISÉE ET RESPONSIVE 05-12-25======= */
 
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
