@@ -185,7 +185,7 @@ export default function CashLedger() {
 
     setFiltered(result);
     setPage(1);
-  }, [search, startDate, endDate, sortField, sortOrder, ledger]);
+  }, [search, startDate, endDate, movementFilter, sortField, sortOrder, ledger]);
 
   const handleSort = (field: keyof LedgerItem) => {
     if (sortField === field) {
