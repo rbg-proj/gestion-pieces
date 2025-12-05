@@ -196,6 +196,8 @@ export default function Expenses() {
       description: exp.description,
       amount: String(exp.amount),
       date: exp.date,
+      currency: exp.currency || "USD",
+      exchange_rate_used: exp.exchange_rate_used || exchangeRate,
     });
     setShowModal(true);
   };
