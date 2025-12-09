@@ -8,7 +8,7 @@ import { loginWithSupabase, getProfile, User } from "@/lib/authService";
 import { supabase } from "@/lib/supabase";
 
 // Gestion d'inactivité POS-friendly
-const IDLE_TIMEOUT = 15 * 60 * 1000; // 15 min
+const IDLE_TIMEOUT = 2 * 60 * 1000; // 15 min
 const WARNING_TIMEOUT = 60 * 1000;   // 60 sec avant déconnexion
 
 export type AuthContextType = {
