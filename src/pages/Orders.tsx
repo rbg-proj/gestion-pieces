@@ -333,7 +333,7 @@ export default function OrdersPage() {
     // SUPPRESSION VENTE + RESTAURATION STOCK
     // =========================
     const deleteOrder = async (orderId: number) => {
-      if (!window.confirm("Voulez-vous vraiment supprimer cette vente ?\nLe stock sera automatiquement restauré.")) {
+      if (!window.confirm("Voulez-vous VRAIMENT SUPPRIMER cette vente ?\nLe stock sera automatiquement restauré.")) {
         return;
       }
     
