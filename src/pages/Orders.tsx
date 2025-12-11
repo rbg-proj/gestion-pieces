@@ -864,7 +864,7 @@ export default function OrdersPage() {
                           <label className="text-sm">Prix FC</label>
                           <Input
                             type="text"
-                            value={Number(item.unit_price || 0 * exchangeRate).toLocaleString("fr-FR")}
+                            value={Number(item.unit_price || 0 * exchangeRate)}
                             onChange={(e) => {
                               const raw = e.target.value.replace(/[^0-9.,]/g, "");
                               const fcValue = parseFloat(raw.replace(",", ".")) || 0;
