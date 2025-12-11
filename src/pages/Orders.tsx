@@ -5,6 +5,7 @@ import {
   FileSpreadsheet,
   Eye,
   Trash2,
+  Pencil,
   X,
 } from "lucide-react";
 import { supabase } from "../lib/supabase";
