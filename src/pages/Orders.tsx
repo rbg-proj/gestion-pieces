@@ -852,7 +852,7 @@ export default function OrdersPage() {
                           <label className="text-sm">Prix USD</label>
                           <Input
                             readOnly
-                            type="number"
+                            type="text"
                             value={item.unit_price}
                             onChange={(e) => {
                               const p = parseFloat(e.target.value || "0") || 0;
