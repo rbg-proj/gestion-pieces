@@ -329,6 +329,25 @@ export default function OrdersPage() {
       setIsSaving(false);
     }
   };
+
+  // Vérifier si le stock d’un produit est suffisant
+const checkStock = async (productId: number, requestedQty: number) => {
+  const { data, error } = await supabase
+    .from("products")
+    .select("stock")
+    .eq("id", productId)
+    .single();
+
+  if (error) return { ok: false, stock: 0, error };
+
+  const available = data.stock ?? 0;
+
+  return {
+    ok: requestedQty <= available,
+    stock: available
+  };
+};
+
     // =========================
     // SUPPRESSION VENTE + RESTAURATION STOCK
     // =========================
