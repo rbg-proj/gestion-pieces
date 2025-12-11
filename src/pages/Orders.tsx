@@ -834,7 +834,7 @@ export default function OrdersPage() {
                           <label className="text-sm">Quantité</label>
                           <Input
                             type="number"
-                            min={1}
+                            min={0}
                             value={item.quantity}
                             onChange={(e) => {
                               const qty = parseInt(e.target.value || "0", 10) || 0;
