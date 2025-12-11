@@ -850,6 +850,7 @@ export default function OrdersPage() {
                         <div>
                           <label className="text-sm">Prix USD</label>
                           <Input
+                            readOnly
                             type="number"
                             value={item.unit_price}
                             onChange={(e) => {
@@ -863,7 +864,7 @@ export default function OrdersPage() {
                         <div>
                           <label className="text-sm">Prix FC</label>
                           <Input
-                            readOnly
+                            
                             className="bg-gray-200"
                             value={((Number(item.unit_price || 0) * Number(exchangeRate || 1))).toLocaleString("fr-FR")}
                           />
