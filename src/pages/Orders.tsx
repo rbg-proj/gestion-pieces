@@ -68,6 +68,8 @@ export default function OrdersPage() {
   const [exchangeRate, setExchangeRate] = useState(2800);
   const [products, setProducts] = useState([]);
   const [searchArticle, setSearchArticle] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
+
 
   // Fetch Orders
   useEffect(() => {
