@@ -209,23 +209,23 @@ export default function OrdersPage() {
       return sortByDateAsc ? aDate - bDate : bDate - aDate;
     });
 
-  const indexOfLastRow = currentPage * rowsPerPage;
-  const indexOfFirstRow = indexOfLastRow - rowsPerPage;
-  const currentOrders = filteredOrders.slice(indexOfFirstRow, indexOfLastRow);
-  const totalPages = Math.max(1, Math.ceil(filteredOrders.length / rowsPerPage));
-
-  const totalVente = filteredOrders.reduce((sum, order) => sum + Number(order.total || 0), 0);
-  const ventesParClient = filteredOrders.reduce((acc, order) => {
-    acc[order.customer] = (acc[order.customer] || 0) + Number(order.total || 0);
-    return acc;
-  }, {} as Record<string, number>);
-  const ventesData = Object.entries(ventesParClient).map(([client, total]) => ({ client, total }));
+      const indexOfLastRow = currentPage * rowsPerPage;
+      const indexOfFirstRow = indexOfLastRow - rowsPerPage;
+      const currentOrders = filteredOrders.slice(indexOfFirstRow, indexOfLastRow);
+      const totalPages = Math.max(1, Math.ceil(filteredOrders.length / rowsPerPage));
+    
+      const totalVente = filteredOrders.reduce((sum, order) => sum + Number(order.total || 0), 0);
+      const ventesParClient = filteredOrders.reduce((acc, order) => {
+        acc[order.customer] = (acc[order.customer] || 0) + Number(order.total || 0);
+        return acc;
+      }, {} as Record<string, number>);
+      const ventesData = Object.entries(ventesParClient).map(([client, total]) => ({ client, total }));
 
   // Handle update order (edits)
-  const handleUpdateOrder = async () => {
-    if (!editOrder) return;
+      const handleUpdateOrder = async () => {
+        if (!editOrder) return;
   
-    setIsSaving(true);
+        setIsSaving(true);
   
     try {
       // 1. Charger ANCIENS items pour comparer
@@ -329,6 +329,64 @@ export default function OrdersPage() {
       setIsSaving(false);
     }
   };
+    // =========================
+    // SUPPRESSION VENTE + RESTAURATION STOCK
+    // =========================
+    const deleteOrder = async (orderId: number) => {
+      if (!window.confirm("Voulez-vous vraiment supprimer cette vente ?\nLe stock sera automatiquement restauré.")) {
+        return;
+      }
+    
+      try {
+        // 1️⃣ Récupérer les items de la vente
+        const { data: saleItems, error: saleItemsError } = await supabase
+          .from("sale_items")
+          .select("product_id, quantity")
+          .eq("sale_id", orderId);
+    
+        if (saleItemsError) {
+          console.error("Erreur récupération sale_items:", saleItemsError);
+          alert("Erreur lors de la récupération de la vente.");
+          return;
+        }
+    
+        // 2️⃣ Restaurer le stock produit par produit
+        for (const item of saleItems) {
+          const { error: stockError } = await supabase.rpc("increment_stock", {
+            product_id_input: item.product_id,
+            qty_input: item.quantity,
+          });
+    
+          if (stockError) {
+            console.error("Erreur restauration stock:", stockError);
+            alert("Erreur restauration stock pour un produit.");
+            return;
+          }
+        }
+    
+        // 3️⃣ Supprimer les sale_items
+        await supabase.from("sale_items").delete().eq("sale_id", orderId);
+    
+        // 4️⃣ Supprimer la vente elle-même
+        const { error: deleteError } = await supabase
+          .from("sales")
+          .delete()
+          .eq("id", orderId);
+    
+        if (deleteError) {
+          console.error("Erreur suppression vente:", deleteError);
+          alert("Erreur suppression de la vente.");
+          return;
+        }
+    
+        // 5️⃣ Recharger données UI
+        fetchOrders();
+        alert("Vente supprimée et stock restauré avec succès !");
+      } catch (error) {
+        console.error(error);
+        alert("Erreur inattendue.");
+      }
+    };
 
   // Export Excel
   const exportToExcel = () => {
@@ -486,15 +544,17 @@ export default function OrdersPage() {
                         </button>
                         
                       {/* Supprimer */} 
-                      <button onClick={async (e) => {
+                      <button
+                        onClick={(e) => {
                           e.stopPropagation();
-                          if (!confirm("Voulez-vous SUPPRIMER DEFINITIVEMENT cette vente ?")) return;
-                          const { error } = await supabase.from("sales").delete().eq("id", order.rawId);
-                          if (error) console.error("Erreur suppression de la vente :", error.message);
-                          else setOrders((prev) => prev.filter((o) => o.rawId !== order.rawId));
-                        }} className="p-2 rounded-full hover:bg-blue-100 transition-colors duration-200 text-blue-600 hover:text-blue-800" title="Attention --> Suppression">
-                          <Trash2 size={18} />
-                        </button>
+                          deleteOrder(order.rawId);
+                        }}
+                        className="p-2 rounded-full hover:bg-blue-100 transition-colors duration-200 text-blue-600 hover:text-blue-800"
+                        title="Attention --> Suppression"
+                      >
+                        <Trash2 size={18} />
+                      </button>
+
                       </div>
                     </TableCell>
                     )}
