@@ -69,6 +69,10 @@ export default function OrdersPage() {
   const [searchArticle, setSearchArticle] = useState("");
   const [isSaving, setIsSaving] = useState(false);
 
+  // Temporary UI state for stock check (to disable input while verifying)
+  const [checkingIndex, setCheckingIndex] = useState<number | null>(null);
+  const [addingProductIdChecking, setAddingProductIdChecking] = useState<number | null>(null);
+
   // --- Fetch orders (declarée ici pour la réutiliser) ---
   const fetchOrders = useCallback(async () => {
     setLoading(true);
@@ -209,23 +213,46 @@ export default function OrdersPage() {
       return sortByDateAsc ? aDate - bDate : bDate - aDate;
     });
 
-      const indexOfLastRow = currentPage * rowsPerPage;
-      const indexOfFirstRow = indexOfLastRow - rowsPerPage;
-      const currentOrders = filteredOrders.slice(indexOfFirstRow, indexOfLastRow);
-      const totalPages = Math.max(1, Math.ceil(filteredOrders.length / rowsPerPage));
+  const indexOfLastRow = currentPage * rowsPerPage;
+  const indexOfFirstRow = indexOfLastRow - rowsPerPage;
+  const currentOrders = filteredOrders.slice(indexOfFirstRow, indexOfLastRow);
+  const totalPages = Math.max(1, Math.ceil(filteredOrders.length / rowsPerPage));
     
-      const totalVente = filteredOrders.reduce((sum, order) => sum + Number(order.total || 0), 0);
-      const ventesParClient = filteredOrders.reduce((acc, order) => {
-        acc[order.customer] = (acc[order.customer] || 0) + Number(order.total || 0);
-        return acc;
-      }, {} as Record<string, number>);
-      const ventesData = Object.entries(ventesParClient).map(([client, total]) => ({ client, total }));
+  const totalVente = filteredOrders.reduce((sum, order) => sum + Number(order.total || 0), 0);
+  const ventesParClient = filteredOrders.reduce((acc, order) => {
+    acc[order.customer] = (acc[order.customer] || 0) + Number(order.total || 0);
+    return acc;
+  }, {} as Record<string, number>);
+  const ventesData = Object.entries(ventesParClient).map(([client, total]) => ({ client, total }));
+
+  // Vérifier si le stock d’un produit est suffisant
+  const checkStock = async (productId: number, requestedQty: number) => {
+    try {
+      const { data, error } = await supabase
+        .from("products")
+        .select("stock")
+        .eq("id", productId)
+        .single();
+      
+      if (error) return { ok: false, stock: 0, error };
+    
+      const available = data.stock ?? 0;
+    
+      return {
+        ok: requestedQty <= available,
+        stock: available
+      };
+    } catch (err) {
+      console.error("Erreur checkStock:", err);
+      return { ok: false, stock: 0, error: err };
+    }
+  };
 
   // Handle update order (edits)
-    const handleUpdateOrder = async () => {
-        if (!editOrder) return;
+  const handleUpdateOrder = async () => {
+    if (!editOrder) return;
   
-        setIsSaving(true);
+    setIsSaving(true);
   
     try {
       // 1. Charger ANCIENS items pour comparer
@@ -322,6 +349,7 @@ export default function OrdersPage() {
       setEditModalOpen(false);
       setEditOrder(null);
       await fetchOrders();
+      alert("Vente mise à jour avec succès !");
     } catch (error) {
       console.error("Erreur update:", error);
       alert("Erreur lors de la mise à jour de la vente.");
@@ -330,80 +358,132 @@ export default function OrdersPage() {
     }
   };
 
-  // Vérifier si le stock d’un produit est suffisant
-    const checkStock = async (productId: number, requestedQty: number) => {
-      const { data, error } = await supabase
-        .from("products")
-        .select("stock")
-        .eq("id", productId)
-        .single();
+  // SUPPRESSION VENTE + RESTAURATION STOCK
+  const deleteOrder = async (orderId: number) => {
+    if (!window.confirm("Voulez-vous VRAIMENT SUPPRIMER cette vente ?\nLe stock sera automatiquement restauré.")) {
+      return;
+    }
     
-      if (error) return { ok: false, stock: 0, error };
+    try {
+      // 1️⃣ Récupérer les items de la vente
+      const { data: saleItems, error: saleItemsError } = await supabase
+        .from("sale_items")
+        .select("product_id, quantity")
+        .eq("sale_id", orderId);
     
-      const available = data.stock ?? 0;
-    
-      return {
-        ok: requestedQty <= available,
-        stock: available
-      };
-};
-
-    // SUPPRESSION VENTE + RESTAURATION STOCK
-    const deleteOrder = async (orderId: number) => {
-      if (!window.confirm("Voulez-vous VRAIMENT SUPPRIMER cette vente ?\nLe stock sera automatiquement restauré.")) {
+      if (saleItemsError) {
+        console.error("Erreur récupération sale_items:", saleItemsError);
+        alert("Erreur lors de la récupération de la vente.");
         return;
       }
     
-      try {
-        // 1️⃣ Récupérer les items de la vente
-        const { data: saleItems, error: saleItemsError } = await supabase
-          .from("sale_items")
-          .select("product_id, quantity")
-          .eq("sale_id", orderId);
+      // 2️⃣ Restaurer le stock produit par produit
+      for (const item of saleItems) {
+        const { error: stockError } = await supabase.rpc("increase_stock", {
+          p_product_id: item.product_id,
+          p_qty: item.quantity,
+        });
     
-        if (saleItemsError) {
-          console.error("Erreur récupération sale_items:", saleItemsError);
-          alert("Erreur lors de la récupération de la vente.");
+        if (stockError) {
+          console.error("Erreur restauration stock:", stockError);
+          alert("Erreur restauration stock pour un produit.");
           return;
         }
-    
-        // 2️⃣ Restaurer le stock produit par produit
-        for (const item of saleItems) {
-          const { error: stockError } = await supabase.rpc("increase_stock", {
-            p_product_id: item.product_id,
-            p_qty: item.quantity,
-          });
-    
-          if (stockError) {
-            console.error("Erreur restauration stock:", stockError);
-            alert("Erreur restauration stock pour un produit.");
-            return;
-          }
-        }
-    
-        // 3️⃣ Supprimer les sale_items
-        await supabase.from("sale_items").delete().eq("sale_id", orderId);
-    
-        // 4️⃣ Supprimer la vente elle-même
-        const { error: deleteError } = await supabase
-          .from("sales")
-          .delete()
-          .eq("id", orderId);
-    
-        if (deleteError) {
-          console.error("Erreur suppression vente:", deleteError);
-          alert("Erreur suppression de la vente.");
-          return;
-        }
-    
-        // 5️⃣ Recharger données UI
-        fetchOrders();
-        alert("Vente supprimée et stock restauré avec succès !");
-      } catch (error) {
-        console.error(error);
-        alert("Erreur inattendue.");
       }
-    };
+    
+      // 3️⃣ Supprimer les sale_items
+      await supabase.from("sale_items").delete().eq("sale_id", orderId);
+    
+      // 4️⃣ Supprimer la vente elle-même
+      const { error: deleteError } = await supabase
+        .from("sales")
+        .delete()
+        .eq("id", orderId);
+    
+      if (deleteError) {
+        console.error("Erreur suppression vente:", deleteError);
+        alert("Erreur suppression de la vente.");
+        return;
+      }
+    
+      // 5️⃣ Recharger données UI
+      fetchOrders();
+      alert("Vente supprimée et stock restauré avec succès !");
+    } catch (error) {
+      console.error(error);
+      alert("Erreur inattendue.");
+    }
+  };
+
+  // Handler pour changement de quantité dans le modal d'édition
+  const handleQuantityChange = async (productId: number, newQty: number, index: number) => {
+    if (!editOrder) return;
+    if (!Number.isFinite(newQty) || newQty < 0) return;
+
+    const currentItems = editOrder.items || [];
+    const oldQty = Number(currentItems[index]?.quantity || 0);
+
+    // si on augmente, vérifier le stock avant de valider le changement
+    if (newQty > oldQty) {
+      const diff = newQty - oldQty;
+      setCheckingIndex(index);
+      try {
+        const check = await checkStock(productId, diff);
+        if (!check.ok) {
+          alert(`Stock insuffisant pour "${currentItems[index]?.productName || productId}". Stock disponible : ${check.stock}`);
+          return;
+        }
+      } catch (err) {
+        console.error("Erreur lors du checkStock:", err);
+        alert("Impossible de vérifier le stock pour le moment.");
+        return;
+      } finally {
+        setCheckingIndex(null);
+      }
+    }
+
+    // Appliquer la modification localement
+    const updated = [...currentItems];
+    updated[index] = { ...updated[index], quantity: newQty };
+    setEditOrder({ ...editOrder, items: updated });
+  };
+
+  // Handler pour changement de prix unitaire (simple mise à jour locale)
+  const handleUnitPriceChange = (index: number, newPrice: number) => {
+    if (!editOrder) return;
+    const updated = [...(editOrder.items || [])];
+    updated[index] = { ...updated[index], unit_price: newPrice };
+    setEditOrder({ ...editOrder, items: updated });
+  };
+
+  // Ajouter un article depuis la liste produit en vérifiant le stock (1 par défaut)
+  const handleAddProductToEdit = async (p: any) => {
+    if (!editOrder) return;
+    const productId = p.id;
+    const initialQty = 1;
+
+    setAddingProductIdChecking(productId);
+    try {
+      const check = await checkStock(productId, initialQty);
+      if (!check.ok) {
+        alert(`Impossible d'ajouter "${p.name}" — stock insuffisant (disponible: ${check.stock}).`);
+        return;
+      }
+
+      const updated = [...(editOrder.items || []), {
+        product_id: p.id,
+        productName: p.name,
+        quantity: initialQty,
+        unit_price: Number(p.selling_price || 0)
+      }];
+      setEditOrder({ ...editOrder, items: updated });
+    } catch (err) {
+      console.error("Erreur checkStock lors de l'ajout:", err);
+      alert("Impossible de vérifier le stock pour le moment.");
+    } finally {
+      setAddingProductIdChecking(null);
+    }
+  };
 
   // Export Excel
   const exportToExcel = () => {
@@ -758,10 +838,10 @@ export default function OrdersPage() {
                             value={item.quantity}
                             onChange={(e) => {
                               const qty = parseInt(e.target.value || "0", 10) || 0;
-                              const updated = [...(editOrder.items || [])];
-                              updated[index] = { ...updated[index], quantity: qty };
-                              setEditOrder({ ...editOrder, items: updated });
+                              // Use handler which checks stock before allowing increases
+                              handleQuantityChange(item.product_id, qty, index);
                             }}
+                            disabled={checkingIndex === index}
                           />
                         </div>
 
@@ -773,9 +853,7 @@ export default function OrdersPage() {
                             value={item.unit_price}
                             onChange={(e) => {
                               const p = parseFloat(e.target.value || "0") || 0;
-                              const updated = [...(editOrder.items || [])];
-                              updated[index] = { ...updated[index], unit_price: p };
-                              setEditOrder({ ...editOrder, items: updated });
+                              handleUnitPriceChange(index, p);
                             }}
                           />
                         </div>
@@ -815,16 +893,8 @@ export default function OrdersPage() {
                     .map((p) => (
                       <div
                         key={p.id}
-                        onClick={() => {
-                          const updated = [...(editOrder.items || []), {
-                            product_id: p.id,
-                            productName: p.name,
-                            quantity: 1,
-                            unit_price: Number(p.selling_price || 0)
-                          }];
-                          setEditOrder({ ...editOrder, items: updated });
-                        }}
-                        className="p-2 hover:bg-blue-50 cursor-pointer"
+                        onClick={() => handleAddProductToEdit(p)}
+                        className={`p-2 hover:bg-blue-50 cursor-pointer ${addingProductIdChecking === p.id ? "opacity-60 pointer-events-none" : ""}`}
                       >
                         {p.name} — {p.selling_price} $  
                         ({(Number(p.selling_price || 0) * Number(exchangeRate || 1)).toLocaleString("fr-FR")} FC)
