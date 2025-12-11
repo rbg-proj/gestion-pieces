@@ -445,6 +445,224 @@ export default function OrdersPage() {
           </div>
         </DialogContent>
       </Dialog>
+
+
+      {editModalOpen && editOrder && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+    <div className="bg-white rounded-lg w-full max-w-3xl p-6 shadow-lg">
+
+      {/* Header */}
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-semibold">Modifier la vente {editOrder.id}</h2>
+        <button
+          onClick={() => { setEditModalOpen(false); }}
+          className="text-gray-400 hover:text-gray-600"
+        >
+          <X size={22} />
+        </button>
+      </div>
+
+      {/* Client & Paiement */}
+      <div className="grid grid-cols-2 gap-4 mb-6">
+        <div>
+          <label className="text-sm text-gray-600">Client</label>
+          <Input
+            value={editOrder.customer}
+            onChange={(e) => setEditOrder({ ...editOrder, customer: e.target.value })}
+          />
+        </div>
+
+        <div>
+          <label className="text-sm text-gray-600">Méthode de paiement</label>
+          <select
+            className="border rounded-md p-2 w-full"
+            value={editOrder.paymentMethod}
+            onChange={(e) => setEditOrder({ ...editOrder, paymentMethod: e.target.value })}
+          >
+            <option value="cash">Cash</option>
+            <option value="mobile_money">Mobile Money</option>
+            <option value="credit">Crédit</option>
+          </select>
+        </div>
+      </div>
+
+      {/* Ligne Articles */}
+      <h3 className="font-semibold mb-2">Articles vendus</h3>
+
+      <div className="max-h-96 overflow-y-auto border rounded-md">
+        <table className="w-full text-sm">
+          <thead className="bg-gray-100 text-left">
+            <tr>
+              <th className="p-3">Produit</th>
+              <th className="p-3 text-center">Qté</th>
+              <th className="p-3 text-right">Prix ($)</th>
+              <th className="p-3 text-right">Total</th>
+              <th className="p-3"></th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {editItems.map((item, index) => (
+              <tr key={item.id} className="border-b">
+                <td className="p-3">
+                  <select
+                    className="p-2 border rounded-md w-full"
+                    value={item.product_id}
+                    onChange={(e) => {
+                      const prod = productsList.find(p => p.id == e.target.value);
+                      const newItems = [...editItems];
+                      newItems[index].product_id = prod.id;
+                      newItems[index].unit_price = prod.selling_price;
+                      newItems[index].products = { name: prod.name };
+                      setEditItems(newItems);
+                    }}
+                  >
+                    {productsList.map(p => (
+                      <option key={p.id} value={p.id}>{p.name}</option>
+                    ))}
+                  </select>
+                </td>
+
+                <td className="p-3 text-center">
+                  <Input
+                    type="number"
+                    value={item.quantity}
+                    onChange={(e) => {
+                      const newItems = [...editItems];
+                      newItems[index].quantity = parseInt(e.target.value || "0");
+                      setEditItems(newItems);
+                    }}
+                  />
+                </td>
+
+                <td className="p-3 text-right">
+                  <Input
+                    type="number"
+                    value={item.unit_price}
+                    onChange={(e) => {
+                      const newItems = [...editItems];
+                      newItems[index].unit_price = parseFloat(e.target.value || "0");
+                      setEditItems(newItems);
+                    }}
+                  />
+                </td>
+
+                <td className="p-3 text-right font-semibold">
+                  {(item.unit_price * item.quantity).toLocaleString("fr-FR")}
+                </td>
+
+                <td className="p-3 text-right">
+                  <button
+                    className="text-red-500 hover:text-red-700"
+                    onClick={() => {
+                      setEditItems(prev => prev.filter((_, i) => i !== index));
+                    }}
+                  >
+                    <Trash2 size={18} />
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Ajouter un article */}
+      <div className="mt-4">
+        <button
+          className="px-3 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+          onClick={() => {
+            if (productsList.length === 0) return;
+            setEditItems(prev => [
+              ...prev,
+              {
+                id: null,
+                product_id: productsList[0].id,
+                quantity: 1,
+                unit_price: productsList[0].selling_price,
+                products: { name: productsList[0].name }
+              }
+            ]);
+          }}
+        >
+          + Ajouter un article
+        </button>
+      </div>
+
+      {/* Total */}
+      <div className="text-right mt-6 text-lg font-bold">
+        Total :{" "}
+        {editItems.reduce((sum, i) => sum + i.unit_price * i.quantity, 0)
+          .toLocaleString("fr-FR")}{" "}
+        $
+      </div>
+
+      {/* Buttons */}
+      <div className="flex justify-end mt-6 gap-2">
+        <button
+          onClick={() => setEditModalOpen(false)}
+          className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-md"
+        >
+          Annuler
+        </button>
+
+        <button
+          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+          onClick={async () => {
+
+            const newTotal = editItems.reduce((sum, i) => sum + i.unit_price * i.quantity, 0);
+
+            // 1) Update sale
+            await supabase
+              .from("sales")
+              .update({
+                total_amount: newTotal,
+                payment_method: editOrder.paymentMethod
+              })
+              .eq("id", editOrder.rawId);
+
+            // 2) Update sale_items
+            for (const item of editItems) {
+              if (item.id) {
+                await supabase
+                  .from("sale_items")
+                  .update({
+                    product_id: item.product_id,
+                    quantity: item.quantity,
+                    unit_price: item.unit_price
+                  })
+                  .eq("id", item.id);
+              } else {
+                await supabase
+                  .from("sale_items")
+                  .insert({
+                    sale_id: editOrder.rawId,
+                    product_id: item.product_id,
+                    quantity: item.quantity,
+                    unit_price: item.unit_price
+                  });
+              }
+            }
+
+            // 3) Mise à jour instantanée tableau Orders
+            setOrders(prev =>
+              prev.map(o =>
+                o.rawId === editOrder.rawId
+                  ? { ...o, total: newTotal, paymentMethod: editOrder.paymentMethod }
+                  : o
+              )
+            );
+
+            setEditModalOpen(false);
+          }}
+        >
+          Enregistrer
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
     </div>
   );
 }
