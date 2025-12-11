@@ -853,7 +853,7 @@ export default function OrdersPage() {
                           <Input
                             readOnly
                             type="text"
-                            value={item.unit_price}
+                            value={formatCurrency(item.unit_price,"USD"}
                             onChange={(e) => {
                               const p = parseFloat(e.target.value || "0") || 0;
                               handleUnitPriceChange(index, p);
