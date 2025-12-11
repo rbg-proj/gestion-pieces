@@ -352,9 +352,9 @@ export default function OrdersPage() {
     
         // 2️⃣ Restaurer le stock produit par produit
         for (const item of saleItems) {
-          const { error: stockError } = await supabase.rpc("increment_stock", {
-            product_id_input: item.product_id,
-            qty_input: item.quantity,
+          const { error: stockError } = await supabase.rpc("increase_stock", {
+            p_product_id: item.product_id,
+            p_qty: item.quantity,
           });
     
           if (stockError) {
