@@ -315,29 +315,46 @@ export default function OrdersPage() {
                         <button
                           onClick={async (e) => {
                             e.stopPropagation();
-                            setEditOrder(order);
-                            
-                          // Charger articles de la vente
-                          const { data: items } = await supabase
-                            .from("sale_items")
-                            .select(`id, quantity, unit_price, product_id, products(name)`)
-                            .eq("sale_id", order.rawId);
-                      
-                          setEditItems(items || []);
-                  
-                          // Charger liste des produits →
-                          const { data: prods } = await supabase
-                            .from("products")
-                            .select(`id, name, selling_price`);
-
-                          setProductsList(prods || []);
-                          setEditModalOpen(true);
-                        }}
-                        className="p-2 rounded-full hover:bg-yellow-100 transition-colors duration-200 text-yellow-600 hover:text-yellow-800"
-                        title="Modifier la vente"
-                      >
-                        <Pencil size={18} />
-                      </button>
+                        
+                            // 1️⃣ Charger articles de la vente
+                            const { data: items } = await supabase
+                              .from("sale_items")
+                              .select(`id, quantity, unit_price, product_id, products(name)`)
+                              .eq("sale_id", order.rawId);
+                        
+                            // 2️⃣ Charger produits disponibles
+                            const { data: prods } = await supabase
+                              .from("products")
+                              .select(`id, name, selling_price`);
+                        
+                            setProductsList(prods || []);
+                        
+                            // 3️⃣ Construire un editOrder PROPRE et SOLIDE
+                            setEditOrder({
+                              id: order.rawId,
+                              customer: order.customer,
+                              paymentMethod: order.paymentMethod,
+                              exchange_rate: order.exchange_rate,
+                              items: (items || []).map((it) => ({
+                                id: it.id,
+                                product_id: it.product_id,
+                                productName: it.products?.name || "",
+                                quantity: it.quantity,
+                                unit_price: it.unit_price
+                              }))
+                            });
+                        
+                            // 4️⃣ Liste d'items brute (si tu la gardes)
+                            setEditItems(items || []);
+                        
+                            // 5️⃣ Ouvrir le modal
+                            setEditModalOpen(true);
+                          }}
+                          className="p-2 rounded-full hover:bg-yellow-100 transition-colors duration-200 text-yellow-600 hover:text-yellow-800"
+                          title="Modifier la vente"
+                        >
+                          <Pencil size={18} />
+                        </button>
                         
                       {/* Supprimer */} 
                       <button onClick={async (e) => {
