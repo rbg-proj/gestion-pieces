@@ -60,6 +60,14 @@ export default function OrdersPage() {
   todayLocal.setHours(0, 0, 0, 0);
   const todayISO = todayLocal.toLocaleDateString("fr-CA");
 
+  //Modification d'une vente
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [editOrder, setEditOrder] = useState<any | null>(null);
+  const [editItems, setEditItems] = useState<any[]>([]);
+  const [productsList, setProductsList] = useState<any[]>([]);
+
+
+
   // Fetch Orders
   useEffect(() => {
     const fetchOrders = async () => {
