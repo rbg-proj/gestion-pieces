@@ -293,6 +293,20 @@ export default function OrdersPage() {
                         onClick={(e) => {
                           e.stopPropagation();
                           setEditOrder(order);
+                          // Charger articles de la vente
+                          const { data: items } = await supabase
+                            .from("sale_items")
+                            .select(`id, quantity, unit_price, product_id, products(name)`)
+                            .eq("sale_id", order.rawId);
+                      
+                          setEditItems(items || []);
+                  
+                          // Charger liste des produits →
+                          const { data: prods } = await supabase
+                            .from("products")
+                            .select(`id, name, selling_price`);
+
+                          setProductsList(prods || []);
                           setEditModalOpen(true);
                         }}
                         className="p-2 rounded-full hover:bg-yellow-100 transition-colors duration-200 text-yellow-600 hover:text-yellow-800"
