@@ -852,7 +852,7 @@ export default function OrdersPage() {
                           <Input
                             readOnly
                             type="number"
-                            value={(item.unit_price).toLocaleString("fr-FR")}
+                            value={item.unit_price.toLocaleString("fr-FR")}
                             onChange={(e) => {
                               const p = parseFloat(e.target.value || "0") || 0;
                               handleUnitPriceChange(index, p);
