@@ -222,7 +222,7 @@ export default function OrdersPage() {
       const ventesData = Object.entries(ventesParClient).map(([client, total]) => ({ client, total }));
 
   // Handle update order (edits)
-      const handleUpdateOrder = async () => {
+    const handleUpdateOrder = async () => {
         if (!editOrder) return;
   
         setIsSaving(true);
@@ -331,26 +331,24 @@ export default function OrdersPage() {
   };
 
   // Vérifier si le stock d’un produit est suffisant
-const checkStock = async (productId: number, requestedQty: number) => {
-  const { data, error } = await supabase
-    .from("products")
-    .select("stock")
-    .eq("id", productId)
-    .single();
-
-  if (error) return { ok: false, stock: 0, error };
-
-  const available = data.stock ?? 0;
-
-  return {
-    ok: requestedQty <= available,
-    stock: available
-  };
+    const checkStock = async (productId: number, requestedQty: number) => {
+      const { data, error } = await supabase
+        .from("products")
+        .select("stock")
+        .eq("id", productId)
+        .single();
+    
+      if (error) return { ok: false, stock: 0, error };
+    
+      const available = data.stock ?? 0;
+    
+      return {
+        ok: requestedQty <= available,
+        stock: available
+      };
 };
 
-    // =========================
     // SUPPRESSION VENTE + RESTAURATION STOCK
-    // =========================
     const deleteOrder = async (orderId: number) => {
       if (!window.confirm("Voulez-vous VRAIMENT SUPPRIMER cette vente ?\nLe stock sera automatiquement restauré.")) {
         return;
