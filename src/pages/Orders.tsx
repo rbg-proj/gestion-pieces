@@ -109,6 +109,28 @@ export default function OrdersPage() {
     fetchOrders();
   }, []);
 
+  //Fetch rate
+   useEffect(() => {
+      const loadData = async () => {
+        const { data: rateData } = await supabase
+          .from("exchange_rates")
+          .select("rate")
+          .order("created_at", { ascending: false })
+          .limit(1);
+    
+        if (rateData?.length > 0) setExchangeRate(rateData[0].rate);
+    
+        const { data: productsData } = await supabase
+          .from("products")
+          .select("id, name, selling_price");
+    
+        setProducts(productsData || []);
+      };
+    
+      loadData();
+    }, []);
+
+
   const fetchSaleDetails = async (saleId: number) => {
     const { data, error } = await supabase
       .from("sale_items")
