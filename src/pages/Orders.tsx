@@ -847,18 +847,15 @@ export default function OrdersPage() {
                           />
                         </div>
 
-                        {/* Prix USD */}
+                       
+                        {/* Prix USD (formaté, dérivé du FC) */}
                         <div>
                           <label className="text-sm">Prix USD</label>
                           <Input
                             readOnly
                             type="text"
-                            value={formatCurrency(item.unit_price,"USD")}
                             className="bg-gray-200"
-                            onChange={(e) => {
-                              const p = parseFloat(e.target.value || "0") || 0;
-                              handleUnitPriceChange(index, p);
-                            }}
+                            value={formatCurrency(item.unit_price, "USD")}
                           />
                         </div>
                         
