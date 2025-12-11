@@ -842,6 +842,7 @@ export default function OrdersPage() {
                               handleQuantityChange(item.product_id, qty, index);
                             }}
                             disabled={checkingIndex === index}
+                            className="no-spinner"
                           />
                         </div>
 
