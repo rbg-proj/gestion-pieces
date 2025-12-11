@@ -199,6 +199,119 @@ export default function OrdersPage() {
   }, {} as Record<string, number>);
   const ventesData = Object.entries(ventesParClient).map(([client, total]) => ({ client, total }));
 
+  const handleUpdateOrder = async () => {
+      if (!editOrder || !editItems) return;
+    
+      setIsSaving(true);
+    
+      try {
+        // 1. Charger ANCIENS items pour comparer
+        const { data: oldItems, error: oldErr } = await supabase
+          .from("sale_items")
+          .select("id, product_id, quantity")
+          .eq("sale_id", editOrder.rawId);
+    
+        if (oldErr) throw oldErr;
+    
+        // Convertir en maps pour comparaison rapide
+        const oldMap: Record<string, any> = {};
+        oldItems.forEach((item) => (oldMap[item.product_id] = item));
+    
+        const newMap: Record<string, any> = {};
+        editItems.forEach((item) => (newMap[item.product_id] = item));
+    
+        // 2. TRAITER LES SUPPRESSIONS → RESTAURER LE STOCK
+        for (const old of oldItems) {
+          if (!newMap[old.product_id]) {
+            // → Cet article a été supprimé
+            // 1. remettre le stock
+            await supabase.rpc("increase_stock", {
+              p_product_id: old.product_id,
+              p_qty: old.quantity,
+            });
+    
+            // 2. supprimer la ligne sale_item
+            await supabase.from("sale_items").delete().eq("id", old.id);
+          }
+        }
+    
+        // 3. METTRE À JOUR OU AJOUTER LES ITEMS
+        for (const newItem of editItems) {
+          const old = oldMap[newItem.product_id];
+    
+          if (old) {
+            // → L’article existait déjà
+            const diff = newItem.quantity - old.quantity;
+    
+            if (diff !== 0) {
+              // Ajuster le stock
+              if (diff > 0) {
+                // Augmentation de quantité → réduire stock
+                await supabase.rpc("decrease_stock", {
+                  p_product_id: newItem.product_id,
+                  p_qty: diff,
+                });
+              } else {
+                // Diminution de quantité → augmenter stock
+                await supabase.rpc("increase_stock", {
+                  p_product_id: newItem.product_id,
+                  p_qty: Math.abs(diff),
+                });
+              }
+            }
+    
+            // Mettre à jour la ligne sale_item
+            await supabase
+              .from("sale_items")
+              .update({
+                quantity: newItem.quantity,
+                unit_price: newItem.unit_price,
+              })
+              .eq("id", old.id);
+    
+          } else {
+            // → NOUVEL ARTICLE AJOUTÉ
+    
+            // Déduire du stock
+            await supabase.rpc("decrease_stock", {
+              p_product_id: newItem.product_id,
+              p_qty: newItem.quantity,
+            });
+    
+            // Ajouter nouvelle ligne sale_item
+            await supabase.from("sale_items").insert({
+              sale_id: editOrder.rawId,
+              product_id: newItem.product_id,
+              quantity: newItem.quantity,
+              unit_price: newItem.unit_price,
+            });
+          }
+        }
+    
+        // 4. Mettre à jour le total de la vente
+        const newTotal = editItems.reduce(
+          (sum, item) => sum + item.quantity * item.unit_price,
+          0
+        );
+    
+        await supabase
+          .from("sales")
+          .update({ total_amount: newTotal })
+          .eq("id", editOrder.rawId);
+    
+        // 5. Rafraîchir
+        setEditModalOpen(false);
+        fetchOrders(); // si tu as une fonction pour recharger la liste
+    
+      } catch (error) {
+        console.error("Erreur update:", error);
+        alert("Erreur lors de la mise à jour de la vente.");
+      } finally {
+        setIsSaving(false);
+      }
+    };
+
+
   // Export Excel
   const exportToExcel = () => {
     const exportData = filteredOrders.map((order) => ({
