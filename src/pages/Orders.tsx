@@ -60,13 +60,14 @@ export default function OrdersPage() {
   todayLocal.setHours(0, 0, 0, 0);
   const todayISO = todayLocal.toLocaleDateString("fr-CA");
 
-  //Modification d'une vente
+  //Modal Modification d'une vente
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editOrder, setEditOrder] = useState<any | null>(null);
   const [editItems, setEditItems] = useState<any[]>([]);
   const [productsList, setProductsList] = useState<any[]>([]);
-
-
+  const [exchangeRate, setExchangeRate] = useState(2800);
+  const [products, setProducts] = useState([]);
+  const [searchArticle, setSearchArticle] = useState("");
 
   // Fetch Orders
   useEffect(() => {
@@ -490,7 +491,8 @@ export default function OrdersPage() {
       {/* Ligne Articles */}
       <h3 className="font-semibold mb-2">Articles vendus</h3>
 
-      <div className="max-h-96 overflow-y-auto border rounded-md">
+      <div className=
+        "max-h-[80vh] overflow-y-auto p-6 space-y-6">
         <table className="w-full text-sm">
           <thead className="bg-gray-100 text-left">
             <tr>
