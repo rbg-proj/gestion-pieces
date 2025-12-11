@@ -281,17 +281,18 @@ export default function OrdersPage() {
                         </button>
 
                         {/* Modifier */}
+                        
                         <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            alert("Fonction modifier bientôt disponible !");
-                            // Ici tu pourras rediriger vers une page EditSale.tsx ou ouvrir un modal.
-                          }}
-                          className="p-2 rounded-full hover:bg-yellow-100 transition-colors duration-200 text-yellow-600 hover:text-yellow-800"
-                          title="Modifier la vente"
-                        >
-                          <Pencil size={18} />
-                        </button>
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setEditOrder(order);
+                          setEditModalOpen(true);
+                        }}
+                        className="p-2 rounded-full hover:bg-yellow-100 transition-colors duration-200 text-yellow-600 hover:text-yellow-800"
+                        title="Modifier la vente"
+                      >
+                        <Pencil size={18} />
+                      </button>
 
                         
                         <button onClick={async (e) => {
