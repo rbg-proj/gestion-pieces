@@ -854,6 +854,7 @@ export default function OrdersPage() {
                             readOnly
                             type="text"
                             value={formatCurrency(item.unit_price,"USD")}
+                            className="bg-gray-200"
                             onChange={(e) => {
                               const p = parseFloat(e.target.value || "0") || 0;
                               handleUnitPriceChange(index, p);
