@@ -759,11 +759,13 @@ export default function OrdersPage() {
         </button>
 
         <button
-          onClick={handleUpdateOrder}
-          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-        >
-          Enregistrer
-        </button>
+        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-60"
+        onClick={handleUpdateOrder}
+        disabled={isSaving}
+      >
+        {isSaving ? "Enregistrement..." : "Enregistrer"}
+      </button>
+
       </div>
 
     </div>
