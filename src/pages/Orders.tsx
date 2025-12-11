@@ -26,6 +26,7 @@ import { Button } from "@/components/ui/button";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import { useAuth } from "@/hooks/useAuth";
 import * as XLSX from "xlsx";
+import { formatCurrency } from "@/utils/formatCurrency";
 
 export default function OrdersPage() {
   const { user } = useAuth();
