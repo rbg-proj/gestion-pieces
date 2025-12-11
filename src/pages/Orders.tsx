@@ -864,7 +864,7 @@ export default function OrdersPage() {
                         <div>
                           <label className="text-sm">Prix FC</label>
                           <Input
-                            
+                            type="number"
                             className="bg-gray-200"
                             value={((Number(item.unit_price || 0) * Number(exchangeRate || 1))).toLocaleString("fr-FR")}
                           />
