@@ -288,8 +288,7 @@ export default function OrdersPage() {
                           title="Voir les détails"><Eye size={18} />
                         </button>
 
-                        {/* Modifier */}
-                        
+                        {/* Modifier */} 
                         <button
                         onClick={(e) => {
                           e.stopPropagation();
@@ -301,9 +300,9 @@ export default function OrdersPage() {
                       >
                         <Pencil size={18} />
                       </button>
-
                         
-                        <button onClick={async (e) => {
+                      {/* Supprimer */} 
+                      <button onClick={async (e) => {
                           e.stopPropagation();
                           if (!confirm("Voulez-vous SUPPRIMER DEFINITIVEMENT cette vente ?")) return;
                           const { error } = await supabase.from("sales").delete().eq("id", order.rawId);
