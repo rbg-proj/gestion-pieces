@@ -292,8 +292,8 @@ export default function OrdersPage() {
                         <button
                           onClick={async (e) => {
                             e.stopPropagation();
-                        
                             setEditOrder(order);
+                            
                           // Charger articles de la vente
                           const { data: items } = await supabase
                             .from("sale_items")
