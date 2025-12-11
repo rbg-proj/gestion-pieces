@@ -861,13 +861,21 @@ export default function OrdersPage() {
                             }}
                           />
                         </div>
-
-                        {/* Prix FC basé sur exchange_rates */}
+                        
+                          {/* Prix FC (saisi par l'utilisateur) */}
                         <div>
                           <label className="text-sm">Prix FC</label>
                           <Input
-                            type="number"
-                            value={((Number(item.unit_price || 0) * Number(exchangeRate || 1))).toLocaleString("fr-FR")}
+                            type="text"
+                            value={Number(item.unit_price || 0 * exchangeRate).toLocaleString("fr-FR")}
+                            onChange={(e) => {
+                              const raw = e.target.value.replace(/[^0-9.,]/g, "");
+                              const fcValue = parseFloat(raw.replace(",", ".")) || 0;
+                        
+                              const usdValue = fcValue / Number(exchangeRate || 1);
+                        
+                              handleUnitPriceChange(index, usdValue); // on stocke en USD
+                            }}
                           />
                         </div>
 
