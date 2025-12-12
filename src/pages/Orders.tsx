@@ -917,9 +917,18 @@ export default function OrdersPage() {
               </div>
 
               {/* TOTAL */}
+              
               <div className="text-right text-xl font-semibold mt-6">
-                Total : {( (editOrder.items || []).reduce((sum: number, item: any) => sum + Number(item.quantity || 0) * Number(item.unit_price || 0), 0) ).toLocaleString("fr-FR")} $
+                Total : {formatCurrency(
+                  (editOrder.items || []).reduce(
+                    (sum: number, item: any) =>
+                      sum + Number(item.quantity || 0) * Number(item.unit_price || 0),
+                    0
+                  ),
+                  "USD"
+                )}
               </div>
+
 
             </div>
 
