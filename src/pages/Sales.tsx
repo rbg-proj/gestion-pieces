@@ -19,7 +19,7 @@ import { useReactToPrint } from 'react-to-print';
 import Receipt from '@/pages/Receipt';
 import { useAuth } from "@/hooks/useAuth";
 import { initOfflineDB } from '@/lib/offlineDB';
-import { formatCurrency } from "@/utils/formatCurrency";
+
 
 // Génère un n° facture lisible
 function generateInvoiceNumber(id: string | number | null, prefix = 'Fac') {
@@ -70,6 +70,11 @@ const Sales: React.FC = () => {
   const [isCustomerConfirmed, setIsCustomerConfirmed] = useState(false);
   const [customerNotFound, setCustomerNotFound] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const formatNumber = (value: number) => {
+  return value.toLocaleString("fr-FR"); // format 1 000 / 2 500 / 125 400
+};
+
 
   // Pagination
   const itemsPerPage = 10;
