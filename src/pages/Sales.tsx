@@ -525,15 +525,20 @@ const Sales: React.FC = () => {
             <span className="text-sm text-gray-500">Prix:</span>
 
             <input
-              type="number"
-              min="0"
-              step="1"
-              value={item.price}
+              type="text"
+              value={formatNumber(item.price || 0)}
               onChange={(e) => {
-                const newPrice = parseFloat(e.target.value);
-                if (!isNaN(newPrice) && newPrice >= 0) {
+                let raw = e.target.value;
+            
+                // Retirer tout sauf chiffres et virgules/points
+                raw = raw.replace(/[^\d.,]/g, "");
+            
+                // Convertir virgule → point (au cas où)
+                const numeric = Number(raw.replace(",", "."));
+            
+                if (!isNaN(numeric)) {
                   setCart((prev) =>
-                    prev.map((i) => (i.id === item.id ? { ...i, price: newPrice } : i))
+                    prev.map((i) => (i.id === item.id ? { ...i, price: numeric } : i))
                   );
                 }
               }}
