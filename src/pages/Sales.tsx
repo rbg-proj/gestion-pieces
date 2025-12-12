@@ -19,6 +19,7 @@ import { useReactToPrint } from 'react-to-print';
 import Receipt from '@/pages/Receipt';
 import { useAuth } from "@/hooks/useAuth";
 import { initOfflineDB } from '@/lib/offlineDB';
+import { formatCurrency } from "@/utils/formatCurrency";
 
 // Génère un n° facture lisible
 function generateInvoiceNumber(id: string | number | null, prefix = 'Fac') {
