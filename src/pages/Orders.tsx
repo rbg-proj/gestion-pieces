@@ -587,7 +587,7 @@ export default function OrdersPage() {
                   }}>
                     <TableCell>{order.date instanceof Date ? order.date.toLocaleDateString() : new Date(order.date).toLocaleDateString()}</TableCell>
                     <TableCell>{order.customer}</TableCell>
-                    <TableCell>{Number(order.total || 0).toLocaleString("fr-FR")} $</TableCell>
+                    <TableCell>{formatCurrency(Number(order?.total ?? 0), "USD")}</TableCell>
                     <TableCell>{order.items}</TableCell>
                     <TableCell><Badge variant={order.status === "Payé" ? "success" : "secondary"}>{order.status}</Badge></TableCell>
                     <TableCell>{order.paymentMethod}</TableCell>
