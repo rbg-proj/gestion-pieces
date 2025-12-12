@@ -508,6 +508,8 @@ export default function OrdersPage() {
   const actionsVisible = user?.role === "admin" || user?.role === "manager";
   const columnsCount = actionsVisible ? 7 : 6;
 
+
+  
   return (
     <div className="p-4 space-y-4">
       {/* Header */}
