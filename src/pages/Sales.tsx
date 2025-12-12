@@ -595,7 +595,7 @@ const Sales: React.FC = () => {
 
     <div className="flex justify-between font-bold text-lg">
       <span>Total Général</span>
-      <span>{Number(total ?? 0).toFixed(0)} Fc</span>
+     
       <span>{formatNumber(total ?? 0)} Fc</span>
       
     </div>
