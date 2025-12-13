@@ -52,3 +52,4 @@ const Receipt = forwardRef<HTMLDivElement, ReceiptProps>(
     );
   }
 );
+export default Receipt;
