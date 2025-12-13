@@ -1,97 +1,54 @@
-import React, { forwardRef } from 'react';
-
-
-
-interface ReceiptProps {
-  cart: { name: string; quantity: number; price: number }[];
-  total: number;
-  customerName: string | null;
-  paymentMethod: string;
-  date: string;
-  invoiceNumber: string;
-  userName: string;
-  exchangeRate: number; // ⬅️ Ajout du taux
-}
-
-const TAX_RATE = 0.00;
-
 const Receipt = forwardRef<HTMLDivElement, ReceiptProps>(
-  ({ cart, total, customerName, paymentMethod, date, invoiceNumber, userName,exchangeRate  }, ref) => {
-    const totalHT = total / (1 + TAX_RATE);
-    const taxAmount = total - totalHT;
+  ({ cart, total, customerName, paymentMethod, date, invoiceNumber, userName, exchangeRate }, ref) => {
 
-  
-  const formattedDate = new Date(date).toLocaleString("fr-FR", {
-  day: "2-digit",
-  month: "2-digit",
-  year: "numeric",
-  hour: "2-digit",
-  minute: "2-digit",
-  second: "2-digit",
-  hour12: false,
-  });
-
+    const formattedDate = new Date(date).toLocaleString("fr-FR");
 
     return (
       <div
         ref={ref}
-        className="p-4 max-w-[80mm] bg-white text-black text-sm border border-gray-300"
+        style={{
+          width: "58mm",
+          padding: "8px",
+          fontSize: "11px",
+          color: "#000",
+          background: "#fff"
+        }}
       >
-        <div className="text-center mb-2">
-          <h1 className="font-bold text-base">REHOBOTH BUSINESS GROUP</h1>
-          <p className="text-xs">RCCM 18-A-01715 - ID.NAT 01-93-N40495R</p>
-          <p className="text-xs">45 BLVD LUMUMBA, MASINA, KINSHASA</p>
-          <p className="text-xs">Date/Heure : {formattedDate} </p>
-          <p className="text-xs">N° Facture : {invoiceNumber}</p>
+        <div style={{ textAlign: "center" }}>
+          <strong>REHOBOTH BUSINESS GROUP</strong><br />
+          RCCM 18-A-01715<br />
+          45 BLVD LUMUMBA<br />
+          {formattedDate}<br />
+          Facture : {invoiceNumber}
         </div>
 
-        <div className="mb-2 text-xs">
-          <p><strong>Client :</strong> {customerName || 'Client anonyme'}  </p> 
-          <p><strong>Mode de paiement :</strong> {paymentMethod}</p>
-          <p style={{ display: "flex", justifyContent: "space-between", width: "100%" }}> 
-              <span><strong>Caissier :</strong> {userName}</span>
-               <span> 
-                 <strong> Taux :</strong> {exchangeRate?.toLocaleString("fr-FR")} Fc 
-                </span>
-          </p>
-        </div>
+        <hr />
 
-        <hr className="my-2" />
+        Client : {customerName || "Client anonyme"}<br />
+        Paiement : {paymentMethod}<br />
+        Caissier : {userName}<br />
+        Taux : {exchangeRate.toLocaleString("fr-FR")} Fc
 
-        <div className="text-xs">
-          <div className="flex justify-between font-bold border-b border-gray-400 pb-1 mb-1">
-            <span className="w-1/6">Qté</span>
-            <span className="w-2/6">Désignation</span>
-            <span className="w-1/4 text-right">Prix Unit.</span>
-            <span className="w-1/4 text-right">Prix Tot.</span>
+        <hr />
+
+        Qté  Désignation     Total
+        <br />
+        --------------------------------
+
+        {cart.map((item, i) => (
+          <div key={i}>
+            {item.quantity} x {item.name}<br />
+            &nbsp;&nbsp;&nbsp;{(item.price * item.quantity).toFixed(0)} Fc
           </div>
-          {cart.map((item, index) => {
-            const price = Number(item.price);
-            const lineTotal = price * item.quantity;
-            return (
-              <div key={index} className="flex justify-between">
-                <span className="w-1/6">{item.quantity}</span>
-                <span className="w-2/6">{item.name.toUpperCase()}</span>
-                <span className="w-1/4 text-right">{price.toFixed(0)}Fc</span>
-                <span className="w-1/4 text-right">{lineTotal.toFixed(0)}Fc</span>
-              </div>
-            );
-          })}
-        </div>
+        ))}
 
-        <hr className="my-2" />
+        <hr />
 
-        <div className="text-xs space-y-1 text-right">
-          <p>Total HT : {totalHT.toFixed(0)}Fc</p>
-          <p>TVA (0%) : {taxAmount.toFixed(2)}Fc</p>
-          <p className="font-bold">Total TTC : {total.toLocaleString('fr-FR')} Fc</p>
-        </div>
-       
-        <p className="text-center text-xs mt-4"> Merci pour votre achat !</p>
-        
+        TOTAL : {total.toLocaleString("fr-FR")} Fc
+
+        <br /><br />
+        Merci pour votre achat
       </div>
     );
   }
 );
-
-export default Receipt;
