@@ -1,4 +1,4 @@
-Receipt.tsx correct mais avec défaut d’impression de plus de 2 lignes.
+//Receipt.tsx correct mais avec défaut d’impression de plus de 2 lignes.
 
 import React, { forwardRef } from 'react';
 
