@@ -59,4 +59,5 @@ Ajout Filtre recherche par Type de mouvement dans Cashledger (Livre de caisse)
 Ajout modal CRUD vente
 
 Version 35
+Correction impression sur 2 lignes
 Composant indépendant de gestion d'entrée et sortie en stock
