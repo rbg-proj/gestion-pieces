@@ -262,6 +262,12 @@ const Sales: React.FC = () => {
   // Finalise la vente : insère sale + sale_items, met à jour stock, prépare reçu
   const handleCompleteSale = async () => {
     if (isSubmitting) return;
+  
+    // 🚫 Bloquer immédiatement si hors ligne
+  if (!navigator.onLine) {
+    toast.error("Connexion perdue. Vente annulée.");
+    return;
+  }  
 
     // --- Vérification des prix trop bas ---
       const lowPriceItems = cart.filter(item => item.price <= 100);
@@ -312,6 +318,8 @@ const Sales: React.FC = () => {
       if (!cart || cart.length === 0) {
           throw new Error("Panier vide – vente bloquée");
         }
+
+      
 
 
       // total en CDF (UI) -> converti en USD pour la base
