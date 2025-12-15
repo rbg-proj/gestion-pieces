@@ -309,6 +309,10 @@ const Sales: React.FC = () => {
       if (!rate || rate <= 0) {
         throw new Error('Taux de change nul ou invalide. Vérifiez-le svp !');
       }
+      if (!cart || cart.length === 0) {
+          throw new Error("Panier vide – vente bloquée");
+        }
+
 
       // total en CDF (UI) -> converti en USD pour la base
       const totalCDF = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
