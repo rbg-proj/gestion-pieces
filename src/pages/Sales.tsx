@@ -265,7 +265,7 @@ const Sales: React.FC = () => {
   
     // 🚫 Bloquer immédiatement si hors ligne
   if (!navigator.onLine) {
-    toast.error("Connexion perdue. Vente annulée.");
+    toast.error("Connexion perdue. Vente annulée; veuillez recommencer.");
     return;
   }  
 
