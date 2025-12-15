@@ -319,7 +319,10 @@ const Sales: React.FC = () => {
           throw new Error("Panier vide – vente bloquée");
         }
 
-      
+      if (!cart || cart.length === 0) {
+        throw new Error("Panier vide – vente bloquée");
+      }
+
 
 
       // total en CDF (UI) -> converti en USD pour la base
