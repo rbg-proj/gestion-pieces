@@ -260,145 +260,134 @@ const Sales: React.FC = () => {
   };
 
   // Finalise la vente : insère sale + sale_items, met à jour stock, prépare reçu
+ 
   const handleCompleteSale = async () => {
-    if (isSubmitting) return;
-  
-    // 🚫 Bloquer immédiatement si hors ligne
+  // ⛔ Anti double-clic
+  if (isSubmitting) return;
+
+  // 🚫 Hors ligne = vente bloquée
   if (!navigator.onLine) {
-    toast.error("Connexion perdue. Vente annulée; veuillez recommencer.");
+    toast.error("Connexion perdue. Vente annulée.");
     return;
-  }  
+  }
 
-    // --- Vérification des prix trop bas ---
-      const lowPriceItems = cart.filter(item => item.price <= 100);
-      
-      if (lowPriceItems.length > 0) {
-        const list = lowPriceItems.map(i => `${i.name} (${i.price} Fc)`).join('\n - ');
-        const confirmLow = window.confirm(
-          `⚠️ Certains articles ont un prix très bas (0 ou ≤ 100 Fc) :\n\n - ${list}\n\n` +
-          "Voulez-vous vraiment continuer ?"
-        );
-      
-        if (!confirmLow) {
-          toast.error("Vente annulée. Veuillez corriger les prix");
-          return; // ⛔ stop la vente
-        }
-      }
+  // 🚫 Panier vide
+  if (!cart || cart.length === 0) {
+    toast.error("Ajoutez au moins un article au panier.");
+    return;
+  }
 
-    setIsSubmitting(true);
-    setSaleCompleted(false);
-    toast.loading('Validation de la vente en cours… Veuillez patienter.', { id: 'sale-progress' });
+  // 🚫 Mode de paiement obligatoire
+  if (!selectedPayment) {
+    toast.error("Veuillez sélectionner un mode de paiement.");
+    return;
+  }
+
+  // ⚠️ Alerte prix trop bas
+  const lowPriceItems = cart.filter(item => item.price <= 100);
+  if (lowPriceItems.length > 0) {
+    const list = lowPriceItems
+      .map(i => `${i.name} (${i.price} Fc)`)
+      .join("\n - ");
+
+    const confirmed = window.confirm(
+      `⚠️ Certains articles ont un prix très bas (≤ 100 Fc) :\n\n - ${list}\n\n` +
+      "Voulez-vous vraiment continuer ?"
+    );
+
+    if (!confirmed) {
+      toast.error("Vente annulée. Veuillez corriger les prix.");
+      return;
+    }
+  }
+
+  setIsSubmitting(true);
+  toast.loading("Validation de la vente…", { id: "sale-progress" });
+
+  try {
+    // 🔄 Taux de change (fallback safe)
+    let rate = exchangeRate;
 
     try {
-      if (cart.length === 0 || !selectedPayment) {
-        // reset isSubmitting and exit early
-        toast.dismiss('sale-progress');
-        toast.error('Ajoutez au moins un article et sélectionnez un mode de paiement.');
-        setIsSubmitting(false);
-        return;
-      }
-
-      // Re-fetch latest rate to ensure accuracy at time of sale
-      let rate = exchangeRate;
-      try {
-        const { data } = await supabase
-          .from('exchange_rates')
-          .select('rate')
-          .order('created_at', { ascending: false })
-          .limit(1)
-          .single();
-        if (data && data.rate) rate = Number(data.rate);
-      } catch (e) {
-        // ignore network hiccups here, we'll check rate validity below
-      }
-
-      if (!rate || rate <= 0) {
-        throw new Error('Taux de change nul ou invalide. Vérifiez-le svp !');
-      }
-      if (!cart || cart.length === 0) {
-          throw new Error("Erreur survenue : Panier vidé – vente bloquée");
-        }
-
-      // total en CDF (UI) -> converti en USD pour la base
-      const totalCDF = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-      const totalUSD = totalCDF / rate;
-
-      // Insertion dans sales
-      const { data: saleData, error: saleError } = await supabase
-        .from('sales')
-        .insert([
-          {
-            total_amount: totalUSD,
-            payment_method: selectedPayment,
-            customer_id: selectedCustomerId,
-            exchange_rate: rate,
-            sale_date: new Date().toISOString(), // ✅ ajout de la date système
-            user_id: user?.id, // ✅ ajout de l’agent qui a fait la vente
-          },
-        ])
-        .select()
+      const { data } = await supabase
+        .from("exchange_rates")
+        .select("rate")
+        .order("created_at", { ascending: false })
+        .limit(1)
         .single();
 
-      if (saleError) throw saleError;
-      if (!saleData || !saleData.id) throw new Error('Impossible de créer la vente');
+      if (data?.rate) rate = Number(data.rate);
+    } catch {}
 
-      // Prépare sale_items (unit_price enregistré en USD)
-      const saleItemsToInsert = cart.map((item) => ({
-        sale_id: saleData.id,
-        product_id: item.id,
-        quantity: item.quantity,
-        unit_price: item.price / rate,
-      }));
-      
-
-      const { error: itemsError } = await supabase.from('sale_items').insert(saleItemsToInsert);
-      if (itemsError) throw itemsError;
-
-      // Update stock pour chaque article
-      for (const item of cart) {
-        const { data: productData, error: fetchError } = await supabase
-          .from('products')
-          .select('stock')
-          .eq('id', item.id)
-          .single();
-
-        if (fetchError) throw fetchError;
-        const newStock = (productData.stock ?? 0) - item.quantity;
-
-        const { error: updateError } = await supabase.from('products').update({ stock: newStock }).eq('id', item.id);
-        if (updateError)
-          throw new Error(`Erreur mise à jour du stock pour ${item.id}: ${(updateError as any).message}`);
-      }
-
-      // Préparation du reçu : on mémorise le taux effectivement utilisé (printedRate)
-      setSelectedSaleId(saleData.id);
-      setPrintedCart([...cart]);
-      setPrintedTotal(totalCDF); // total en CDF — Receipt attend total en FC
-      setPrintedCustomerName(customerName);
-      setPrintedPaymentMethod(selectedPayment);
-      setPrintedRate(rate ?? null);
-
-      // reset du panier / UI
-      setCart([]);
-      setSelectedPayment('');
-      await fetchProducts();
-
-      setCustomerPhone('');
-      setSelectedCustomerId(null);
-      setCustomerName(null);
-
-      setSaleCompleted(true);
-      setShowReceiptModal(true);
-
-      toast.success('Vente complétée avec succès !', { id: 'sale-progress' });
-    } catch (err) {
-      console.error('handleCompleteSale error', err);
-      toast.error('Une erreur est survenue lors de la validation.', { id: 'sale-progress' });
-      setError(err instanceof Error ? err.message : 'Une erreur est survenue...');
-    } finally {
-      setIsSubmitting(false);
+    if (!rate || rate <= 0) {
+      throw new Error("Taux de change invalide.");
     }
-  };
+
+    // 📦 Préparation des items (USD)
+    const itemsPayload = cart.map(item => ({
+      product_id: item.id,
+      quantity: item.quantity,
+      unit_price: item.price / rate,
+    }));
+
+    // 🔐 Appel RPC transactionnelle
+    const { data: saleId, error } = await supabase.rpc(
+      "create_sale_transaction",
+      {
+        p_customer_id: selectedCustomerId,
+        p_payment_method: selectedPayment,
+        p_exchange_rate: rate,
+        p_user_id: user?.id,
+        p_items: itemsPayload,
+      }
+    );
+
+    if (error || !saleId) {
+      throw error || new Error("Échec de la validation de la vente.");
+    }
+
+    // 🧾 Reçu (UI uniquement)
+    const totalCDF = cart.reduce(
+      (sum, item) => sum + item.price * item.quantity,
+      0
+    );
+
+    setSelectedSaleId(saleId);
+    setPrintedCart([...cart]);
+    setPrintedTotal(totalCDF);
+    setPrintedPaymentMethod(selectedPayment);
+    setPrintedCustomerName(customerName);
+    setPrintedRate(rate);
+
+    // 🔄 Reset UI
+    setCart([]);
+    setSelectedPayment("");
+    setCustomerPhone("");
+    setSelectedCustomerId(null);
+    setCustomerName(null);
+
+    await fetchProducts();
+
+    setSaleCompleted(true);
+    setShowReceiptModal(true);
+
+    toast.success("Vente enregistrée avec succès !", {
+      id: "sale-progress",
+    });
+
+  } catch (err) {
+    console.error("handleCompleteSale error:", err);
+
+    toast.error(
+      err instanceof Error
+        ? err.message
+        : "Une erreur est survenue lors de la validation.",
+      { id: "sale-progress" }
+    );
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   // Totaux côté UI (CDF)
   const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
