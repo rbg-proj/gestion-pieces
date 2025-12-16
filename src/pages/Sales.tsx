@@ -259,7 +259,7 @@ const Sales: React.FC = () => {
     }
   };
 
-  // Finalise la vente : insère sale + sale_items, met à jour stock, prépare reçu
+// Finalise la vente : insère sale + sale_items, met à jour stock, prépare reçu
   
   const handleCompleteSale = async () => {
   // ⛔ Anti double-clic
