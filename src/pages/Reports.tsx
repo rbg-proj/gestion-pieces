@@ -266,6 +266,7 @@ const Reports: React.FC = () => {
             <option value="day">Aujourd'hui</option>
             <option value="week">Cette Semaine</option>
             <option value="month">Ce Mois</option>
+            <option value="year">Cette Année</option>
           </select>
           <button
             onClick={() => exportToExcel(dailySales, productSales, topCustomers)}
