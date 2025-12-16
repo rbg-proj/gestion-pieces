@@ -6,7 +6,7 @@ import {
   Package
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
-import { format, subDays, startOfDay, endOfDay, startOfWeek, startOfMonth } from 'date-fns';
+import { format, subDays, startOfDay, endOfDay, startOfWeek, startOfMonth, startOfYear } from 'date-fns';
 import * as XLSX from 'xlsx';
 import { supabase } from '../lib/supabase';
 
