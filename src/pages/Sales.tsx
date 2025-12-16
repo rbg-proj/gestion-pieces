@@ -349,6 +349,7 @@ const Sales: React.FC = () => {
         quantity: item.quantity,
         unit_price: item.price / rate,
       }));
+      
 
       const { error: itemsError } = await supabase.from('sale_items').insert(saleItemsToInsert);
       if (itemsError) throw itemsError;
