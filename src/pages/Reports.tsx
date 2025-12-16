@@ -57,8 +57,11 @@ const getDateRange = (timeRange: 'day' | 'week' | 'month') => {
     case 'month':
       startDate = startOfMonth(now);
       break;
+    case 'year':
+    startDate = startOfYear(now);
+    break;
     default:
-      startDate = startOfWeek(now);
+      startDate = startOfDay(now);
   }
   
   return {
