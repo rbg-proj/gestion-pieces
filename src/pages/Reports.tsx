@@ -34,15 +34,7 @@ const COLORS = ['#0066FF', '#7C3AED', '#06B6D4', '#10B981', '#F59E0B'];
 const ITEMS_PER_PAGE = 10;
 const MAX_PIE_CHART_ITEMS = 10;
 
-// 2️⃣ Fonctions utilitaires
-const formatCurrency = (amount: number) => {
-  return new Intl.NumberFormat('fr-CD', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(amount);
-};
+
 
 const getDateRange = (timeRange: 'day' | 'week' | 'month' | 'year') => {
   const now = new Date();
