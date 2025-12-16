@@ -260,7 +260,7 @@ const Reports: React.FC = () => {
         <div className="flex space-x-2">
           <select
             value={timeRange}
-            onChange={(e) => setTimeRange(e.target.value as 'day' | 'week' | 'month')}
+            onChange={(e) => setTimeRange(e.target.value as 'day' | 'week' | 'month' | 'year')}
             className="px-4 py-2 border border-gray-200 rounded-md bg-white text-gray-700 hover:bg-gray-50"
           >
             <option value="day">Aujourd'hui</option>
