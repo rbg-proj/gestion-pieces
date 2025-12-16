@@ -91,7 +91,7 @@ const exportToExcel = (dailySales: DailySale[], productSales: ProductSale[], top
 
 const Reports: React.FC = () => {
   // 1️⃣ États regroupés
-  const [timeRange, setTimeRange] = useState<'day' | 'week' | 'month'>('week');
+  const [timeRange, setTimeRange] = useState<'day' | 'week' | 'month' | 'year'>('day');
   const [dailySales, setDailySales] = useState<DailySale[]>([]);
   const [productSales, setProductSales] = useState<ProductSale[]>([]);
   const [topCustomers, setTopCustomers] = useState<CustomerStat[]>([]);
