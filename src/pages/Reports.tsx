@@ -43,7 +43,7 @@ const formatCurrency = (amount: number) => {
   }).format(amount);
 };
 
-const getDateRange = (timeRange: 'day' | 'week' | 'month') => {
+const getDateRange = (timeRange: 'day' | 'week' | 'month' | 'year') => {
   const now = new Date();
   let startDate;
   
