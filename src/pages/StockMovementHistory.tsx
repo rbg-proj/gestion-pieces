@@ -18,6 +18,7 @@ interface Product {
 }
 
 export default function StockMovementsHistory() {
+  const [query, setQuery] = useState("");
   const [data, setData] = useState<any[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [page, setPage] = useState(1);
