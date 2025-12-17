@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import StockMovementHistory from "@/pages/StockMovementHistory";
 
-
 interface Product {
   id: string;
   name: string;
@@ -24,6 +23,7 @@ export default function StockMovement() {
   const [loading, setLoading] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
 
+  // Recherche produit côté serveur
   useEffect(() => {
     if (query.length < 3) {
       setResults([]);
@@ -43,8 +43,12 @@ export default function StockMovement() {
     return () => clearTimeout(timeout);
   }, [query]);
 
+  // Soumission mouvement de stock
   const handleSubmit = async () => {
-    if (!selected || quantity <= 0 || !reason) return;
+    if (!selected || quantity <= 0 || !reason) {
+      alert("Veuillez remplir tous les champs obligatoires");
+      return;
+    }
 
     if (type === "OUT" && quantity > selected.stock) {
       alert("Stock insuffisant");
@@ -53,6 +57,7 @@ export default function StockMovement() {
 
     setLoading(true);
 
+    // Insérer le mouvement
     await supabase.from("stock_movements").insert({
       product_id: selected.id,
       type,
@@ -61,6 +66,7 @@ export default function StockMovement() {
       comment,
     });
 
+    // Mettre à jour le stock
     const newStock =
       type === "OUT"
         ? selected.stock - quantity
@@ -71,8 +77,10 @@ export default function StockMovement() {
       .update({ stock: newStock })
       .eq("id", selected.id);
 
+    // Reset formulaire
     setSelected(null);
     setQuery("");
+    setResults([]);
     setQuantity(1);
     setReason("");
     setComment("");
@@ -82,121 +90,120 @@ export default function StockMovement() {
   };
 
   return (
-    <div className="max-w-md space-y-4">
-      {/* Recherche produit */}
-      <div className="space-y-1">
-      <label className="text-sm font-medium">
-        Produit
-      </label>
-      <Input
-        placeholder="Rechercher un produit (tapez au moins 3 lettres)"
-        value={query}
-        onChange={e => {
-          setQuery(e.target.value);
-          setSelected(null);
-        }}
-      />
-      </div>
-      {/* Résultats */}
-      {results.length > 0 && (
-        <div className="border rounded bg-white max-h-40 overflow-auto">
-          {results.map(p => (
-            <div
-              key={p.id}
-              className="p-2 cursor-pointer hover:bg-gray-100"
-              onClick={() => {
-                setSelected(p);
-                setResults([]);
-                setQuery(p.name);
-              }}
-            >
-              {p.name} — Stock: {p.stock}
-            </div>
-          ))}
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {/* Colonne formulaire */}
+      <div className="lg:col-span-2 space-y-4">
+        <h2 className="text-xl font-bold">Mouvement de stock</h2>
+
+        {/* Champ produit */}
+        <div className="space-y-1">
+          <label className="text-sm font-medium">Produit</label>
+          <Input
+            placeholder="Rechercher un produit (min 3 lettres)"
+            value={query}
+            onChange={e => {
+              setQuery(e.target.value);
+              setSelected(null);
+            }}
+          />
         </div>
-      )}
 
-      {selected && (
-        <div className="text-sm text-gray-600">
-          Stock actuel : {selected.stock}
+        {/* Résultats auto-complétion */}
+        {results.length > 0 && (
+          <div className="border rounded bg-white max-h-40 overflow-auto">
+            {results.map(p => (
+              <div
+                key={p.id}
+                className="p-2 cursor-pointer hover:bg-gray-100"
+                onClick={() => {
+                  setSelected(p);
+                  setResults([]);
+                  setQuery(p.name);
+                }}
+              >
+                {p.name} — Stock: {p.stock}
+              </div>
+            ))}
+          </div>
+        )}
+
+        {selected && (
+          <div className="text-sm text-gray-600">
+            Stock actuel : {selected.stock}
+          </div>
+        )}
+
+        {/* Type mouvement */}
+        <div className="space-y-1">
+          <label className="text-sm font-medium">Type de mouvement</label>
+          <select
+            className="border rounded px-2 py-1 w-full"
+            value={type}
+            onChange={e => setType(e.target.value as "IN" | "OUT")}
+          >
+            <option value="OUT">Sortie</option>
+            <option value="IN">Entrée</option>
+          </select>
         </div>
-      )}
 
-      {/* Type */}
-      <div className="space-y-1">
-      <label className="text-sm font-medium">
-        Type Mouvement
-      </label>
-      <select
-        className="border rounded px-2 py-1 w-full"
-        value={type}
-        onChange={e => setType(e.target.value as "IN" | "OUT")}
-      >
-        <option value="OUT">Sortie</option>
-        <option value="IN">Entrée</option>
-      </select>
+        {/* Motif */}
+        <div className="space-y-1">
+          <label className="text-sm font-medium">Motif</label>
+          <select
+            className="border rounded px-2 py-1 w-full"
+            value={reason}
+            onChange={e => setReason(e.target.value)}
+          >
+            <option value="">Sélectionner un motif</option>
+            {REASONS.map(r => (
+              <option key={r} value={r}>
+                {r}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Quantité */}
+        <div className="space-y-1">
+          <label className="text-sm font-medium">Quantité</label>
+          <Input
+            type="number"
+            min={1}
+            value={quantity}
+            onChange={e => setQuantity(Number(e.target.value))}
+          />
+        </div>
+
+        {/* Commentaire */}
+        <div className="space-y-1">
+          <label className="text-sm font-medium">Commentaire</label>
+          <Input
+            placeholder="Commentaire (optionnel)"
+            value={comment}
+            onChange={e => setComment(e.target.value)}
+          />
+        </div>
+
+        {/* Bouton valider */}
+        <Button onClick={handleSubmit} disabled={loading}>
+          Valider
+        </Button>
+
+        {/* Bouton afficher l'historique */}
+        <Button
+          variant="outline"
+          onClick={() => setShowHistory(s => !s)}
+        >
+          {showHistory ? "Masquer l'historique" : "Voir l'historique"}
+        </Button>
       </div>
 
-      {/* Motif */}
-      <div className="space-y-1">
-      <label className="text-sm font-medium">
-        Motif
-      </label>
-      <select
-        className="border rounded px-2 py-1 w-full"
-        value={reason}
-        onChange={e => setReason(e.target.value)}
-      >
-        <option value="">Motif</option>
-        {REASONS.map(r => (
-          <option key={r} value={r}>{r}</option>
-        ))}
-      </select>
-      </div>
-
-      {/* Quantité */}
-      <div className="space-y-1">
-      <label className="text-sm font-medium">
-        Quantité
-      </label>
-      <Input
-        type="number"
-        min={1}
-        value={quantity}
-        onChange={e => setQuantity(Number(e.target.value))}
-      />
-      </div>
-
-      {/* Commentaire */}
-      <div className="space-y-1">
-      <label className="text-sm font-medium">
-        Commentaire
-      </label>
-      <Input
-        placeholder="Commentaire (optionnel)"
-        value={comment}
-        onChange={e => setComment(e.target.value)}
-      />
-      </div>
-
-      <Button onClick={handleSubmit} disabled={loading}>
-        Valider
-      </Button>
-
-      {/*Afficher l'historique */}
-     
-      <Button
-        variant="outline"
-        onClick={() => setShowHistory(s => !s)}
-      >
-        {showHistory ? "Masquer l'historique" : "Voir l'historique"}
-      </Button>
-      
+      {/* Colonne historique */}
       {showHistory && (
-        <StockMovementHistory />
+        <div className="lg:col-span-1 border-l pl-4 max-h-[80vh] overflow-y-auto">
+          <StockMovementHistory />
+        </div>
       )}
-
     </div>
   );
-  
 }
