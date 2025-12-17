@@ -145,6 +145,7 @@ export default function StockMovementsHistory() {
                       setQuery(p.name);
                     }}
                   >
+                     {p.name}
                   </div>
                 ))}
               </div>
