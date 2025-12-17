@@ -49,8 +49,8 @@ function App() {
             <Route path="orders" element={<Orders />} />
             <Route path="reports" element={<Reports />} />
             <Route path="stock-history" element={<StockHistory />} />
-            <Route path="stockMovement" element={<stockMovement />} />
-            <Route path="stockMovementHistory" element={<stockMovementHistory />} />
+            <Route path="stockMovement" element={<StockMovement />} />
+            <Route path="stockMovementHistory" element={<StockMovementHistory />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/exchangeRates" element={<ExchangeRatesPage />} />
