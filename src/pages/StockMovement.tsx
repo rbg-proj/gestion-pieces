@@ -94,6 +94,7 @@ export default function StockMovement() {
       {/* Colonne formulaire */}
       <div className="space-y-4">
         <h2 className="text-xl font-bold">Mouvement de stock</h2>
+        
          {/* Bouton afficher l'historique */}
         <Button
           variant="outline"
