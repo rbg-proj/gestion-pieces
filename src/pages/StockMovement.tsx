@@ -81,6 +81,7 @@ export default function StockMovement() {
   return (
     <div className="max-w-md space-y-4">
       {/* Recherche produit */}
+      <div className="space-y-1">
       <label className="text-sm font-medium">
     Produit
   </label>
@@ -92,7 +93,7 @@ export default function StockMovement() {
           setSelected(null);
         }}
       />
-
+      </div>
       {/* Résultats */}
       {results.length > 0 && (
         <div className="border rounded bg-white max-h-40 overflow-auto">
