@@ -102,7 +102,7 @@ export default function StockMovement() {
         <SelectContent>
           {products.map(p => (
             <SelectItem key={p.id} value={p.id}>
-              {p.name} (Stock: {p.stock_quantity})
+              {p.name} (Stock: {p.stock})
             </SelectItem>
           ))}
         </SelectContent>
