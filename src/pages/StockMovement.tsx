@@ -2,13 +2,6 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 interface Product {
   id: string;
@@ -16,16 +9,12 @@ interface Product {
   stock_quantity: number;
 }
 
-const REASONS = [
-  "ENDOMMAGE",
-  "PERIME",
-  "PERTE",
-  "AJUSTEMENT",
-];
+const REASONS = ["ENDOMMAGE", "PERIME", "PERTE", "AJUSTEMENT"];
 
 export default function StockMovement() {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [product, setProduct] = useState<Product | null>(null);
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState<Product[]>([]);
+  const [selected, setSelected] = useState<Product | null>(null);
   const [type, setType] = useState<"IN" | "OUT">("OUT");
   const [reason, setReason] = useState("");
   const [quantity, setQuantity] = useState(1);
@@ -33,112 +22,130 @@ export default function StockMovement() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const loadProducts = async () => {
+    if (query.length < 3) {
+      setResults([]);
+      return;
+    }
+
+    const timeout = setTimeout(async () => {
       const { data } = await supabase
         .from("products")
         .select("id, name, stock")
-        .order("name");
+        .ilike("name", `%${query}%`)
+        .limit(10);
 
-      if (data) setProducts(data);
-    };
+      if (data) setResults(data);
+    }, 300);
 
-    loadProducts();
-  }, []);
+    return () => clearTimeout(timeout);
+  }, [query]);
 
   const handleSubmit = async () => {
-    if (!product || !reason || quantity <= 0) return;
+    if (!selected || quantity <= 0 || !reason) return;
 
-    if (type === "OUT" && quantity > product.stock_quantity) {
+    if (type === "OUT" && quantity > selected.stock_quantity) {
       alert("Stock insuffisant");
       return;
     }
 
     setLoading(true);
 
-    // 1. Enregistrer le mouvement
-    const { error } = await supabase.from("stock_movements").insert({
-      product_id: product.id,
+    await supabase.from("stock_movements").insert({
+      product_id: selected.id,
       type,
       reason,
       quantity,
       comment,
     });
 
-    if (error) {
-      alert("Erreur lors de l'enregistrement");
-      setLoading(false);
-      return;
-    }
-
-    // 2. Mettre à jour le stock
     const newStock =
       type === "OUT"
-        ? product.stock_quantity - quantity
-        : product.stock_quantity + quantity;
+        ? selected.stock_quantity - quantity
+        : selected.stock_quantity + quantity;
 
     await supabase
       .from("products")
-      .update({ stock_quantity: newStock })
-      .eq("id", product.id);
+      .update({ stock: newStock })
+      .eq("id", selected.id);
 
-    // reset
-    setProduct(null);
+    setSelected(null);
+    setQuery("");
     setQuantity(1);
     setReason("");
     setComment("");
     setLoading(false);
+
     alert("Mouvement enregistré");
   };
 
   return (
     <div className="max-w-md space-y-4">
-      <Select onValueChange={(id) => {
-        const p = products.find(p => p.id === id);
-        if (p) setProduct(p);
-      }}>
-        <SelectTrigger>
-          <SelectValue placeholder="Sélectionner un produit" />
-        </SelectTrigger>
-        <SelectContent>
-          {products.map(p => (
-            <SelectItem key={p.id} value={p.id}>
-              {p.name} (Stock: {p.stock})
-            </SelectItem>
+      {/* Recherche produit */}
+      <Input
+        placeholder="Rechercher un produit (min 3 lettres)"
+        value={query}
+        onChange={e => {
+          setQuery(e.target.value);
+          setSelected(null);
+        }}
+      />
+
+      {/* Résultats */}
+      {results.length > 0 && (
+        <div className="border rounded bg-white max-h-40 overflow-auto">
+          {results.map(p => (
+            <div
+              key={p.id}
+              className="p-2 cursor-pointer hover:bg-gray-100"
+              onClick={() => {
+                setSelected(p);
+                setResults([]);
+                setQuery(p.name);
+              }}
+            >
+              {p.name} — Stock: {p.stock}
+            </div>
           ))}
-        </SelectContent>
-      </Select>
+        </div>
+      )}
 
-      <Select value={type} onValueChange={(v: "IN" | "OUT") => setType(v)}>
-        <SelectTrigger>
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="OUT">Sortie</SelectItem>
-          <SelectItem value="IN">Entrée</SelectItem>
-        </SelectContent>
-      </Select>
+      {selected && (
+        <div className="text-sm text-gray-600">
+          Stock actuel : {selected.stock}
+        </div>
+      )}
 
-      <Select value={reason} onValueChange={setReason}>
-        <SelectTrigger>
-          <SelectValue placeholder="Motif" />
-        </SelectTrigger>
-        <SelectContent>
-          {REASONS.map(r => (
-            <SelectItem key={r} value={r}>
-              {r}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+      {/* Type */}
+      <select
+        className="border rounded px-2 py-1 w-full"
+        value={type}
+        onChange={e => setType(e.target.value as "IN" | "OUT")}
+      >
+        <option value="OUT">Sortie</option>
+        <option value="IN">Entrée</option>
+      </select>
 
+      {/* Motif */}
+      <select
+        className="border rounded px-2 py-1 w-full"
+        value={reason}
+        onChange={e => setReason(e.target.value)}
+      >
+        <option value="">Motif</option>
+        {REASONS.map(r => (
+          <option key={r} value={r}>{r}</option>
+        ))}
+      </select>
+
+      {/* Quantité */}
       <Input
         type="number"
         min={1}
         value={quantity}
         onChange={e => setQuantity(Number(e.target.value))}
-        placeholder="Quantité"
       />
 
+      {/* Commentaire */}
       <Input
         placeholder="Commentaire (optionnel)"
         value={comment}
