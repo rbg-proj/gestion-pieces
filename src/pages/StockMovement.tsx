@@ -90,9 +90,9 @@ export default function StockMovement() {
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {/* Colonne formulaire */}
-      <div className="lg:col-span-2 space-y-4">
+      <div className="space-y-4">
         <h2 className="text-xl font-bold">Mouvement de stock</h2>
 
         {/* Champ produit */}
@@ -200,7 +200,7 @@ export default function StockMovement() {
 
       {/* Colonne historique */}
       {showHistory && (
-        <div className="lg:col-span-1 border-l pl-4 max-h-[80vh] overflow-y-auto">
+        <div className="border-l pl-4 max-h-[80vh] overflow-y-auto">
           <StockMovementHistory />
         </div>
       )}
