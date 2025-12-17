@@ -189,14 +189,7 @@ export default function StockMovement() {
           Valider
         </Button>
 
-        {/* Bouton afficher l'historique */}
-        <Button
-          variant="outline"
-          onClick={() => setShowHistory(s => !s)}
-        >
-          {showHistory ? "Masquer l'historique" : "Voir l'historique"}
-        </Button>
-      </div>
+       
 
       {/* Colonne historique */}
       {showHistory && (
