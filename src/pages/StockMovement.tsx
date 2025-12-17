@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 interface Product {
   id: string;
   name: string;
-  stock_quantity: number;
+  stock: number;
 }
 
 const REASONS = ["ENDOMMAGE", "PERIME", "PERTE", "AJUSTEMENT"];
