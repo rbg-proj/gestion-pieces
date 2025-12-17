@@ -105,6 +105,8 @@ export default function StockMovementsHistory() {
   const totalPages = Math.ceil(total / PAGE_SIZE);
 
   const resetFilters = () => {
+    setQuery("");
+    setResults([]);
     setProductId(null);
     setType(null);
     setReason(null);
