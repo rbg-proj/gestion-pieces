@@ -120,18 +120,7 @@ export default function StockMovementsHistory() {
 
       {/* FILTRES */}
       <div className="grid grid-cols-1 md:grid-cols-5 gap-2">
-        <Select onValueChange={setProductId} value={productId ?? ""}>
-          <SelectTrigger>
-            <SelectValue placeholder="Produit" />
-          </SelectTrigger>
-          <SelectContent>
-            {products.map(p => (
-              <SelectItem key={p.id} value={p.id}>
-                {p.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        
 
         <div className="space-y-1">
           <label className="text-sm font-medium">Produit</label>
