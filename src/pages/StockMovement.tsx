@@ -184,14 +184,7 @@ export default function StockMovement() {
       </Button>
 
       {/*Afficher l'historique */}
-      <div className="flex gap-2">
-        <button
-          onClick={() => navigate("/addcashentry")}
-          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition flex items-center"
-        >
-          <Plus className="w-4 h-4 mr-1" /> Entrée Caisse
-        </button>
-      </div>
+     
       <Button
         variant="outline"
         onClick={() => setShowHistory(s => !s)}
