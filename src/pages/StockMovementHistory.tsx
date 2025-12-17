@@ -133,6 +133,18 @@ export default function StockMovementsHistory() {
           </SelectContent>
         </Select>
 
+        <div className="space-y-1">
+          <label className="text-sm font-medium">Produit</label>
+          <Input
+            placeholder="Rechercher un produit (min 3 lettres)"
+            value={query}
+            onChange={e => {
+              setQuery(e.target.value);
+              setSelected(null);
+            }}
+          />
+        </div>
+
         <Select onValueChange={setType} value={type ?? ""}>
           <SelectTrigger>
             <SelectValue placeholder="Type" />
