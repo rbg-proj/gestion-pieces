@@ -40,6 +40,25 @@ export default function StockMovementsHistory() {
       .then(({ data }) => data && setProducts(data));
   }, []);
 
+  // Recherche produit côté serveur
+  useEffect(() => {
+    if (query.length < 3) {
+      setResults([]);
+      return;
+    }
+
+    const timeout = setTimeout(async () => {
+      const { data } = await supabase
+        .from("products")
+        .select("id, name, stock")
+        .ilike("name", `%${query}%`)
+        .limit(10);
+
+      if (data) setResults(data);
+    }, 300);
+
+    return () => clearTimeout(timeout);
+  }, [query]);
 
   const fetchData = async () => {
     setLoading(true);
