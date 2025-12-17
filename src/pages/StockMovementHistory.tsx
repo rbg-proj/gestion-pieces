@@ -119,10 +119,7 @@ export default function StockMovementsHistory() {
     <div className="space-y-4">
 
       {/* FILTRES */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-2">
-        
-
-        
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-2">        
           
           <Input
             placeholder="Rechercher un produit (min 3 lettres)"
@@ -130,6 +127,7 @@ export default function StockMovementsHistory() {
             onChange={e => {
               setQuery(e.target.value);
               setSelected(null);
+              
             }}
             />
            {/* Résultats auto-complétion */}
