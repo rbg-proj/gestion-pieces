@@ -51,12 +51,17 @@ Ajout module dépenses
 Version 29
 Composant de Gestion caisse réelle / Entrées - Sorties
 
-Version 30 à 34
+Version 30 à 36
 Refactorisation Expenses.tsx
 Responsive OK
 Ajout fonction saisie CDF/USD dans Dépenses, avec detection automatique CDF
 Ajout Filtre recherche par Type de mouvement dans Cashledger (Livre de caisse)
 Ajout modal CRUD vente
+Optimisation de :
+✅ Création de vente sécurisée (RPC)
+✅ Suppression automatique des ventes vides
+✅ Base auto-cohérente
+✅ Frontend allégé
 
 Version 35
 Correction impression sur 2 lignes
