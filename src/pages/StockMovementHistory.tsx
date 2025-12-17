@@ -123,7 +123,7 @@ export default function StockMovementsHistory() {
         
 
         
-          <label className="text-sm font-medium">Produit</label>
+          
           <Input
             placeholder="Rechercher un produit (min 3 lettres)"
             value={query}
