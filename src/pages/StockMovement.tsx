@@ -43,7 +43,7 @@ export default function StockMovement() {
   const handleSubmit = async () => {
     if (!selected || quantity <= 0 || !reason) return;
 
-    if (type === "OUT" && quantity > selected.stock_quantity) {
+    if (type === "OUT" && quantity > selected.stock) {
       alert("Stock insuffisant");
       return;
     }
