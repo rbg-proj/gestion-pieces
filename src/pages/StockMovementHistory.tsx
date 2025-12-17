@@ -122,7 +122,7 @@ export default function StockMovementsHistory() {
       <div className="grid grid-cols-1 md:grid-cols-5 gap-2">
         
 
-        <div className="space-y-1">
+        
           <label className="text-sm font-medium">Produit</label>
           <Input
             placeholder="Rechercher un produit (min 3 lettres)"
@@ -132,7 +132,7 @@ export default function StockMovementsHistory() {
               setSelected(null);
             }}
           />
-        </div>
+        
 
         <Select onValueChange={setType} value={type ?? ""}>
           <SelectTrigger>
