@@ -51,7 +51,7 @@ Ajout module dépenses
 Version 29
 Composant de Gestion caisse réelle / Entrées - Sorties
 
-Version 30 à 36
+Version 30 à 37
 Refactorisation Expenses.tsx
 Responsive OK
 Ajout fonction saisie CDF/USD dans Dépenses, avec detection automatique CDF
@@ -63,6 +63,6 @@ Optimisation de :
 ✅ Base auto-cohérente
 ✅ Frontend allégé
 
-Version 35
+Version 38
 Correction impression sur 2 lignes
 Composant indépendant de gestion d'entrée et sortie en stock
