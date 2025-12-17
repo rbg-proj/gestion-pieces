@@ -21,7 +21,6 @@ export default function StockMovementsHistory() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<Product[]>([]);
   const [data, setData] = useState<any[]>([]);
-  const [products, setProducts] = useState<Product[]>([]);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -33,15 +32,9 @@ export default function StockMovementsHistory() {
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
 
-  useEffect(() => {
-    supabase
-      .from("products")
-      .select("id, name")
-      .order("name")
-      .then(({ data }) => data && setProducts(data));
-  }, []);
-
-  // Recherche produit côté serveur
+  /* ==============================
+     Recherche produit (autocomplete)
+  =============================== */
   useEffect(() => {
     if (query.length < 3) {
       setResults([]);
@@ -51,7 +44,7 @@ export default function StockMovementsHistory() {
     const timeout = setTimeout(async () => {
       const { data } = await supabase
         .from("products")
-        .select("id, name, stock")
+        .select("id, name")
         .ilike("name", `%${query}%`)
         .limit(10);
 
@@ -61,13 +54,16 @@ export default function StockMovementsHistory() {
     return () => clearTimeout(timeout);
   }, [query]);
 
+  /* ==============================
+     Fetch historique
+  =============================== */
   const fetchData = async () => {
     setLoading(true);
 
     const from = (page - 1) * PAGE_SIZE;
     const to = from + PAGE_SIZE - 1;
 
-    let query = supabase
+    let queryBuilder = supabase
       .from("stock_movements")
       .select(
         `
@@ -82,13 +78,13 @@ export default function StockMovementsHistory() {
       )
       .order("created_at", { ascending: false });
 
-    if (productId) query = query.eq("product_id", productId);
-    if (type) query = query.eq("type", type);
-    if (reason) query = query.eq("reason", reason);
-    if (fromDate) query = query.gte("created_at", fromDate);
-    if (toDate) query = query.lte("created_at", toDate + " 23:59:59");
+    if (productId) queryBuilder = queryBuilder.eq("product_id", productId);
+    if (type) queryBuilder = queryBuilder.eq("type", type);
+    if (reason) queryBuilder = queryBuilder.eq("reason", reason);
+    if (fromDate) queryBuilder = queryBuilder.gte("created_at", fromDate);
+    if (toDate) queryBuilder = queryBuilder.lte("created_at", toDate + " 23:59:59");
 
-    const { data, count, error } = await query.range(from, to);
+    const { data, count, error } = await queryBuilder.range(from, to);
 
     if (!error && data) {
       setData(data);
@@ -117,40 +113,41 @@ export default function StockMovementsHistory() {
 
   return (
     <div className="space-y-4">
-
       {/* FILTRES */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-2">        
-          
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-2 relative">
+        {/* Recherche produit */}
+        <div className="relative">
           <Input
             placeholder="Rechercher un produit (min 3 lettres)"
             value={query}
             onChange={e => {
               setQuery(e.target.value);
-              setSelected(null);
-              
+              setProductId(null);
+              setPage(1);
             }}
-            />
-           {/* Résultats auto-complétion */}
-            {results.length > 0 && (
-              <div className="border rounded bg-white max-h-40 overflow-auto">
-                {results.map(p => (
-                  <div
-                    key={p.id}
-                    className="p-2 cursor-pointer hover:bg-gray-100"
-                    onClick={() => {
-                      setSelected(p);
-                      setResults([]);
-                      setQuery(p.name);
-                    }}
-                  >
-                     {p.name}
-                  </div>
-                ))}
-              </div>
-            )}
-        
+          />
 
-        <Select onValueChange={setType} value={type ?? ""}>
+          {results.length > 0 && (
+            <div className="absolute z-10 w-full border bg-white max-h-40 overflow-auto">
+              {results.map(p => (
+                <div
+                  key={p.id}
+                  className="p-2 cursor-pointer hover:bg-gray-100"
+                  onClick={() => {
+                    setProductId(p.id);
+                    setQuery(p.name);
+                    setResults([]);
+                    setPage(1);
+                  }}
+                >
+                  {p.name}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <Select value={type ?? ""} onValueChange={v => { setType(v); setPage(1); }}>
           <SelectTrigger>
             <SelectValue placeholder="Type" />
           </SelectTrigger>
@@ -160,7 +157,7 @@ export default function StockMovementsHistory() {
           </SelectContent>
         </Select>
 
-        <Select onValueChange={setReason} value={reason ?? ""}>
+        <Select value={reason ?? ""} onValueChange={v => { setReason(v); setPage(1); }}>
           <SelectTrigger>
             <SelectValue placeholder="Motif" />
           </SelectTrigger>
@@ -169,12 +166,12 @@ export default function StockMovementsHistory() {
             <SelectItem value="PERIME">Périmé</SelectItem>
             <SelectItem value="PERTE">Perte</SelectItem>
             <SelectItem value="RETOUR">Retour</SelectItem>
-             <SelectItem value="AJUSTEMENT">Ajustement</SelectItem>
+            <SelectItem value="AJUSTEMENT">Ajustement</SelectItem>
           </SelectContent>
         </Select>
 
-        <Input type="date" value={fromDate} onChange={e => setFromDate(e.target.value)} />
-        <Input type="date" value={toDate} onChange={e => setToDate(e.target.value)} />
+        <Input type="date" value={fromDate} onChange={e => { setFromDate(e.target.value); setPage(1); }} />
+        <Input type="date" value={toDate} onChange={e => { setToDate(e.target.value); setPage(1); }} />
       </div>
 
       <div className="flex justify-end">
