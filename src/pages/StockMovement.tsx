@@ -20,6 +20,7 @@ export default function StockMovement() {
   const [quantity, setQuantity] = useState(1);
   const [comment, setComment] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
 
   useEffect(() => {
     if (query.length < 3) {
@@ -179,6 +180,19 @@ export default function StockMovement() {
       <Button onClick={handleSubmit} disabled={loading}>
         Valider
       </Button>
+
+      <Button
+        variant="outline"
+        onClick={() => setShowHistory(s => !s)}
+      >
+        {showHistory ? "Masquer l'historique" : "Voir l'historique"}
+      </Button>
+      
+      {showHistory && (
+        <StockMovementHistory />
+      )}
+
     </div>
   );
+  
 }
