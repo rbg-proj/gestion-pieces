@@ -23,7 +23,7 @@ const REASONS = [
   "AJUSTEMENT",
 ];
 
-export default function StockMovementForm() {
+export default function StockMovement() {
   const [products, setProducts] = useState<Product[]>([]);
   const [product, setProduct] = useState<Product | null>(null);
   const [type, setType] = useState<"IN" | "OUT">("OUT");
