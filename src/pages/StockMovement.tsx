@@ -81,6 +81,9 @@ export default function StockMovement() {
   return (
     <div className="max-w-md space-y-4">
       {/* Recherche produit */}
+      <label className="text-sm font-medium">
+    Produit
+  </label>
       <Input
         placeholder="Rechercher un produit (tapez au moins 3 lettres)"
         value={query}
