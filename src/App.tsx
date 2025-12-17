@@ -20,6 +20,8 @@ import ProfilesPage from './pages/ProfilesPage';
 import Expenses from './pages/Expenses';
 import Cashledger from './pages/Cashledger';
 import AddCashEntry from './pages/addCashEntry';
+import stockMovement from './pages/stockMovement';
+import stockMovementHistory from './pages/stockMovementHistory';
 
 const InactivityWarning = () => {
   const { showWarning } = useAuth();
@@ -47,6 +49,8 @@ function App() {
             <Route path="orders" element={<Orders />} />
             <Route path="reports" element={<Reports />} />
             <Route path="stock-history" element={<StockHistory />} />
+            <Route path="stockMovement" element={<stockMovement />} />
+            <Route path="stockMovementHistory" element={<stockMovementHistory />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/exchangeRates" element={<ExchangeRatesPage />} />
