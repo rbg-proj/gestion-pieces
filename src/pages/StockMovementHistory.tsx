@@ -131,7 +131,25 @@ export default function StockMovementsHistory() {
               setQuery(e.target.value);
               setSelected(null);
             }}
-          />
+            />
+           {/* Résultats auto-complétion */}
+            {results.length > 0 && (
+              <div className="border rounded bg-white max-h-40 overflow-auto">
+                {results.map(p => (
+                  <div
+                    key={p.id}
+                    className="p-2 cursor-pointer hover:bg-gray-100"
+                    onClick={() => {
+                      setSelected(p);
+                      setResults([]);
+                      setQuery(p.name);
+                    }}
+                  >
+                    {p.name} — Stock: {p.stock}
+                  </div>
+                ))}
+              </div>
+            )}
         
 
         <Select onValueChange={setType} value={type ?? ""}>
