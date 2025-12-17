@@ -60,8 +60,8 @@ export default function StockMovement() {
 
     const newStock =
       type === "OUT"
-        ? selected.stock_quantity - quantity
-        : selected.stock_quantity + quantity;
+        ? selected.stock - quantity
+        : selected.stock + quantity;
 
     await supabase
       .from("products")
