@@ -82,7 +82,7 @@ export default function StockMovement() {
     <div className="max-w-md space-y-4">
       {/* Recherche produit */}
       <Input
-        placeholder="Rechercher un produit (min 3 lettres)"
+        placeholder="Rechercher un produit (tapez au moins 3 lettres)"
         value={query}
         onChange={e => {
           setQuery(e.target.value);
