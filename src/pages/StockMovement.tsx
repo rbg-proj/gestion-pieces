@@ -83,8 +83,8 @@ export default function StockMovement() {
       {/* Recherche produit */}
       <div className="space-y-1">
       <label className="text-sm font-medium">
-    Produit
-  </label>
+        Produit
+      </label>
       <Input
         placeholder="Rechercher un produit (tapez au moins 3 lettres)"
         value={query}
@@ -130,6 +130,10 @@ export default function StockMovement() {
       </select>
 
       {/* Motif */}
+      <div className="space-y-1">
+      <label className="text-sm font-medium">
+        Motif
+      </label>
       <select
         className="border rounded px-2 py-1 w-full"
         value={reason}
@@ -140,21 +144,32 @@ export default function StockMovement() {
           <option key={r} value={r}>{r}</option>
         ))}
       </select>
+      </div>
 
       {/* Quantité */}
+      <div className="space-y-1">
+      <label className="text-sm font-medium">
+        Quantité
+      </label>
       <Input
         type="number"
         min={1}
         value={quantity}
         onChange={e => setQuantity(Number(e.target.value))}
       />
+      </div>
 
       {/* Commentaire */}
+      <div className="space-y-1">
+      <label className="text-sm font-medium">
+        Commentaire
+      </label>
       <Input
         placeholder="Commentaire (optionnel)"
         value={comment}
         onChange={e => setComment(e.target.value)}
       />
+      </div>
 
       <Button onClick={handleSubmit} disabled={loading}>
         Valider
