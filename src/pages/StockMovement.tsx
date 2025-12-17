@@ -102,7 +102,7 @@ export default function StockMovement() {
         >
           {showHistory ? "Masquer l'historique" : "Voir l'historique"}
         </Button>
-      </div>
+     
 
         {/* Champ produit */}
         <div className="space-y-1">
