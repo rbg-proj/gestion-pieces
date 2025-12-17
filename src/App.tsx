@@ -20,8 +20,8 @@ import ProfilesPage from './pages/ProfilesPage';
 import Expenses from './pages/Expenses';
 import Cashledger from './pages/Cashledger';
 import AddCashEntry from './pages/addCashEntry';
-import StockMovement from './pages/stockMovement';
-import StockMovementHistory from './pages/stockMovementHistory';
+import stockMovement from './pages/stockMovement';
+import stockMovementHistory from './pages/stockMovementHistory';
 
 const InactivityWarning = () => {
   const { showWarning } = useAuth();
