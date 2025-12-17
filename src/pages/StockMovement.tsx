@@ -36,7 +36,7 @@ export default function StockMovement() {
     const loadProducts = async () => {
       const { data } = await supabase
         .from("products")
-        .select("id, name, stock_quantity")
+        .select("id, name, stock")
         .order("name");
 
       if (data) setProducts(data);
