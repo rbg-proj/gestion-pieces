@@ -120,6 +120,10 @@ export default function StockMovement() {
       )}
 
       {/* Type */}
+      <div className="space-y-1">
+      <label className="text-sm font-medium">
+        Type Mouvement
+      </label>
       <select
         className="border rounded px-2 py-1 w-full"
         value={type}
@@ -128,6 +132,7 @@ export default function StockMovement() {
         <option value="OUT">Sortie</option>
         <option value="IN">Entrée</option>
       </select>
+      </div>
 
       {/* Motif */}
       <div className="space-y-1">
