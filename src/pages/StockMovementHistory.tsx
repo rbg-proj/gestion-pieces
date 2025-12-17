@@ -40,6 +40,13 @@ export default function StockMovementsHistory() {
       .then(({ data }) => data && setProducts(data));
   }, []);
 
+   // Recherche produit côté serveur
+  useEffect(() => {
+    if (query.length < 3) {
+      setResults([]);
+      return;
+    }
+
   const fetchData = async () => {
     setLoading(true);
 
