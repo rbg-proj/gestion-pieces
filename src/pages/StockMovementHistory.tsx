@@ -127,7 +127,8 @@ export default function StockMovementsHistory() {
             <SelectItem value="ENDOMMAGE">Endommagé</SelectItem>
             <SelectItem value="PERIME">Périmé</SelectItem>
             <SelectItem value="PERTE">Perte</SelectItem>
-            <SelectItem value="AJUSTEMENT">Ajustement</SelectItem>
+            <SelectItem value="RETOUR">Retour</SelectItem>
+             <SelectItem value="AJUSTEMENT">Ajustement</SelectItem>
           </SelectContent>
         </Select>
 
