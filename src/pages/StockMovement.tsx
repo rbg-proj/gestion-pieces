@@ -197,6 +197,7 @@ export default function StockMovement() {
         <Button onClick={handleSubmit} disabled={loading}>
           Valider
         </Button>
+         </div>
 
        
 
