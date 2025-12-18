@@ -202,9 +202,6 @@ const Products: React.FC = () => {
               }
             }
 
-      console.log("NEW PRODUCT ID:", newProduct.id);
-      console.log("STOCK:", newProduct.stock);
-
      // if ((response as any).error) throw (response as any).error;
 
       setIsFormOpen(false);
