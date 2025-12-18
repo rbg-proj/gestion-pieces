@@ -412,7 +412,7 @@ const Products: React.FC = () => {
                   Stock actuel : <strong>{editingProduct.stock}</strong>
                   <br />
                   <span className="text-xs text-gray-500">
-                    Le stock se modifie via les mouvements
+                    Pour modifier le stock, aller sur "Mouvement Stock" dans le menu lateral
                   </span>
                 </div>
               )}
