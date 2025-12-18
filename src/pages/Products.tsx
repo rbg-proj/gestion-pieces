@@ -765,7 +765,10 @@ return (
                   type="number"
                   Placeholder="Quantité stock de l'article"
                   value={formData.stock}
-                  disabled
+                  onChange={(e) => {const val = e.target.value;
+                        setFormData({...formData, stock: val === '' ? '' :                                   Number(val) });
+                      }}
+                  //disabled
                   className="w-full border px-3 py-2 rounded"
                 />
                 <p className="text-xs text-gray-500 mt-1">
