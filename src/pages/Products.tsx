@@ -765,6 +765,9 @@ return (
                   disabled
                   className="w-full border px-3 py-2 rounded"
                 />
+                <p className="text-xs text-gray-500 mt-1">
+                  Pour Modifier le Stock, Aller vers le menu laterral "Mouvements Stock".
+                </p>
               </div>
 
               <div>
