@@ -117,7 +117,7 @@ const Products: React.FC = () => {
         image_url: formData.image_url || null,
         category_id: formData.category_id,
       };
-
+      let newProduct: any = null;
       let response;
       if (editingProduct) {
         const oldStock = editingProduct.stock;
@@ -181,7 +181,7 @@ const Products: React.FC = () => {
                 .single();
             
               if (error) throw error;
-            
+              newProduct = data; // ✅ stocké ici
               toast.success("Produit ajouté avec succès !");
             
               // Mouvement de stock initial
@@ -204,17 +204,17 @@ const Products: React.FC = () => {
 
      // if ((response as any).error) throw (response as any).error;
 
-      setIsFormOpen(false);
-      setEditingProduct(null);
-      setFormData(initialFormState);
-      fetchProducts();
-
-    } catch (err) {
-      console.error('Error submitting:', err);
-      setError(err instanceof Error ? err.message : 'Une erreur est survenue !');
-      toast.error("Erreur lors de l’enregistrement de cet article !");
-    }
-  };
+            setIsFormOpen(false);
+            setEditingProduct(null);
+            setFormData(initialFormState);
+            fetchProducts();
+      
+          } catch (err) {
+            console.error('Error submitting:', err);
+            setError(err instanceof Error ? err.message : 'Une erreur est survenue !');
+            toast.error("Erreur lors de l’enregistrement de cet article !");
+          }
+        };
 
   // -------------------------
   // DELETE
