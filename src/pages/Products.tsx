@@ -120,7 +120,7 @@ const Products: React.FC = () => {
       let response;
       if (editingProduct) {
         const oldStock = editingProduct.stock;
-        const newStock = formData.stock;
+        const newStock = Number(formData.stock);
 
         // D'abord effectuer la mise à jour produit
         const { data: updateData, error: updateError } = await supabase
@@ -133,22 +133,25 @@ const Products: React.FC = () => {
         if (updateError) throw updateError;
 
           // 2. Insérer historique SEULEMENT si stock changé
-          if (oldStock !== newStock) {
-          const { error: histError } = await supabase
-          .from('stock_history')
-          .insert([{
-            product_id: editingProduct.id,
-            old_stock: oldStock,
-            new_stock: newStock,
-            change: newStock - oldStock,
-            reason: 'Mise à jour manuelle',
-          }]);
+          if (diff !== 0) {
+            const movement = {
+              product_id: editingProduct.id,
+              type: diff > 0 ? "IN" : "OUT",
+              reason: "AJUSTEMENT",
+              quantity: Math.abs(diff),
+              comment: "Modification manuelle depuis fiche produit",
+              created_at: new Date().toISOString(),
+            };
           
-          if (histError) {
-          // optionnel : log/notify — on choisit de ne pas rollbacker l'update ici
-            console.error('Erreur insertion stock_history après update', histError);
+            const { error: movementError } = await supabase
+              .from("stock_movements")
+              .insert(movement);
+          
+            if (movementError) {
+              console.error("Erreur stock_movements :", movementError);
+              toast.error("Stock modifié mais mouvement non enregistré !");
+            }
           }
-        }
 
         response = { data: updateData, error: updateError };
         toast.success("Article mis à jour avec succès !");
