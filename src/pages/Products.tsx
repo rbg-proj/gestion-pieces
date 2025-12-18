@@ -1,22 +1,16 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from 'react';
 import {
-  Search,
-  PlusCircle,
-  Edit,
-  Trash,
-  AlertTriangle,
-  Loader2,
-  X,
-  Package,
-} from "lucide-react";
-import { supabase } from "../lib/supabase";
+  Search, PlusCircle, Edit, Trash, AlertTriangle, Loader2, X, Package
+} from 'lucide-react';
+import { supabase } from '../lib/supabase';
 import toast from "react-hot-toast";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
-/* =======================
-   TYPES
-======================= */
+
+// -------------------------
+// TYPES
+// -------------------------
 interface Category {
   id: string;
   name: string;
@@ -34,308 +28,850 @@ interface Product {
   category?: Category;
 }
 
-/* =======================
-   COMPONENT
-======================= */
+// -------------------------
+// COMPONENT
+// -------------------------
 const Products: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  /* Filters */
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("all");
-  const [minStock, setMinStock] = useState<number | "">("");
-  const [maxStock, setMaxStock] = useState<number | "">("");
-
-  /* Pagination */
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
-
-  /* Form */
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
   const nameInputRef = useRef<HTMLInputElement>(null);
-
-  const initialFormState = {
-    name: "",
-    barcode: "",
-    purchase_price: 0,
-    selling_price: 0,
-    image_url: "",
-    category_id: "",
-  };
-
-  const [formData, setFormData] = useState(initialFormState);
-
-  /* Category modal */
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [categoryName, setCategoryName] = useState("");
 
-  /* =======================
-     LOAD DATA
-  ======================= */
+
+
+  // filtres stock
+  const [minStock, setMinStock] = useState<number | ''>('');
+  const [maxStock, setMaxStock] = useState<number | ''>('');
+
+  const initialFormState = {
+    name: '',
+    barcode: '',
+    purchase_price: 0,
+    selling_price: 0,
+    stock: 0,
+    image_url: '',
+    category_id: '',
+  };
+  const [formData, setFormData] = useState(initialFormState);
+
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  // -------------------------
+  // LOAD DATA
+  // -------------------------
   useEffect(() => {
     fetchProducts();
     fetchCategories();
   }, []);
 
+  const fetchCategories = async () => {
+    const { data, error } = await supabase.from('categories').select('*').order('name');
+    if (error) {
+      console.error('Erreur chargement catégories', error);
+      setError('Erreur lors du chargement des catégories');
+    } else {
+      setCategories(data || []);
+    }
+  };
+
   const fetchProducts = async () => {
     try {
       setLoading(true);
       const { data, error } = await supabase
-        .from("products")
-        .select("*, category:categories (id, name)")
-        .order("name");
-
+        .from('products')
+        .select('*, category:categories (id, name)')
+        .order('name');
       if (error) throw error;
       setProducts(data || []);
     } catch (err) {
-      setError("Erreur lors du chargement des produits");
+      setError(err instanceof Error ? err.message : 'Une erreur est survenue lors du chargement !');
     } finally {
+     
       setLoading(false);
     }
   };
 
-  const fetchCategories = async () => {
-    const { data } = await supabase
-      .from("categories")
-      .select("*")
-      .order("name");
-
-    setCategories(data || []);
-  };
-
-  /* =======================
-     FORM SUBMIT
-  ======================= */
+  // -------------------------
+  // FORM SUBMIT
+  // -------------------------
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     try {
-      const payload = {
-        name: formData.name.trim(),
+      const dataToSend = {
+        name: formData.name,
         barcode: formData.barcode,
         purchase_price: Number(formData.purchase_price),
         selling_price: Number(formData.selling_price),
+        stock: Number(formData.stock),
         image_url: formData.image_url || null,
         category_id: formData.category_id,
       };
 
+      let response;
       if (editingProduct) {
-        const { error } = await supabase
-          .from("products")
-          .update(payload)
-          .eq("id", editingProduct.id);
+        const oldStock = editingProduct.stock;
+        const newStock = formData.stock;
 
-        if (error) throw error;
-        toast.success("Article mis à jour");
-      } else {
-        const { data: existing } = await supabase
-          .from("products")
-          .select("id")
-          .eq("name", payload.name);
+        // D'abord effectuer la mise à jour produit
+        const { data: updateData, error: updateError } = await supabase
+            .from('products')
+            .update(dataToSend)
+            .eq('id', editingProduct.id)
+            .select()
+            .single();
+    
+        if (updateError) throw updateError;
 
-        if (existing && existing.length > 0) {
-          toast.error("Un produit avec ce nom existe déjà");
-          nameInputRef.current?.focus();
-          return;
+          // 2. Insérer historique SEULEMENT si stock changé
+          if (oldStock !== newStock) {
+          const { error: histError } = await supabase
+          .from('stock_history')
+          .insert([{
+            product_id: editingProduct.id,
+            old_stock: oldStock,
+            new_stock: newStock,
+            change: newStock - oldStock,
+            reason: 'Mise à jour manuelle',
+          }]);
+          
+          if (histError) {
+          // optionnel : log/notify — on choisit de ne pas rollbacker l'update ici
+            console.error('Erreur insertion stock_history après update', histError);
+          }
         }
 
-        const { error } = await supabase.from("products").insert([payload]);
-        if (error) throw error;
+        response = { data: updateData, error: updateError };
+        toast.success("Article mis à jour avec succès !");
 
-        toast.success("Article ajouté");
+       
+      } else {
+        // // Vérification nom existant
+          const { data: existing, error: checkError } = await supabase
+            .from('products')
+            .select('id')
+            .eq('name', formData.name.trim());
+        
+          if (checkError) {
+            setToastMessage("Erreur lors de la vérification du nom");
+            setIsFormOpen(false);
+            setTimeout(() => setToastMessage(null), 3000);
+            return;
+          }
+        
+       
+        if (existing && existing.length > 0) {
+              toast.error("Un produit portant ce nom existe déjà");
+              setTimeout(() => nameInputRef.current?.focus(), 300);
+              return;
+            }
+
+
+      // 🔵 Si tout est bon, on peut insérer
+        response = await supabase.from('products').insert([dataToSend]);
+        if (response.data && response.data[0]) {
+          const newProduct = response.data[0];
+          toast.success("Produit ajouté avec succès !");
+          await supabase.from('stock_history').insert([{
+            product_id: newProduct.id,
+            old_stock: 0,
+            new_stock: newProduct.stock,
+            change: newProduct.stock,
+            reason: 'Ajout initial',
+          }]);
+        }
       }
+
+      if ((response as any).error) throw (response as any).error;
 
       setIsFormOpen(false);
       setEditingProduct(null);
       setFormData(initialFormState);
       fetchProducts();
+
     } catch (err) {
-      toast.error("Erreur lors de l’enregistrement");
+      console.error('Error submitting:', err);
+      setError(err instanceof Error ? err.message : 'Une erreur est survenue !');
+      toast.error("Erreur lors de l’enregistrement du produit !");
     }
   };
 
-  /* =======================
-     DELETE PRODUCT
-  ======================= */
+  // -------------------------
+  // DELETE
+  // -------------------------
   const handleDelete = async (id: string) => {
-    if (!confirm("Supprimer cet article ?")) return;
-
-    const { error } = await supabase.from("products").delete().eq("id", id);
-    if (!error) {
-      toast.success("Article supprimé");
+    if (!confirm('Voulez-vous vraiment supprimer cet article ?')) return;
+    try {
+      const { error } = await supabase.from('products').delete().eq('id', id);
+      if (error) throw error;
       fetchProducts();
+      toast.success("Article supprimé !");
+    } catch (err) {
+      console.error('Error deleting:', err);
+      setError(err instanceof Error ? err.message : 'Une erreur est survenue !');
+      toast.error("Erreur lors de la suppression !");
     }
   };
 
-  /* =======================
-     IMAGE UPLOAD
-  ======================= */
+
+  // -------------------------
+// CATEGORY CRUD
+// -------------------------
+  const handleSaveCategory = async () => {
+            if (!categoryName.trim()) return;
+          
+            try {
+              if (editingCategory) {
+                // Update
+                const { error } = await supabase
+                  .from("categories")
+                  .update({ name: categoryName.trim() })
+                  .eq("id", editingCategory.id);
+          
+                if (error) throw error;
+                toast.success("Catégorie modifiée avec succès !");
+              } else {
+                // Insert
+                const { error } = await supabase
+                  .from("categories")
+                  .insert([{ name: categoryName.trim() }]);
+          
+                if (error) throw error;
+                toast.success("Catégorie ajoutée avec succès !");
+              }
+          
+              setIsCategoryModalOpen(false);
+              setEditingCategory(null);
+              setCategoryName("");
+              fetchCategories();
+            } catch (error) {
+              console.error(error);
+              toast.error("Erreur survenue lors de l’enregistrement !");
+            }
+          };
+          
+          const handleDeleteCategory = async (id: string) => {
+            if (!confirm("Supprimer cette catégorie ?")) return;
+          
+            try {
+              const { error } = await supabase
+                .from("categories")
+                .delete()
+                .eq("id", id);
+          
+              if (error) throw error;
+              toast.success("Catégorie supprimée !");
+          
+              fetchCategories();
+            } catch (error) {
+              console.error(error);
+               toast.error("Impossible de supprimer la catégorie. Elle contient encore d'Articles");
+            }
+          };
+
+
+  
+  // -------------------------
+  // IMAGE UPLOAD
+  // -------------------------
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const fileName = `products/${Date.now()}.${file.name.split(".").pop()}`;
-    const { error } = await supabase.storage
-      .from("product-images")
-      .upload(fileName, file);
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${Date.now()}.${fileExt}`;
+    const filePath = `products/${fileName}`;
 
+    const { error } = await supabase.storage.from('product-images').upload(filePath, file);
     if (error) {
-      toast.error("Erreur upload image");
+      console.error('Erreur upload :', error.message);
+      toast.error("Échec de l’upload de l’image !");
       return;
     }
 
-    const { data } = supabase.storage
-      .from("product-images")
-      .getPublicUrl(fileName);
-
-    setFormData((p) => ({ ...p, image_url: data.publicUrl }));
+    const { data } = supabase.storage.from('product-images').getPublicUrl(filePath);
+    if (data?.publicUrl) {
+      setFormData((prev) => ({ ...prev, image_url: data.publicUrl }));
+      toast.success("Image uploadée avec succès !");
+    }
   };
 
-  /* =======================
-     FILTERS & PAGINATION
-  ======================= */
-  const filteredProducts = products.filter((p) => {
-    const matchSearch =
-      p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      p.barcode.includes(searchTerm);
+  // -------------------------
+  // FILTERS & PAGINATION
+  // -------------------------
+  const filteredProducts = products.filter(product => {
+    const matchesSearch =
+      product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product.barcode.includes(searchTerm);
 
-    const matchCategory =
-      selectedCategory === "all" || p.category_id === selectedCategory;
+    const matchesCategory =
+      selectedCategory === 'all' || product.category_id === selectedCategory;
 
-    const matchMin = minStock === "" || p.stock >= minStock;
-    const matchMax = maxStock === "" || p.stock <= maxStock;
+    const matchesStockMin = minStock === '' || product.stock >= minStock;
+    const matchesStockMax = maxStock === '' || product.stock <= maxStock;
 
-    return matchSearch && matchCategory && matchMin && matchMax;
+    return matchesSearch && matchesCategory && matchesStockMin && matchesStockMax;
   });
 
-  const totalPages = Math.max(
-    1,
-    Math.ceil(filteredProducts.length / itemsPerPage)
-  );
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentProducts = filteredProducts.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / itemsPerPage));
 
-  const paginatedProducts = filteredProducts.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  useEffect(() => {
+    if (currentPage > totalPages) setCurrentPage(1);
+  }, [filteredProducts.length, totalPages]);
 
-  /* =======================
-     EXPORTS
-  ======================= */
-  const exportToExcel = async () => {
-    const xlsx = await import("xlsx");
-    const ws = xlsx.utils.json_to_sheet(
-      filteredProducts.map((p) => ({
+  // -------------------------
+  // EXPORT EXCEL
+  // -------------------------
+  const exportToExcel = () => {
+    import('xlsx').then((xlsx) => {
+      const exportData = filteredProducts.map((p) => ({
         Nom: p.name,
-        Catégorie: p.category?.name,
-        Achat: p.purchase_price,
-        Vente: p.selling_price,
+        CodeBarre: p.barcode,
+        Categorie: p.category?.name || '',
+        PrixAchat: p.purchase_price,
+        PrixVente: p.selling_price,
         Stock: p.stock,
-      }))
-    );
-    const wb = xlsx.utils.book_new();
-    xlsx.utils.book_append_sheet(wb, ws, "Produits");
-    xlsx.writeFile(wb, "Produits.xlsx");
-  };
+      }));
 
-  const exportToPDF = () => {
-    const doc = new jsPDF();
-    autoTable(doc, {
-      head: [["Produit", "Catégorie", "Achat", "Vente", "Stock"]],
-      body: filteredProducts.map((p) => [
-        p.name,
-        p.category?.name,
-        p.purchase_price,
-        p.selling_price,
-        p.stock,
-      ]),
+      const worksheet = xlsx.utils.json_to_sheet(exportData);
+      const workbook = xlsx.utils.book_new();
+      xlsx.utils.book_append_sheet(workbook, worksheet, 'Articles');
+
+      xlsx.writeFile(workbook, 'RBG Liste articles.xlsx');
     });
-    doc.save("Produits.pdf");
   };
+  // -------------------------
+  // EXPORT PDF
+  // -------------------------
+  
+const exportToPDF = async () => {
+  try {
+    const jsPDFModule = await import("jspdf");
+    const jsPDF = jsPDFModule.jsPDF || jsPDFModule.default;
 
-  /* =======================
-     RENDER
-  ======================= */
-  if (loading)
+    const autoTableModule = await import("jspdf-autotable");
+    const autoTable =
+      autoTableModule.default ||
+      autoTableModule.autoTable ||
+      autoTableModule.default?.autoTable;
+
+    if (!autoTable) throw new Error("Le plugin jspdf-autotable n'a pas été trouvé.");
+
+    const doc = new jsPDF();
+
+    const title = "Liste des articles";
+    const exportDate = "Date d'export : " + new Date().toLocaleDateString();
+
+    // Données du tableau
+    const tableData = filteredProducts.map((p, index) => [
+      index + 1,
+      p.name,
+      p.category?.name || "",
+      formatPrice(p.purchase_price),
+      formatPrice(p.selling_price),
+      p.stock.toString(),
+    ]);
+
+    autoTable(doc, {
+      head: [["#", "Produit", "Catégorie", "Prix Achat", "Prix Vente", "Stock"]],
+      body: tableData,
+      startY: 40,
+      margin: { top: 40 },
+
+      didDrawPage: (data) => {
+        // --- TITRE & DATE uniquement sur la 1ère page ---
+        if (data.pageNumber === 1) {
+          doc.setFontSize(16);
+          doc.text(title, doc.internal.pageSize.width / 2, 20, { align: "center" });
+
+          doc.setFontSize(11);
+          doc.text(exportDate, doc.internal.pageSize.width / 2, 28, { align: "center" });
+        }
+
+        // --- NUMÉRO DE PAGE (sur toutes les pages) ---
+        const pageSize = doc.internal.pageSize;
+        const pageHeight = pageSize.height ? pageSize.height : pageSize.getHeight();
+        const totalPages = doc.internal.getNumberOfPages();
+
+        doc.setFontSize(10);
+        doc.text(
+          `Page ${data.pageNumber} / ${totalPages}`,
+          pageSize.width / 2,
+          pageHeight - 10,
+          { align: "center" }
+        );
+      }
+    });
+
+    doc.save("Liste_Articles.pdf");
+  } catch (error) {
+    console.error("Erreur export PDF :", error);
+    setError("Impossible de générer le PDF.");
+  }
+};
+
+
+  
+  // -------------------------
+  // PRICE FORMAT
+  // -------------------------
+  const formatPrice = (price: number) =>
+    new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'USD' }).format(price);
+
+  const startDisplay = filteredProducts.length === 0 ? 0 : indexOfFirstItem + 1;
+  const endDisplay = Math.min(indexOfLastItem, filteredProducts.length);
+
+  // -------------------------
+  // RENDER
+  // -------------------------
+  if (loading) {
     return (
-      <div className="flex justify-center p-10">
-        <Loader2 className="animate-spin" />
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="w-8 h-8 animate-spin text-primary-500" />
       </div>
     );
+  }
 
-  return (
+return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Articles</h1>
 
-      <div className="flex gap-3 flex-wrap">
-        <button onClick={exportToExcel} className="btn btn-success">
+      {/* HEADER + EXPORT BUTTONS */}
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-3">
+
+      <h1 className="text-xl sm:text-2xl font-bold">Tous nos Articles</h1>
+    
+      <div className="flex flex-wrap gap-3">
+    
+        <button
+          onClick={exportToExcel}
+          className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 shadow-sm active:scale-95"
+        >
           Export Excel
         </button>
-        <button onClick={exportToPDF} className="btn btn-danger">
+    
+        <button
+          onClick={exportToPDF}
+          className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 shadow-sm active:scale-95"
+        >
           Export PDF
         </button>
+    
         <button
           onClick={() => {
+            setIsFormOpen(true);
             setEditingProduct(null);
             setFormData(initialFormState);
-            setIsFormOpen(true);
           }}
-          className="btn btn-primary"
+          className="inline-flex items-center px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 shadow-sm active:scale-95"
         >
-          <PlusCircle size={16} /> Nouvel article
+          <PlusCircle size={18} className="mr-2" />
+          Créer un Article
+        </button>
+    
+        <button
+          onClick={() => {
+            setIsCategoryModalOpen(true);
+            setEditingCategory(null);
+            setCategoryName("");
+          }}
+          className="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 shadow-sm active:scale-95"
+        >
+          <PlusCircle size={18} className="mr-2" />
+          Gérer les Catégories
+        </button>
+    
+      </div>
+    </div>
+
+      {error && (
+        <div className="bg-red-100 text-red-700 p-3 rounded">{error}</div>
+      )}
+
+      {/* FILTERS */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        <input
+          type="text"
+          placeholder="Recherche..."
+          value={searchTerm}
+          onChange={(e) => {
+            setSearchTerm(e.target.value);
+            setCurrentPage(1);
+          }}
+          className="border rounded-lg px-3 py-2 text-sm w-full"
+        />
+      
+        <select
+          value={selectedCategory}
+          onChange={(e) => {
+            setSelectedCategory(e.target.value);
+            setCurrentPage(1);
+          }}
+          className="border rounded-lg px-3 py-2 text-sm w-full"
+        >
+          <option value="all">Toutes les catégories</option>
+          {categories.map((cat) => (
+            <option key={cat.id} value={cat.id}>{cat.name}</option>
+          ))}
+        </select>
+      
+        <input
+          type="number"
+          placeholder="Stock min"
+          value={minStock}
+          onChange={(e) => {
+            const v = e.target.value;
+            setMinStock(v === '' ? '' : Number(v));
+            setCurrentPage(1);
+          }}
+          className="border rounded-lg px-3 py-2 text-sm w-full"
+        />
+      
+        <input
+          type="number"
+          placeholder="Stock max"
+          value={maxStock}
+          onChange={(e) => {
+            const v = e.target.value;
+            setMaxStock(v === '' ? '' : Number(v));
+            setCurrentPage(1);
+          }}
+          className="border rounded-lg px-3 py-2 text-sm w-full"
+        />
+      
+        <button
+          onClick={() => {
+            setMinStock('');
+            setMaxStock('');
+            setCurrentPage(1);
+          }}
+          className="border rounded-lg px-3 py-2 text-sm bg-gray-100 hover:bg-gray-200 active:scale-95"
+        >
+          Réinitialiser
+        </button>
+      
+      </div>
+
+     {/* TABLE */}
+      <div className="overflow-x-auto bg-white rounded-lg shadow-sm">
+      <table className="min-w-full text-sm">
+        <thead className="bg-gray-100">
+          <tr>
+            <th className="px-3 py-2">N°</th>
+            <th className="px-3 py-2 text-left">Nom</th>
+            <th className="px-3 py-2 text-left">Catégorie</th>
+            <th className="px-3 py-2 text-right">Achat</th>
+            <th className="px-3 py-2 text-right">Vente</th>
+            <th className="px-3 py-2 text-right">Stock</th>
+            <th className="px-3 py-2 text-right">Actions</th>
+          </tr>
+        </thead>
+          <tbody>
+            {currentProducts.map((product, index) => (
+              <tr key={product.id} className="border-b">
+                <td className="px-4 py-2">{(currentPage - 1) * itemsPerPage + index + 1}</td>
+                <td className="px-4 py-2 flex items-center gap-2">
+                  {product.image_url ? (
+                    <img src={product.image_url} alt={product.name} className="w-10 h-10 rounded object-cover" />
+                  ) : (
+                    <div className="w-10 h-10 bg-gray-200 flex justify-center items-center rounded">
+                      <Package size={20} className="text-gray-400" />
+                    </div>
+                  )}
+                  {product.name}
+                </td>
+                <td className="px-4 py-2">{product.category?.name}</td>
+                <td className="px-4 py-2 text-right">{formatPrice(product.purchase_price)}</td>
+                <td className="px-4 py-2 text-right">{formatPrice(product.selling_price)}</td>
+                <td className="px-4 py-2 text-right">
+                  {product.stock < 10 && <AlertTriangle size={16} className="text-red-500 inline mr-1" />}
+                  {product.stock}
+                </td>
+                <td className="px-4 py-2 text-right">
+                  <button
+                    className="text-blue-500 hover:underline mr-2"
+                    onClick={() => {
+                      setEditingProduct(product);
+                      setFormData({
+                        name: product.name,
+                        barcode: product.barcode,
+                        purchase_price: product.purchase_price,
+                        selling_price: product.selling_price,
+                        stock: product.stock,
+                        image_url: product.image_url || '',
+                        category_id: product.category_id,
+                      });
+                      setIsFormOpen(true);
+                    }}
+                  >
+                    <Edit size={16} />
+                  </button>
+
+                  <button
+                    className="text-red-500 hover:underline"
+                    onClick={() => handleDelete(product.id)}
+                  >
+                    <Trash size={16} />
+                  </button>
+                </td>
+              </tr>
+            ))}
+
+            {filteredProducts.length === 0 && (
+              <tr>
+                <td colSpan={6} className="text-center p-4 text-gray-500">
+                  Aucun article trouvé
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {/* FOOTER */}
+      <div className="text-sm text-gray-600 mt-2">
+        Affichage de Produits {startDisplay} à {endDisplay} sur {filteredProducts.length} Produits
+      </div>
+
+      {/* PAGINATION */}
+      {filteredProducts.length > itemsPerPage && (
+        <div className="flex justify-center items-center gap-4 mt-4">
+          <button
+            onClick={() => setCurrentPage(Math.max(currentPage - 1, 1))}
+            disabled={currentPage === 1}
+            className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+          >
+            Précédent
+          </button>
+
+          <span className="font-medium">
+            Page {currentPage} / {totalPages}
+          </span>
+
+          <button
+            onClick={() =>
+              setCurrentPage(currentPage < totalPages ? currentPage + 1 : currentPage)
+            }
+            disabled={currentPage === totalPages}
+            className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+          >
+            Suivant
+          </button>
+        </div>
+      )}
+
+      {/* FORM MODAL */}
+      {isFormOpen && (
+      <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center p-4 z-50">
+  <div className="bg-white w-full max-w-lg rounded-xl shadow-lg p-6 relative">
+
+            <button
+              onClick={() => setIsFormOpen(false)}
+              className="absolute top-2 right-2 text-gray-500"
+            >
+              <X size={24} />
+            </button>
+
+            <h2 className="text-xl font-semibold mb-4">
+              {editingProduct ? 'Modifier l’article' : 'Nouvel article'}
+            </h2>
+            <form onSubmit={handleFormSubmit} className="space-y-4 text-sm">
+                <div>
+                <label>Nom</label>
+                <input
+                  ref={nameInputRef}
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  required
+                  className="w-full border px-3 py-2 rounded"
+                />
+              </div>
+
+              <div>
+                <label>Barcode</label>
+                <input
+                  type="text"
+                  value={formData.barcode}
+                  onChange={(e) => setFormData({ ...formData, barcode: e.target.value })}
+                  className="w-full border px-3 py-2 rounded"
+                />
+              </div>
+
+              <div>
+                <label>Catégorie</label>
+                <select
+                  value={formData.category_id}
+                  onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
+                  required
+                  className="w-full border px-3 py-2 rounded"
+                >
+                  <option value="">Sélectionnez</option>
+                  {categories.map((cat) => (
+                    <option key={cat.id} value={cat.id}>{cat.name}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="flex gap-4">
+                <div className="flex-1">
+                  <label>Prix d’achat</label>
+                  <input
+                      type="number"
+                      Placeholder="Prix en dollars US"
+                      value={formData.purchase_price}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setFormData({
+                          ...formData,
+                          purchase_price: val === '' ? '' : Number(val)
+                        });
+                      }}
+                      className="w-full border px-3 py-2 rounded"
+                    />
+                </div>
+
+                <div className="flex-1">
+                  <label>Prix de vente</label>
+                  <input
+                    type="number"
+                    Placeholder="Prix en dollars US"
+                    value={formData.selling_price}
+                    onChange={(e) => {const val = e.target.value;
+                        setFormData({...formData, selling_price: val === '' ? '' :                                   Number(val) });
+                      }}
+                    className="w-full border px-3 py-2 rounded"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label>Stock</label>
+                <input
+                  type="number"
+                  Placeholder="Quantité stock de l'article"
+                  value={formData.stock}
+                  disabled
+                  className="w-full border px-3 py-2 rounded"
+                />
+              </div>
+
+              <div>
+                <label>Image (optionnel)</label>
+                <input type="file" onChange={handleImageUpload} />
+                {formData.image_url && (
+                  <img src={formData.image_url} alt="Preview" className="mt-2 w-24 h-24 object-cover rounded" />
+                )}
+              </div>
+
+              <button
+                type="submit"
+                className="w-full bg-primary-500 text-white py-2 rounded"
+              >
+                {editingProduct ? 'Mettre à jour' : 'Ajouter'}
+              </button>
+
+            </form>
+          </div>
+        </div>
+      )}
+
+        {/* CATEGORY MODAL */}
+{isCategoryModalOpen && (
+  <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
+    <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md relative">
+
+      <button
+        onClick={() => setIsCategoryModalOpen(false)}
+        className="absolute top-2 right-2 text-gray-500"
+      >
+        <X size={24} />
+      </button>
+
+      <h2 className="text-xl font-semibold mb-4">
+        Gérer les Catégories
+      </h2>
+
+      {/* Input */}
+      <div className="mb-4">
+        <label className="font-medium">Nom catégorie</label>
+        <input
+          type="text"
+          value={categoryName}
+          onChange={(e) => setCategoryName(e.target.value)}
+          className="w-full border px-3 py-2 rounded mt-1"
+          placeholder="Ex : Boissons"
+        />
+      </div>
+
+      <div className="flex justify-end gap-2">
+        <button
+          onClick={() => setIsCategoryModalOpen(false)}
+          className="px-3 py-2 bg-gray-200 rounded"
+        >
+          Annuler
+        </button>
+
+        <button
+          onClick={handleSaveCategory}
+          className="px-4 py-2 bg-primary-600 text-white rounded hover:bg-primary-700"
+        >
+          {editingCategory ? "Modifier" : "Ajouter"}
         </button>
       </div>
 
-      {/* TABLE */}
-      <table className="w-full text-sm border">
-        <thead className="bg-gray-100">
-          <tr>
-            <th>Nom</th>
-            <th>Catégorie</th>
-            <th>Achat</th>
-            <th>Vente</th>
-            <th>Stock</th>
-            <th />
-          </tr>
-        </thead>
-        <tbody>
-          {paginatedProducts.map((p) => (
-            <tr key={p.id} className="border-t">
-              <td>{p.name}</td>
-              <td>{p.category?.name}</td>
-              <td>{p.purchase_price}</td>
-              <td>{p.selling_price}</td>
-              <td>
-                {p.stock < 10 && (
-                  <AlertTriangle className="inline text-red-500 mr-1" />
-                )}
-                {p.stock}
-              </td>
-              <td>
-                <Edit
-                  className="cursor-pointer"
+      {/* Liste catégories */}
+      <div className="mt-6">
+        <h3 className="font-semibold mb-2">Liste</h3>
+
+        <div className="max-h-64 overflow-y-auto divide-y">
+          {categories.map((cat) => (
+            <div key={cat.id} className="flex justify-between items-center py-2">
+              <span>{cat.name}</span>
+
+              <div className="flex gap-3">
+                <button
+                  className="text-blue-600"
                   onClick={() => {
-                    setEditingProduct(p);
-                    setFormData({
-                      name: p.name,
-                      barcode: p.barcode,
-                      purchase_price: p.purchase_price,
-                      selling_price: p.selling_price,
-                      image_url: p.image_url || "",
-                      category_id: p.category_id,
-                    });
-                    setIsFormOpen(true);
+                    setEditingCategory(cat);
+                    setCategoryName(cat.name);
                   }}
-                />
-              </td>
-            </tr>
+                >
+                  <Edit size={18} />
+                </button>
+
+                <button
+                  className="text-red-600"
+                  onClick={() => handleDeleteCategory(cat.id)}
+                >
+                  <Trash size={18} />
+                </button>
+              </div>
+            </div>
           ))}
-        </tbody>
-      </table>
+
+          {categories.length === 0 && (
+            <p className="text-gray-500 text-center py-4">Aucune catégorie</p>
+          )}
+        </div>
+      </div>
+    </div>
+  </div>
+)}
+      
+
     </div>
   );
 };
