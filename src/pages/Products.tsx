@@ -207,7 +207,7 @@ const Products: React.FC = () => {
     } catch (err) {
       console.error('Error submitting:', err);
       setError(err instanceof Error ? err.message : 'Une erreur est survenue !');
-      toast.error("Erreur lors de l’enregistrement du produit !");
+      toast.error("Erreur lors de l’enregistrement de cet article !");
     }
   };
 
