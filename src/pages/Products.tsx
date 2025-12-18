@@ -203,7 +203,7 @@ const Products: React.FC = () => {
             }
 
 
-      if ((response as any).error) throw (response as any).error;
+     // if ((response as any).error) throw (response as any).error;
 
       setIsFormOpen(false);
       setEditingProduct(null);
