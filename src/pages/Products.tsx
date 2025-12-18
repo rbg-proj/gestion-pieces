@@ -122,6 +122,7 @@ const Products: React.FC = () => {
       if (editingProduct) {
         const oldStock = editingProduct.stock;
         const newStock = Number(formData.stock);
+        const diff = newStock - oldStock;
 
         // D'abord effectuer la mise à jour produit
         const { data: updateData, error: updateError } = await supabase
