@@ -113,7 +113,6 @@ const Products: React.FC = () => {
         barcode: formData.barcode,
         purchase_price: Number(formData.purchase_price),
         selling_price: Number(formData.selling_price),
-        stock: Number(formData.stock),
         image_url: formData.image_url || null,
         category_id: formData.category_id,
       };
