@@ -142,7 +142,7 @@ const Products: React.FC = () => {
               reason: "AJUSTEMENT",
               quantity: Math.abs(diff),
               comment: "Modification manuelle depuis fiche produit",
-              created_at: new Date().toISOString(),
+             // created_at: new Date().toISOString(),
             };
           
             const { error: movementError } = await supabase
