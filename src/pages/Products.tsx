@@ -224,7 +224,7 @@ const Products: React.FC = () => {
     } catch (err) {
       console.error('Error deleting:', err);
       setError(err instanceof Error ? err.message : 'Une erreur est survenue !');
-      toast.error("Erreur lors de la suppression !");
+      toast.error("Erreur ... Impossible de supprimer un article déjà vendu, !");
     }
   };
 
