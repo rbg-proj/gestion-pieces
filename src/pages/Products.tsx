@@ -158,44 +158,50 @@ const Products: React.FC = () => {
         response = { data: updateData, error: updateError };
         toast.success("Article mis à jour avec succès !");
 
-       
       } else {
-        // // Vérification nom existant
-          const { data: existing, error: checkError } = await supabase
-            .from('products')
-            .select('id')
-            .eq('name', formData.name.trim());
-        
-          if (checkError) {
-            setToastMessage("Erreur lors de la vérification du nom");
-            setIsFormOpen(false);
-            setTimeout(() => setToastMessage(null), 3000);
-            return;
-          }
-       
-        if (existing && existing.length > 0) {
-              toast.error("Un produit portant ce nom existe déjà");
-              setTimeout(() => nameInputRef.current?.focus(), 300);
-              return;
+              // Vérification nom existant
+              const { data: existing, error: checkError } = await supabase
+                .from("products")
+                .select("id")
+                .eq("name", formData.name.trim());
+            
+              if (checkError) throw checkError;
+            
+              if (existing && existing.length > 0) {
+                toast.error("Un produit portant ce nom existe déjà");
+                setTimeout(() => nameInputRef.current?.focus(), 300);
+                return;
+              }
+            
+              // Création produit
+              const { data: newProduct, error } = await supabase
+                .from("products")
+                .insert(dataToSend)
+                .select()
+                .single();
+            
+              if (error) throw error;
+            
+              toast.success("Produit ajouté avec succès !");
+            
+              // Mouvement de stock initial
+              if (newProduct.stock > 0) {
+                const { error: movementError } = await supabase
+                  .from("stock_movements")
+                  .insert({
+                    product_id: newProduct.id,
+                    type: "IN",
+                    reason: "AJUSTEMENT",
+                    quantity: newProduct.stock,
+                    comment: "Stock initial lors de la création du produit",
+                  });
+            
+                if (movementError) {
+                  toast.error("Produit créé mais mouvement de stock non enregistré");
+                }
+              }
             }
-      // 🔵 Si tout est bon, on peut insérer
-        response = await supabase.from('products').insert([dataToSend]);
-        if (response.data && response.data[0]) {
-          const newProduct = response.data[0];
-          toast.success("Produit ajouté avec succès !");
 
-          if (newProduct.stock > 0) {
-            await supabase.from("stock_movements").insert({
-              product_id: newProduct.id,
-              type: "IN",
-              reason: "AJUSTEMENT",
-              quantity: newProduct.stock,
-              comment: "Stock initial lors de la création du produit",
-              created_at: new Date().toISOString(),
-            });
-          }
-        }
-      }
 
       if ((response as any).error) throw (response as any).error;
 
