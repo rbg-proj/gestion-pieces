@@ -185,6 +185,10 @@ const Products: React.FC = () => {
               toast.success("Produit ajouté avec succès !");
             
               // Mouvement de stock initial
+              if (Number(formData.stock) < 0) {
+                toast.error("Le stock ne peut pas être négatif");
+                return;
+}
               if (newProduct.stock > 0) {
                 const { error: movementError } = await supabase
                   .from("stock_movements")
