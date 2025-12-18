@@ -172,27 +172,28 @@ const Products: React.FC = () => {
             setTimeout(() => setToastMessage(null), 3000);
             return;
           }
-        
        
         if (existing && existing.length > 0) {
               toast.error("Un produit portant ce nom existe déjà");
               setTimeout(() => nameInputRef.current?.focus(), 300);
               return;
             }
-
-
       // 🔵 Si tout est bon, on peut insérer
         response = await supabase.from('products').insert([dataToSend]);
         if (response.data && response.data[0]) {
           const newProduct = response.data[0];
           toast.success("Produit ajouté avec succès !");
-          await supabase.from('stock_history').insert([{
-            product_id: newProduct.id,
-            old_stock: 0,
-            new_stock: newProduct.stock,
-            change: newProduct.stock,
-            reason: 'Ajout initial',
-          }]);
+
+          if (newProduct.stock > 0) {
+            await supabase.from("stock_movements").insert({
+              product_id: newProduct.id,
+              type: "IN",
+              reason: "AJUSTEMENT",
+              quantity: newProduct.stock,
+              comment: "Stock initial lors de la création du produit",
+              created_at: new Date().toISOString(),
+            });
+          }
         }
       }
 
