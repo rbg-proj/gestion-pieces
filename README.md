@@ -62,7 +62,10 @@ Optimisation de :
 ✅ Suppression automatique des ventes vides
 ✅ Base auto-cohérente
 ✅ Frontend allégé
+Composant indépendant de gestion d'entrée et sortie en stock ✅
 
 Version 38
-Correction impression sur 2 lignes
-Composant indépendant de gestion d'entrée et sortie en stock
+Correction impression facture sur 2 lignes
+Offline activé
+
+
