@@ -761,7 +761,7 @@ export default function OrdersPage() {
             <DialogTitle>Détails de la vente</DialogTitle>
           </DialogHeader>
 
-          <div className="max-h-[70vh] overflow-y-auto pr-2" ref={printRef}>
+          <div className="receipt-scroll max-h-[70vh] overflow-y-auto pr-2" ref={printRef}>
             {saleItems.length > 0 && selectedOrderInfo && (
               <Receipt
                 cart={saleItems.map(item => ({
