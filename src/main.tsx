@@ -6,10 +6,10 @@ import { AuthProvider } from './contexts/AuthContext';
 import './index.css';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  
+  <>
      <AuthProvider>
     <App />
       </AuthProvider>
     <Toaster position="top-center" reverseOrder={false} />
-  
+  </>
 );
