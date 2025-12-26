@@ -37,15 +37,17 @@ const Receipt = forwardRef<HTMLDivElement, ReceiptProps>(
     return (
       <div
         ref={ref}
-        className="p-4 max-w-[80mm] bg-white text-black text-sm border border-gray-300"
+        className="receipt-print bg-white text-black border border-gray-300"
       >
-        <div className="text-center mb-2">
-          <h1 className="font-bold text-base">REHOBOTH BUSINESS GROUP</h1>
+        
+        <div className="receipt-header text-center mb-2">
+          <h1 className="font-bold">REHOBOTH BUSINESS GROUP</h1>
           <p className="text-xs">RCCM 18-A-01715 - ID.NAT 01-93-N40495R</p>
           <p className="text-xs">45 BLVD LUMUMBA, MASINA, KINSHASA</p>
-          <p className="text-xs">Date/Heure : {formattedDate} </p>
+          <p className="text-xs">Date/Heure : {formattedDate}</p>
           <p className="text-xs">N° Facture : {invoiceNumber}</p>
         </div>
+
 
         <div className="mb-2 text-xs">
           <p><strong>Client :</strong> {customerName || 'Client anonyme'}  </p> 
@@ -67,7 +69,7 @@ const Receipt = forwardRef<HTMLDivElement, ReceiptProps>(
             <span className="w-1/4 text-right">Prix Unit.</span>
             <span className="w-1/4 text-right">Prix Tot.</span>
           </div>
-          {cart.map((item, index) => {
+          {/*cart.map((item, index) => {
             const price = Number(item.price);
             const lineTotal = price * item.quantity;
             return (
@@ -78,7 +80,31 @@ const Receipt = forwardRef<HTMLDivElement, ReceiptProps>(
                 <span className="w-1/4 text-right">{lineTotal.toFixed(0)}Fc</span>
               </div>
             );
-          })}
+          })*/}
+
+          {cart.map((item, index) => {
+              const price = Number(item.price);
+              const lineTotal = price * item.quantity;
+            
+              return (
+                <div key={index} className="mb-1">
+                  <div className="flex justify-between">
+                    <span className="font-bold break-words max-w-[70%]">
+                      {item.quantity} x {item.name.toUpperCase()}
+                    </span>
+                    <span className="whitespace-nowrap">
+                      {lineTotal.toFixed(0)}Fc
+                    </span>
+                  </div>
+            
+                  {/* Détail prix unitaire – visible surtout en 80mm */}
+                  <div className="text-right text-[9px] receipt-wide">
+                    {price.toFixed(0)}Fc / unité
+                  </div>
+                </div>
+              );
+            })}
+
         </div>
 
         <hr className="my-2" />

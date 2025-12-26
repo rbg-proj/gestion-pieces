@@ -53,7 +53,7 @@ export default function OrdersPage() {
   const [selectedSale, setSelectedSale] = useState<any | null>(null);
   const [saleDetails, setSaleDetails] = useState<any[]>([]);
   const printRef = useRef(null);
-  const handlePrint = useReactToPrint({ content: () => printRef.current });
+  const handlePrint = useReactToPrint({ content: () => printRef.current, removeAfterPrint: true, });
 
   const COLORS = ["#8884d8", "#82ca9d", "#ffc658", "#ff7f50", "#a0522d", "#d2691e", "#4682b4", "#9acd32", "#dc143c", "#20b2aa"];
   

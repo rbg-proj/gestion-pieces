@@ -150,3 +150,37 @@
     -moz-appearance: textfield;
   }
 }
+
+
+@media print {
+
+  /* Le navigateur choisira la meilleure correspondance */
+  @page {
+    size: auto;
+    margin: 0;
+  }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Base receipt */
+  .receipt-print {
+    font-size: 10px;
+    padding: 4px;
+    width: 58mm;
+    max-width: 58mm;
+  }
+
+  /* Si imprimé sur 80mm → le navigateur élargit */
+  @page :right {
+    size: 80mm auto;
+  }
+
+  /* Optimisation quand plus de place */
+  .receipt-wide {
+    font-size: 11px;
+  }
+
+}
