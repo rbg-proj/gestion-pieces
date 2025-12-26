@@ -66,3 +66,35 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+@media print {
+
+  /* 1️⃣ On cache ABSOLUMENT TOUT */
+  body * {
+    visibility: hidden !important;
+  }
+
+  /* 2️⃣ Sauf le reçu */
+  .receipt-print,
+  .receipt-print * {
+    visibility: visible !important;
+  }
+
+  /* 3️⃣ Positionnement du ticket */
+  .receipt-print {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 58mm;
+    max-width: 58mm;
+    font-size: 10px;
+    padding: 4px;
+    overflow: visible !important;
+    background: white;
+  }
+
+  @page {
+    size: auto;
+    margin: 0;
+  }
+}
