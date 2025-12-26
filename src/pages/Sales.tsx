@@ -57,6 +57,16 @@ const Sales: React.FC = () => {
   const receiptRef = useRef<HTMLDivElement | null>(null);
   const handlePrint = useReactToPrint({
     content: () => receiptRef.current,
+    removeAfterPrint: true,
+  pageStyle: `
+    @page {
+      size: 80mm auto;
+      margin: 0;
+    }
+    body {
+      margin: 0;
+    }
+  `,
   });
 
   const [saleCompleted, setSaleCompleted] = useState(false);
