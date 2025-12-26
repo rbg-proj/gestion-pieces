@@ -67,20 +67,17 @@ button:focus-visible {
   }
 }
 
-@media print {
 
-  /* 1️⃣ On cache ABSOLUMENT TOUT */
+@media print {
   body * {
     visibility: hidden !important;
   }
 
-  /* 2️⃣ Sauf le reçu */
   .receipt-print,
   .receipt-print * {
     visibility: visible !important;
   }
 
-  /* 3️⃣ Positionnement du ticket */
   .receipt-print {
     position: absolute;
     left: 0;
@@ -89,7 +86,6 @@ button:focus-visible {
     max-width: 58mm;
     font-size: 10px;
     padding: 4px;
-    overflow: visible !important;
     background: white;
   }
 
@@ -97,4 +93,38 @@ button:focus-visible {
     size: auto;
     margin: 0;
   }
+}
+
+/* Styles POS neutres */
+.receipt-header .center {
+  text-align: center;
+}
+.bold {
+  font-weight: bold;
+}
+.small {
+  font-size: 10px;
+}
+.center {
+  text-align: center;
+}
+.right {
+  text-align: right;
+}
+.block {
+  margin-bottom: 2px;
+}
+.line {
+  border-top: 1px dashed #000;
+  margin: 4px 0;
+}
+.item {
+  margin-bottom: 4px;
+}
+.item-sub {
+  font-size: 9px;
+  text-align: right;
+}
+.thanks {
+  margin-top: 6px;
 }
