@@ -745,37 +745,65 @@ export default function OrdersPage() {
       )}
 
       {/* Receipt Dialog */}
-      <Dialog open={!!selectedOrderId} onOpenChange={() => { setSelectedOrderId(null); setSelectedOrderInfo(null); setSaleItems([]); }}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Détails de la vente</DialogTitle>
-          </DialogHeader>
+      <Dialog open={!!selectedOrderId} onOpenChange={() => {
+            setSelectedOrderId(null);
+            setSelectedOrderInfo(null);
+            setSaleItems([]);
+        }}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Détails de la vente</DialogTitle>
+            </DialogHeader>
+        
+            {/* APERÇU SEULEMENT */}
+            <div className="max-h-[70vh] overflow-y-auto pr-2">
+              {saleItems.length > 0 && selectedOrderInfo && (
+                <Receipt
+                  cart={saleItems.map(item => ({
+                    name: item.products?.name || 'Produit inconnu',
+                    quantity: item.quantity,
+                    price: Number(item.unit_price || 0) * (selectedOrderInfo.exchange_rate ?? 1)
+                  }))}
+                  total={Number(selectedOrderInfo.total || 0) * (selectedOrderInfo.exchange_rate ?? 1)}
+                  customerName={selectedOrderInfo.customerName}
+                  paymentMethod={selectedOrderInfo.paymentMethod}
+                  date={selectedOrderInfo.date}
+                  userName={selectedOrderInfo.agent}
+                  exchangeRate={selectedOrderInfo.exchange_rate}
+                  invoiceNumber={`Dupli Fac-${String(new Date().getFullYear()).slice(2)}${String(new Date().getMonth() + 1).padStart(2, '0')}-${String(selectedOrderId ?? '').slice(0, 6).toUpperCase()}`}
+                />
+              )}
+            </div>
+        
+            <div className="mt-4 text-right">
+              <Button onClick={handlePrint}>Imprimer le duplicata</Button>
+            </div>
+          </DialogContent>
+        </Dialog>
 
-          <div className="max-h-[70vh] overflow-y-auto pr-2">
-            {saleItems.length > 0 && selectedOrderInfo && (
-              <Receipt
-                ref={printRef}
-                cart={saleItems.map(item => ({
-                  name: item.products?.name || 'Produit inconnu',
-                  quantity: item.quantity,
-                  price: Number(item.unit_price || 0) * (selectedOrderInfo.exchange_rate ?? 1)
-                }))}
-                total={Number(selectedOrderInfo.total || 0) * (selectedOrderInfo.exchange_rate ?? 1)}
-                customerName={selectedOrderInfo.customerName}
-                paymentMethod={selectedOrderInfo.paymentMethod}
-                date={selectedOrderInfo.date}
-                userName={selectedOrderInfo.agent}
-                exchangeRate={selectedOrderInfo.exchange_rate}
-                invoiceNumber={`Dupli Fac-${String(new Date().getFullYear()).slice(2)}${String(new Date().getMonth() + 1).padStart(2, '0')}-${String(selectedOrderId ?? '').slice(0, 6).toUpperCase()}`}
-              />
-            )}
-          </div>
 
-          <div className="mt-4 text-right">
-            <Button onClick={handlePrint}>Imprimer le duplicata</Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+      
+      {/* RECEIPT À IMPRIMER (invisible à l’écran) */}
+      <div style={{ display: "none" }}>
+        {saleItems.length > 0 && selectedOrderInfo && (
+          <Receipt
+            ref={printRef} // <-- important
+            cart={saleItems.map(item => ({
+              name: item.products?.name || 'Produit inconnu',
+              quantity: item.quantity,
+              price: Number(item.unit_price || 0) * (selectedOrderInfo.exchange_rate ?? 1)
+            }))}
+            total={Number(selectedOrderInfo.total || 0) * (selectedOrderInfo.exchange_rate ?? 1)}
+            customerName={selectedOrderInfo.customerName}
+            paymentMethod={selectedOrderInfo.paymentMethod}
+            date={selectedOrderInfo.date}
+            userName={selectedOrderInfo.agent}
+            exchangeRate={selectedOrderInfo.exchange_rate}
+            invoiceNumber={`Dupli Fac-${String(new Date().getFullYear()).slice(2)}${String(new Date().getMonth() + 1).padStart(2, '0')}-${String(selectedOrderId ?? '').slice(0, 6).toUpperCase()}`}
+          />
+        )}
+      </div>
+
 
       {/* Edit modal */}
       {editModalOpen && editOrder && (
