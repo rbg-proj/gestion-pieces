@@ -66,8 +66,6 @@ Composant indépendant de gestion d'entrée et sortie en stock ✅
 
 Version 38
 Correction impression facture sur 2 lignes
-
-Version 39
 Offline activé
 
 

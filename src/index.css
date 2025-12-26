@@ -150,16 +150,3 @@
     -moz-appearance: textfield;
   }
 }
-
-
-@media print {
-  .receipt-scroll {
-    max-height: none !important;
-    overflow: visible !important;
-  }
-
-  html, body {
-    height: auto !important;
-    overflow: visible !important;
-  }
-}

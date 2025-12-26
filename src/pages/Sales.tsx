@@ -57,16 +57,6 @@ const Sales: React.FC = () => {
   const receiptRef = useRef<HTMLDivElement | null>(null);
   const handlePrint = useReactToPrint({
     content: () => receiptRef.current,
-    removeAfterPrint: true,
-  pageStyle: `
-    @page {
-      size: 80mm auto;
-      margin: 0;
-    }
-    body {
-      margin: 0;
-    }
-  `,
   });
 
   const [saleCompleted, setSaleCompleted] = useState(false);
@@ -720,13 +710,14 @@ const Sales: React.FC = () => {
       {showReceiptModal && (
         <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded shadow-lg w-full max-w-md">
-            <div className="receipt-scroll max-h-[70vh] overflow-y-auto pr-2">
+            <div className="max-h-[70vh] overflow-y-auto pr-2">
             <Receipt
               ref={receiptRef}
               cart={printedCart}
               total={printedTotal} // en CDF
               customerName={printedCustomerName}
               paymentMethod={printedPaymentMethod}
+              //date={new Date().toLocaleString()}
               date={new Date().toISOString()}
               invoiceNumber={generateInvoiceNumber(selectedSaleId)}
               userName={user?.name || ''}

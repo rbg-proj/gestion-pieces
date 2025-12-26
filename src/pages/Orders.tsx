@@ -53,17 +53,7 @@ export default function OrdersPage() {
   const [selectedSale, setSelectedSale] = useState<any | null>(null);
   const [saleDetails, setSaleDetails] = useState<any[]>([]);
   const printRef = useRef(null);
-  const handlePrint = useReactToPrint({ content: () => printRef.current, 
-                                      removeAfterPrint: true,
-                                      pageStyle: `
-                                          @page {
-                                            size: 80mm auto;
-                                            margin: 0;
-                                          }
-                                          body {
-                                            margin: 0;
-                                          }
-                                        `,});
+  const handlePrint = useReactToPrint({ content: () => printRef.current });
 
   const COLORS = ["#8884d8", "#82ca9d", "#ffc658", "#ff7f50", "#a0522d", "#d2691e", "#4682b4", "#9acd32", "#dc143c", "#20b2aa"];
   
@@ -761,7 +751,7 @@ export default function OrdersPage() {
             <DialogTitle>Détails de la vente</DialogTitle>
           </DialogHeader>
 
-          <div className="receipt-scroll max-h-[70vh] overflow-y-auto pr-2" ref={printRef}>
+          <div className="max-h-[70vh] overflow-y-auto pr-2" ref={printRef}>
             {saleItems.length > 0 && selectedOrderInfo && (
               <Receipt
                 cart={saleItems.map(item => ({
