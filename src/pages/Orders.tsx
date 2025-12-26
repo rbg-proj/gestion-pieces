@@ -53,7 +53,7 @@ export default function OrdersPage() {
   const [selectedSale, setSelectedSale] = useState<any | null>(null);
   const [saleDetails, setSaleDetails] = useState<any[]>([]);
   const printRef = useRef(null);
-  const handlePrint = useReactToPrint({ content: () => printRef.current 
+  const handlePrint = useReactToPrint({ content: () => printRef.current, 
                                       removeAfterPrint: true,
                                       pageStyle: `
                                           @page {
