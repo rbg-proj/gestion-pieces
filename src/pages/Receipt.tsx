@@ -203,7 +203,7 @@ const Receipt = forwardRef<HTMLDivElement, ReceiptProps>(
 
           <hr style={{ border: 'none', borderTop: '1px solid #000', margin: '4px 0', padding: 0 }} />
 
-          <div className="pos-footer" style={{ fontSize: '9px', textAlign: 'right', marginBottom: '6px' }}>
+          <div className="pos-footer" style={{ fontSize: '10px', textAlign: 'right', marginBottom: '6px' }}>
             <div style={{ margin: '1px 0' }}>Total HT : {totalHT.toFixed(0)} Fc</div>
             <div style={{ margin: '1px 0' }}>TVA (0%) : {taxAmount.toFixed(2)} Fc</div>
             <div style={{ fontWeight: 'bold', fontSize: '11px', margin: '2px 0' }}>
