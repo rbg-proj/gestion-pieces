@@ -746,34 +746,60 @@ export default function OrdersPage() {
 
       {/* Receipt Dialog */}
       <Dialog open={!!selectedOrderId} onOpenChange={() => { setSelectedOrderId(null); setSelectedOrderInfo(null); setSaleItems([]); }}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Détails de la vente</DialogTitle>
-          </DialogHeader>
+        <>
+          <style>{`
+            @media screen {
+              .receipt-dialog-content {
+                max-height: 70vh;
+                overflow-y: auto;
+              }
+            }
 
-          <div className="max-h-[70vh] overflow-y-auto pr-2" ref={printRef}>
-            {saleItems.length > 0 && selectedOrderInfo && (
-              <Receipt
-                cart={saleItems.map(item => ({
-                  name: item.products?.name || 'Produit inconnu',
-                  quantity: item.quantity,
-                  price: Number(item.unit_price || 0) * (selectedOrderInfo.exchange_rate ?? 1)
-                }))}
-                total={Number(selectedOrderInfo.total || 0) * (selectedOrderInfo.exchange_rate ?? 1)}
-                customerName={selectedOrderInfo.customerName}
-                paymentMethod={selectedOrderInfo.paymentMethod}
-                date={selectedOrderInfo.date}
-                userName={selectedOrderInfo.agent}
-                exchangeRate={selectedOrderInfo.exchange_rate}
-                invoiceNumber={`Dupli Fac-${String(new Date().getFullYear()).slice(2)}${String(new Date().getMonth() + 1).padStart(2, '0')}-${String(selectedOrderId ?? '').slice(0, 6).toUpperCase()}`}
-              />
-            )}
-          </div>
+            @media print {
+              .receipt-dialog-content {
+                max-height: none !important;
+                overflow: visible !important;
+              }
 
-          <div className="mt-4 text-right">
-            <Button onClick={handlePrint}>Imprimer le duplicata</Button>
-          </div>
-        </DialogContent>
+              .dialog-actions {
+                display: none !important;
+              }
+
+              .radix-dialog-overlay {
+                display: none !important;
+              }
+            }
+          `}</style>
+
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Détails de la vente</DialogTitle>
+            </DialogHeader>
+
+            <div className="receipt-dialog-content pr-2" ref={printRef}>
+              {saleItems.length > 0 && selectedOrderInfo && (
+                <Receipt
+                  cart={saleItems.map(item => ({
+                    name: item.products?.name || 'Produit inconnu',
+                    quantity: item.quantity,
+                    price: Number(item.unit_price || 0) * (selectedOrderInfo.exchange_rate ?? 1)
+                  }))}
+                  total={Number(selectedOrderInfo.total || 0) * (selectedOrderInfo.exchange_rate ?? 1)}
+                  customerName={selectedOrderInfo.customerName}
+                  paymentMethod={selectedOrderInfo.paymentMethod}
+                  date={selectedOrderInfo.date}
+                  userName={selectedOrderInfo.agent}
+                  exchangeRate={selectedOrderInfo.exchange_rate}
+                  invoiceNumber={`Dupli Fac-${String(new Date().getFullYear()).slice(2)}${String(new Date().getMonth() + 1).padStart(2, '0')}-${String(selectedOrderId ?? '').slice(0, 6).toUpperCase()}`}
+                />
+              )}
+            </div>
+
+            <div className="dialog-actions mt-4 text-right">
+              <Button onClick={handlePrint}>Imprimer le duplicata</Button>
+            </div>
+          </DialogContent>
+        </>
       </Dialog>
 
       {/* Edit modal */}
