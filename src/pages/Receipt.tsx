@@ -121,7 +121,7 @@ const Receipt = forwardRef<HTMLDivElement, ReceiptProps>(
             <div style={{ fontSize: '9px', margin: '1px 0' }}>
               45 BLVD LUMUMBA, MASINA, KINSHASA
             </div>
-            <div style={{ fontSize: '9px', margin: '1px 0' }}>
+            <div style={{ fontSize: '10px', margin: '1px 0' }}>
               Date/Heure : {formattedDate}
             </div>
             <div style={{ fontSize: '10px', fontWeight: 'bold', margin: '2px 0' }}>
@@ -131,7 +131,7 @@ const Receipt = forwardRef<HTMLDivElement, ReceiptProps>(
 
           <hr style={{ border: 'none', borderTop: '1px solid #000', margin: '4px 0', padding: 0 }} />
 
-          <div style={{ fontSize: '9px', marginBottom: '6px' }}>
+          <div style={{ fontSize: '10px', marginBottom: '6px' }}>
             <div style={{ margin: '1px 0' }}>
               <strong>Client :</strong> {customerName || 'Client anonyme'}
             </div>
@@ -143,7 +143,7 @@ const Receipt = forwardRef<HTMLDivElement, ReceiptProps>(
                 <strong>Caissier :</strong> {userName}
               </span>
               {exchangeRate && (
-                <span style={{ fontSize: '8px' }}>
+                <span style={{ fontSize: '10px' }}>
                   <strong>Taux :</strong> {exchangeRate.toLocaleString('fr-FR')}
                 </span>
               )}
@@ -152,7 +152,7 @@ const Receipt = forwardRef<HTMLDivElement, ReceiptProps>(
 
           <hr style={{ border: 'none', borderTop: '1px solid #000', margin: '4px 0', padding: 0 }} />
 
-          <div className="pos-items" style={{ fontSize: '10px', marginBottom: '6px' }}>
+          <div className="pos-items" style={{ fontSize: '10px', fontWeight: 'bold', marginBottom: '6px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold', borderBottom: '1px solid #000', paddingBottom: '2px', marginBottom: '2px' }}>
               <span style={{ flex: '0 0 12%' }}>Qté</span>
               <span style={{ flex: '0 0 48%' }}>Désignation</span>
