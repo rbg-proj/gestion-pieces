@@ -185,7 +185,7 @@ const Receipt = forwardRef<HTMLDivElement, ReceiptProps>(
                       wordBreak: 'break-word',
                       overflowWrap: 'break-word',
                       whiteSpace: 'normal',
-                      fontSize: '10px',
+                      fontSize: '11px',
                     }}
                   >
                     {item.name.toUpperCase()}
