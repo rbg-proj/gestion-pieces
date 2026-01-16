@@ -170,7 +170,7 @@ const Receipt = forwardRef<HTMLDivElement, ReceiptProps>(
                   style={{
                     display: 'flex',
                     justifyContent: 'space-between',
-                    marginBottom: '2px',
+                    marginBottom: '4px',
                     pageBreakInside: 'avoid',
                     breakInside: 'avoid',
                   }}
