@@ -41,7 +41,7 @@ const Receipt = forwardRef<HTMLDivElement, ReceiptProps>(
             html, body {
               margin: 0;
               padding: 0;
-              width: 80mm;
+              width: 58mm;
               height: auto;
             }
 
