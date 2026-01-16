@@ -185,7 +185,7 @@ const Receipt = forwardRef<HTMLDivElement, ReceiptProps>(
                       wordBreak: 'break-word',
                       overflowWrap: 'break-word',
                       whiteSpace: 'normal',
-                      fontSize: '8px',
+                      fontSize: '10px',
                     }}
                   >
                     {item.name.toUpperCase()}
@@ -203,17 +203,17 @@ const Receipt = forwardRef<HTMLDivElement, ReceiptProps>(
 
           <hr style={{ border: 'none', borderTop: '1px solid #000', margin: '4px 0', padding: 0 }} />
 
-          <div className="pos-footer" style={{ fontSize: '10px', textAlign: 'right', marginBottom: '6px' }}>
+          <div className="pos-footer" style={{ fontSize: '11px', textAlign: 'right', marginBottom: '6px' }}>
             <div style={{ margin: '1px 0' }}>Total HT : {totalHT.toFixed(0)} Fc</div>
             <div style={{ margin: '1px 0' }}>TVA (0%) : {taxAmount.toFixed(2)} Fc</div>
-            <div style={{ fontWeight: 'bold', fontSize: '11px', margin: '2px 0' }}>
+            <div style={{ fontWeight: 'bold', fontSize: '12px', margin: '2px 0' }}>
               Total TTC : {total.toLocaleString('fr-FR')} Fc
             </div>
           </div>
 
           <hr style={{ border: 'none', borderTop: '1px solid #000', margin: '4px 0', padding: 0 }} />
 
-          <div style={{ textAlign: 'center', fontSize: '10px', margin: '4px 0' }}>
+          <div style={{ textAlign: 'center', fontSize: '11px', margin: '4px 0' }}>
             Merci pour votre achat !
           </div>
         </div>
