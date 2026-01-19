@@ -157,7 +157,7 @@ const Receipt = forwardRef<HTMLDivElement, ReceiptProps>(
           <hr style={{ border: 'none', borderTop: '1px solid #000', margin: '2px 0', padding: 0 }} />
 
           {/* Client Info */}
-          <div style={{ fontSize: '9px', marginBottom: '4px' }}>
+          <div style={{ fontSize: '10px', marginBottom: '4px' }}>
             <div style={{ margin: '1px 0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               <strong>Client:</strong> {(customerName || 'Anon').substring(0, 20)}
             </div>
@@ -168,7 +168,7 @@ const Receipt = forwardRef<HTMLDivElement, ReceiptProps>(
               <strong>Caissier:</strong> {userName}
             </div>
             {exchangeRate && (
-              <div style={{ margin: '1px 0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '8px' }}>
+              <div style={{ margin: '1px 0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '9px' }}>
                 <strong>Taux:</strong> {exchangeRate.toLocaleString('fr-FR')} Fc
               </div>
             )}
@@ -180,10 +180,10 @@ const Receipt = forwardRef<HTMLDivElement, ReceiptProps>(
           <div className="pos-items" style={{ marginBottom: '4px' }}>
             {/* Header */}
             <div className="pos-item-row" style={{ borderBottom: '1px solid #000', paddingBottom: '1px', marginBottom: '2px' }}>
-              <div className="pos-item-col" style={{ width: '10%', fontSize: '9px', fontWeight: 'bold' }}>Qté</div>
-              <div className="pos-item-col" style={{ width: '50%', fontSize: '9px', fontWeight: 'bold' }}>Désignation</div>
-              <div className="pos-item-col" style={{ width: '18%', fontSize: '9px', fontWeight: 'bold', textAlign: 'right' }}>P.Unit</div>
-              <div className="pos-item-col" style={{ width: '22%', fontSize: '9px', fontWeight: 'bold', textAlign: 'right' }}>Total</div>
+              <div className="pos-item-col" style={{ width: '10%', fontSize: '10px', fontWeight: 'bold' }}>Qté</div>
+              <div className="pos-item-col" style={{ width: '50%', fontSize: '10px', fontWeight: 'bold' }}>Désignation</div>
+              <div className="pos-item-col" style={{ width: '18%', fontSize: '10px', fontWeight: 'bold', textAlign: 'right' }}>P.Unit</div>
+              <div className="pos-item-col" style={{ width: '22%', fontSize: '10px', fontWeight: 'bold', textAlign: 'right' }}>Total</div>
             </div>
 
             {/* Items */}
