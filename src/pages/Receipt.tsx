@@ -49,9 +49,9 @@ const Receipt = forwardRef<HTMLDivElement, ReceiptProps>(
               width: 58mm !important;
               max-width: 58mm !important;
               margin: 0 !important;
-              padding: 8px !important;
-              font-size: 11px !important;
-              line-height: 1.2 !important;
+              padding: 6px !important;
+              font-size: 10px !important;
+              line-height: 1.1 !important;
               color: black !important;
               background: white !important;
               page-break-after: auto !important;
@@ -71,12 +71,23 @@ const Receipt = forwardRef<HTMLDivElement, ReceiptProps>(
 
             .pos-item {
               page-break-inside: avoid !important;
-              display: block !important;
-              margin: 2px 0 !important;
-              white-space: normal !important;
-              word-wrap: break-word !important;
-              overflow-wrap: break-word !important;
-              word-break: break-all !important;
+              display: table-row !important;
+              width: 100% !important;
+              margin: 0 !important;
+              padding: 0 !important;
+            }
+
+            .pos-item-col {
+              display: table-cell !important;
+              padding: 1px 2px !important;
+              page-break-inside: avoid !important;
+            }
+
+            .pos-item-row {
+              display: table !important;
+              width: 100% !important;
+              table-layout: fixed !important;
+              border-collapse: collapse !important;
             }
 
             .pos-footer {
@@ -93,6 +104,16 @@ const Receipt = forwardRef<HTMLDivElement, ReceiptProps>(
               max-width: 80mm;
               margin: 0 auto;
             }
+
+            .pos-item-row {
+              display: flex !important;
+              width: 100%;
+            }
+
+            .pos-item-col {
+              display: flex !important;
+              align-items: center;
+            }
           }
         `}</style>
 
@@ -102,118 +123,131 @@ const Receipt = forwardRef<HTMLDivElement, ReceiptProps>(
           style={{
             width: '58mm',
             maxWidth: '58mm',
-            padding: '8px',
+            padding: '6px',
             backgroundColor: 'white',
             color: 'black',
-            fontSize: '11px',
+            fontSize: '10px',
             fontFamily: '"Courier New", monospace',
-            lineHeight: '1.2',
+            lineHeight: '1.1',
             border: '1px solid #ddd',
           }}
         >
-          <div className="pos-header" style={{ textAlign: 'center', marginBottom: '6px' }}>
-            <div style={{ fontWeight: 'bold', fontSize: '13px', margin: '0 0 3px 0' }}>
+          {/* Header */}
+          <div className="pos-header" style={{ textAlign: 'center', marginBottom: '4px' }}>
+            <div style={{ fontWeight: 'bold', fontSize: '12px', margin: '0 0 2px 0' }}>
               REHOBOTH BUSINESS GROUP
             </div>
-            <div style={{ fontSize: '11px', margin: '1px 0' }}>
-              RCCM 18-A-01715 - ID.NAT 01-93-N40495R
+            <div style={{ fontSize: '9px', margin: '1px 0' }}>
+              RCCM 18-A-01715
             </div>
-            <div style={{ fontSize: '11px', margin: '1px 0' }}>
-              45 BLVD LUMUMBA, MASINA, KINSHASA
+            <div style={{ fontSize: '9px', margin: '1px 0' }}>
+              ID.NAT 01-93-N40495R
             </div>
-            <div style={{ fontSize: '11px', margin: '1px 0' }}>
+            <div style={{ fontSize: '9px', margin: '1px 0' }}>
+              45 BLVD LUMUMBA, MASINA
+            </div>
+            <div style={{ fontSize: '9px', margin: '1px 0' }}>
               Date/Heure : {formattedDate}
             </div>
-            <div style={{ fontSize: '11px', fontWeight: 'bold', margin: '2px 0' }}>
-              N° Facture : {invoiceNumber}
+            <div style={{ fontSize: '10px', fontWeight: 'bold', margin: '1px 0' }}>
+              N° Fac : {invoiceNumber}
             </div>
           </div>
 
-          <hr style={{ border: 'none', borderTop: '1px solid #000', margin: '4px 0', padding: 0 }} />
+          <hr style={{ border: 'none', borderTop: '1px solid #000', margin: '2px 0', padding: 0 }} />
 
-          <div style={{ fontSize: '11px', marginBottom: '6px' }}>
-            <div style={{ margin: '1px 0' }}>
-              <strong>Client :</strong> {customerName || 'Client anonyme'}
+          {/* Client Info */}
+          <div style={{ fontSize: '9px', marginBottom: '4px' }}>
+            <div style={{ margin: '1px 0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              <strong>Client:</strong> {(customerName || 'Anon').substring(0, 20)}
             </div>
-            <div style={{ margin: '1px 0' }}>
-              <strong>Mode :</strong> {paymentMethod}
+            <div style={{ margin: '1px 0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              <strong>Mode:</strong> {paymentMethod}
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', margin: '1px 0' }}>
-              <span>
-                <strong>Caissier :</strong> {userName}
-              </span>
-              {exchangeRate && (
-                <span style={{ fontSize: '11px' }}>
-                  <strong>Taux :</strong> {exchangeRate.toLocaleString('fr-FR')}
-                </span>
-              )}
+            <div style={{ margin: '1px 0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              <strong>Caissier:</strong> {userName}
             </div>
+            {exchangeRate && (
+              <div style={{ margin: '1px 0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '8px' }}>
+                <strong>Taux:</strong> {exchangeRate.toLocaleString('fr-FR')} Fc
+              </div>
+            )}
           </div>
 
-          <hr style={{ border: 'none', borderTop: '1px solid #000', margin: '4px 0', padding: 0 }} />
+          <hr style={{ border: 'none', borderTop: '1px solid #000', margin: '2px 0', padding: 0 }} />
 
-          <div className="pos-items" style={{ fontSize: '11px', fontWeight: 'bold', marginBottom: '6px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold', borderBottom: '1px solid #000', paddingBottom: '2px', marginBottom: '2px' }}>
-              <span style={{ flex: '0 0 12%' }}>Qté</span>
-              <span style={{ flex: '0 0 48%' }}>Désignation</span>
-              <span style={{ flex: '0 0 18%', textAlign: 'right' }}>P. Unit</span>
-              <span style={{ flex: '0 0 22%', textAlign: 'right' }}>P. Total</span>
+          {/* Items */}
+          <div className="pos-items" style={{ marginBottom: '4px' }}>
+            {/* Header */}
+            <div className="pos-item-row" style={{ borderBottom: '1px solid #000', paddingBottom: '1px', marginBottom: '2px' }}>
+              <div className="pos-item-col" style={{ width: '10%', fontSize: '9px', fontWeight: 'bold' }}>Qté</div>
+              <div className="pos-item-col" style={{ width: '50%', fontSize: '9px', fontWeight: 'bold' }}>Désignation</div>
+              <div className="pos-item-col" style={{ width: '18%', fontSize: '9px', fontWeight: 'bold', textAlign: 'right' }}>P.Unit</div>
+              <div className="pos-item-col" style={{ width: '22%', fontSize: '9px', fontWeight: 'bold', textAlign: 'right' }}>Total</div>
             </div>
 
+            {/* Items */}
             {cart.map((item, index) => {
               const price = Number(item.price);
               const lineTotal = price * item.quantity;
+              const itemName = item.name.toUpperCase().substring(0, 25);
               return (
                 <div
                   key={index}
-                  className="pos-item"
+                  className="pos-item-row"
                   style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    marginBottom: '4px',
+                    marginBottom: '2px',
                     pageBreakInside: 'avoid',
                     breakInside: 'avoid',
                   }}
                 >
-                  <span style={{ flex: '0 0 12%', textAlign: 'center' }}>
+                  <div className="pos-item-col" style={{ width: '10%', fontSize: '10px', textAlign: 'center' }}>
                     {item.quantity}
-                  </span>
-                  <span
+                  </div>
+                  <div
+                    className="pos-item-col"
                     style={{
-                      flex: '0 0 48%',
+                      width: '50%',
+                      fontSize: '9px',
                       wordWrap: 'break-word',
                       wordBreak: 'break-word',
                       overflowWrap: 'break-word',
                       whiteSpace: 'normal',
-                      fontSize: '11px',
+                      lineHeight: '1',
                     }}
                   >
-                    {item.name.toUpperCase()}
-                  </span>
-                  <span style={{ flex: '0 0 18%', textAlign: 'right' }}>
+                    {itemName}
+                  </div>
+                  <div className="pos-item-col" style={{ width: '18%', fontSize: '10px', textAlign: 'right' }}>
                     {price.toFixed(0)}
-                  </span>
-                  <span style={{ flex: '0 0 22%', textAlign: 'right' }}>
+                  </div>
+                  <div className="pos-item-col" style={{ width: '22%', fontSize: '10px', textAlign: 'right' }}>
                     {lineTotal.toFixed(0)}
-                  </span>
+                  </div>
                 </div>
               );
             })}
           </div>
 
-          <hr style={{ border: 'none', borderTop: '1px solid #000', margin: '4px 0', padding: 0 }} />
+          <hr style={{ border: 'none', borderTop: '1px solid #000', margin: '2px 0', padding: 0 }} />
 
-          <div className="pos-footer" style={{ fontSize: '11px', textAlign: 'right', marginBottom: '6px' }}>
-            <div style={{ margin: '1px 0' }}>Total HT : {totalHT.toFixed(0)} Fc</div>
-            <div style={{ margin: '1px 0' }}>TVA (0%) : {taxAmount.toFixed(2)} Fc</div>
-            <div style={{ fontWeight: 'bold', fontSize: '12px', margin: '2px 0' }}>
-              Total TTC : {total.toLocaleString('fr-FR')} Fc
+          {/* Totals */}
+          <div className="pos-footer" style={{ fontSize: '10px', marginBottom: '4px' }}>
+            <div style={{ margin: '1px 0', textAlign: 'right' }}>
+              Total HT: {totalHT.toFixed(0)} Fc
+            </div>
+            <div style={{ margin: '1px 0', textAlign: 'right' }}>
+              TVA (0%): {taxAmount.toFixed(2)} Fc
+            </div>
+            <div style={{ fontWeight: 'bold', fontSize: '11px', margin: '2px 0', textAlign: 'right' }}>
+              Total TTC: {total.toLocaleString('fr-FR')} Fc
             </div>
           </div>
 
-          <hr style={{ border: 'none', borderTop: '1px solid #000', margin: '4px 0', padding: 0 }} />
+          <hr style={{ border: 'none', borderTop: '1px solid #000', margin: '2px 0', padding: 0 }} />
 
-          <div style={{ textAlign: 'center', fontSize: '11px', margin: '4px 0' }}>
+          {/* Footer */}
+          <div style={{ textAlign: 'center', fontSize: '9px', margin: '2px 0' }}>
             Merci pour votre achat !
           </div>
         </div>
