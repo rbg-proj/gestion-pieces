@@ -180,10 +180,10 @@ const Receipt = forwardRef<HTMLDivElement, ReceiptProps>(
           <div className="pos-items" style={{ marginBottom: '4px' }}>
             {/* Header */}
             <div className="pos-item-row" style={{ borderBottom: '1px solid #000', paddingBottom: '1px', marginBottom: '2px' }}>
-              <div className="pos-item-col" style={{ width: '10%', fontSize: '10px', fontWeight: 'bold' }}>Qté</div>
-              <div className="pos-item-col" style={{ width: '50%', fontSize: '10px', fontWeight: 'bold' }}>Désignation</div>
-              <div className="pos-item-col" style={{ width: '18%', fontSize: '10px', fontWeight: 'bold', textAlign: 'right' }}>P.Unit</div>
-              <div className="pos-item-col" style={{ width: '22%', fontSize: '10px', fontWeight: 'bold', textAlign: 'right' }}>Total</div>
+              <div className="pos-item-col" style={{ width: '10%', fontSize: '12px', fontWeight: 'bold' }}>Qté</div>
+              <div className="pos-item-col" style={{ width: '50%', fontSize: '12px', fontWeight: 'bold' }}>Désignation</div>
+              <div className="pos-item-col" style={{ width: '18%', fontSize: '12px', fontWeight: 'bold', textAlign: 'right' }}>P.Unit</div>
+              <div className="pos-item-col" style={{ width: '22%', fontSize: '12px', fontWeight: 'bold', textAlign: 'right' }}>Total</div>
             </div>
 
             {/* Items */}
