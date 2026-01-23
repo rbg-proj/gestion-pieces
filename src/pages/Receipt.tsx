@@ -137,19 +137,19 @@ const Receipt = forwardRef<HTMLDivElement, ReceiptProps>(
             <div style={{ fontWeight: 'bold', fontSize: '13px', margin: '0 0 2px 0' }}>
               REHOBOTH BUSINESS GROUP
             </div>
-            <div style={{ fontSize: '11px', margin: '1px 0' }}>
+            <div style={{ fontSize: '12px', margin: '1px 0' }}>
               RCCM 18-A-01715
             </div>
-            <div style={{ fontSize: '11px', margin: '1px 0' }}>
+            <div style={{ fontSize: '12px', margin: '1px 0' }}>
               ID.NAT 01-93-N40495R
             </div>
-            <div style={{ fontSize: '11px', margin: '1px 0' }}>
+            <div style={{ fontSize: '12px', margin: '1px 0' }}>
               45 BLVD LUMUMBA, MASINA
             </div>
-            <div style={{ fontSize: '11px', margin: '1px 0' }}>
+            <div style={{ fontSize: '12px', margin: '1px 0' }}>
               Date/Heure : {formattedDate}
             </div>
-            <div style={{ fontSize: '11px', fontWeight: 'bold', margin: '1px 0' }}>
+            <div style={{ fontSize: '12px', fontWeight: 'bold', margin: '1px 0' }}>
               N° Fac : {invoiceNumber}
             </div>
           </div>
@@ -157,7 +157,7 @@ const Receipt = forwardRef<HTMLDivElement, ReceiptProps>(
           <hr style={{ border: 'none', borderTop: '1px solid #000', margin: '2px 0', padding: 0 }} />
 
           {/* Client Info */}
-          <div style={{ fontSize: '10px', marginBottom: '4px' }}>
+          <div style={{ fontSize: '12px', marginBottom: '4px' }}>
             <div style={{ margin: '1px 0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               <strong>Client:</strong> {(customerName || 'Anon').substring(0, 20)}
             </div>
@@ -168,7 +168,7 @@ const Receipt = forwardRef<HTMLDivElement, ReceiptProps>(
               <strong>Caissier:</strong> {userName}
             </div>
             {exchangeRate && (
-              <div style={{ margin: '1px 0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '9px' }}>
+              <div style={{ margin: '1px 0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '12px' }}>
                 <strong>Taux:</strong> {exchangeRate.toLocaleString('fr-FR')} Fc
               </div>
             )}
