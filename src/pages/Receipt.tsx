@@ -157,7 +157,7 @@ const Receipt = forwardRef<HTMLDivElement, ReceiptProps>(
           <hr style={{ border: 'none', borderTop: '1px solid #000', margin: '2px 0', padding: 0 }} />
 
           {/* Client Info */}
-          <div style={{ fontSize: '12px', marginBottom: '4px' }}>
+          <div style={{ fontSize: '11px', marginBottom: '4px' }}>
             <div style={{ margin: '1px 0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               <strong>Client:</strong> {(customerName || 'Anon').substring(0, 20)}
             </div>
@@ -168,7 +168,7 @@ const Receipt = forwardRef<HTMLDivElement, ReceiptProps>(
               <strong>Caissier:</strong> {userName}
             </div>
             {exchangeRate && (
-              <div style={{ margin: '1px 0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '12px' }}>
+              <div style={{ margin: '1px 0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '11px' }}>
                 <strong>Taux:</strong> {exchangeRate.toLocaleString('fr-FR')} Fc
               </div>
             )}
