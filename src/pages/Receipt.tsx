@@ -201,7 +201,7 @@ const Receipt = forwardRef<HTMLDivElement, ReceiptProps>(
                     breakInside: 'avoid',
                   }}
                 >
-                  <div className="pos-item-col" style={{ width: '10%', fontSize: '10px', textAlign: 'center' }}>
+                  <div className="pos-item-col" style={{ width: '10%', fontSize: '12px', textAlign: 'center' }}>
                     {item.quantity}
                   </div>
                   <div
@@ -218,7 +218,7 @@ const Receipt = forwardRef<HTMLDivElement, ReceiptProps>(
                   >
                     {itemName}
                   </div>
-                  <div className="pos-item-col" style={{ width: '18%', fontSize: '10px', textAlign: 'right' }}>
+                  <div className="pos-item-col" style={{ width: '18%', fontSize: '12px', textAlign: 'right' }}>
                     {price.toFixed(0)}
                   </div>
                   <div className="pos-item-col" style={{ width: '22%', fontSize: '10px', textAlign: 'right' }}>
