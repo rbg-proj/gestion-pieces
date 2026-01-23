@@ -47,7 +47,7 @@ const Receipt = forwardRef<HTMLDivElement, ReceiptProps>(
 
             .pos-receipt {
               width: 58mm !important;
-              max-width: 58mm !important;
+              max-width: 80mm !important;
               margin: 0 !important;
               padding: 6px !important;
               font-size: 10px !important;
@@ -122,7 +122,7 @@ const Receipt = forwardRef<HTMLDivElement, ReceiptProps>(
           className="pos-receipt"
           style={{
             width: '58mm',
-            maxWidth: '58mm',
+            maxWidth: '80mm',
             padding: '6px',
             backgroundColor: 'white',
             color: 'black',
