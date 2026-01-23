@@ -137,19 +137,19 @@ const Receipt = forwardRef<HTMLDivElement, ReceiptProps>(
             <div style={{ fontWeight: 'bold', fontSize: '13px', margin: '0 0 2px 0' }}>
               REHOBOTH BUSINESS GROUP
             </div>
-            <div style={{ fontSize: '12px', margin: '1px 0' }}>
+            <div style={{ fontSize: '11px', margin: '1px 0' }}>
               RCCM 18-A-01715
             </div>
-            <div style={{ fontSize: '12px', margin: '1px 0' }}>
+            <div style={{ fontSize: '11px', margin: '1px 0' }}>
               ID.NAT 01-93-N40495R
             </div>
-            <div style={{ fontSize: '12px', margin: '1px 0' }}>
+            <div style={{ fontSize: '11px', margin: '1px 0' }}>
               45 BLVD LUMUMBA, MASINA
             </div>
-            <div style={{ fontSize: '12px', margin: '1px 0' }}>
+            <div style={{ fontSize: '10px', margin: '1px 0' }}>
               Date/Heure : {formattedDate}
             </div>
-            <div style={{ fontSize: '12px', fontWeight: 'bold', margin: '1px 0' }}>
+            <div style={{ fontSize: '10px', fontWeight: 'bold', margin: '1px 0' }}>
               N° Fac : {invoiceNumber}
             </div>
           </div>
