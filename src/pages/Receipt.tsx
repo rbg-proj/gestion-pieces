@@ -127,7 +127,7 @@ const Receipt = forwardRef<HTMLDivElement, ReceiptProps>(
             backgroundColor: 'white',
             color: 'black',
             fontSize: '13px',
-            fontFamily: '"Courier New", monospace',
+            fontFamily: 'monospace',
             lineHeight: '1.2',
             border: '1px solid #ddd',
           }}
