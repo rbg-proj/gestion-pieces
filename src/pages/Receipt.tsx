@@ -101,7 +101,7 @@ const Receipt = forwardRef<HTMLDivElement, ReceiptProps>(
 
           @media screen {
             .pos-receipt {
-              max-width: 80mm;
+              max-width: 58mm;
               margin: 0 auto;
             }
 
