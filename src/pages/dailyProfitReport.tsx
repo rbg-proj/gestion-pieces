@@ -10,8 +10,8 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-interface DailyProfitRow {
-  sale_date: string;
+interface DailyProfit {
+  date: string;
   revenue: number;
   cost: number;
   profit: number;
@@ -22,7 +22,7 @@ const ITEMS_PER_PAGE = 7;
 const DailyProfitReport: React.FC = () => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [data, setData] = useState<DailyProfitRow[]>([]);
+  const [data, setData] = useState<DailyProfit[]>([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
 
@@ -31,19 +31,50 @@ const DailyProfitReport: React.FC = () => {
 
     setLoading(true);
 
-    const { data, error } = await supabase.rpc("get_daily_profit", {
-      start_date: startDate,
-      end_date: endDate,
-    });
+    const { data: rows, error } = await supabase
+      .from("sale_items")
+      .select(`
+        quantity,
+        unit_price,
+        products ( purchase_price ),
+        sales!inner ( sale_date )
+      `)
+      .gte("sales.sale_date", startDate)
+      .lte("sales.sale_date", endDate);
 
     setLoading(false);
 
-    if (error) {
-      console.error("Erreur RPC:", error);
+    if (error || !rows) {
+      console.error(error);
       return;
     }
 
-    setData(data || []);
+    const grouped: Record<string, DailyProfit> = {};
+
+    rows.forEach((item: any) => {
+      const date = item.sales.sale_date;
+      const quantity = item.quantity;
+      const unitPrice = item.unit_price;
+      const purchasePrice = item.products.purchase_price;
+
+      const revenue = unitPrice * quantity;
+      const cost = purchasePrice * quantity;
+      const profit = revenue - cost;
+
+      if (!grouped[date]) {
+        grouped[date] = { date, revenue: 0, cost: 0, profit: 0 };
+      }
+
+      grouped[date].revenue += revenue;
+      grouped[date].cost += cost;
+      grouped[date].profit += profit;
+    });
+
+    const result = Object.values(grouped).sort((a, b) =>
+      a.date > b.date ? 1 : -1
+    );
+
+    setData(result);
     setPage(1);
   };
 
@@ -57,9 +88,9 @@ const DailyProfitReport: React.FC = () => {
   // Totaux généraux
   const totals = data.reduce(
     (acc, row) => {
-      acc.revenue += Number(row.revenue);
-      acc.cost += Number(row.cost);
-      acc.profit += Number(row.profit);
+      acc.revenue += row.revenue;
+      acc.cost += row.cost;
+      acc.profit += row.profit;
       return acc;
     },
     { revenue: 0, cost: 0, profit: 0 }
@@ -98,7 +129,7 @@ const DailyProfitReport: React.FC = () => {
           <ResponsiveContainer>
             <LineChart data={data}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="sale_date" />
+              <XAxis dataKey="date" />
               <YAxis />
               <Tooltip />
               <Line type="monotone" dataKey="profit" strokeWidth={3} />
@@ -123,11 +154,11 @@ const DailyProfitReport: React.FC = () => {
           </thead>
           <tbody>
             {paginatedData.map((row) => (
-              <tr key={row.sale_date}>
-                <td>{row.sale_date}</td>
-                <td>{Number(row.revenue).toFixed(2)}</td>
-                <td>{Number(row.cost).toFixed(2)}</td>
-                <td>{Number(row.profit).toFixed(2)}</td>
+              <tr key={row.date}>
+                <td>{row.date}</td>
+                <td>{row.revenue.toFixed(2)}</td>
+                <td>{row.cost.toFixed(2)}</td>
+                <td>{row.profit.toFixed(2)}</td>
                 <td>
                   {row.revenue > 0
                     ? ((row.profit / row.revenue) * 100).toFixed(1)
