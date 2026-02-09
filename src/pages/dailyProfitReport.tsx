@@ -97,7 +97,7 @@ const DailyProfitReport: React.FC = () => {
           <ResponsiveContainer>
             <LineChart data={data}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="date" />
+              <XAxis dataKey="sale_date" />
               <YAxis />
               <Tooltip />
               <Line type="monotone" dataKey="profit" strokeWidth={3} />
