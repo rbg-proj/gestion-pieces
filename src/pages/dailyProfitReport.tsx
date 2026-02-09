@@ -57,7 +57,7 @@ const DailyProfitReport: React.FC = () => {
       acc.profit += row.profit;
       return acc;
     },
-    { revenue: 0, cost: 0, profit: 0 }
+    { profit: 0 }
   );
 
   return (
