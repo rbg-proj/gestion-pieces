@@ -31,50 +31,18 @@ const DailyProfitReport: React.FC = () => {
 
     setLoading(true);
 
-    const { data: rows, error } = await supabase
-      .from("sale_items")
-      .select(`
-        quantity,
-        unit_price,
-        products ( purchase_price ),
-        sales!inner ( sale_date )
-      `)
-      .gte("sales.sale_date", startDate)
-      .lte("sales.sale_date", endDate);
-
+    const { data, error } = await supabase.rpc("get_daily_profit", {
+      start_date: startDate,
+      end_date: endDate,
+    });
     setLoading(false);
 
-    if (error || !rows) {
-      console.error(error);
+    if (error) {
+      console.error("Erreur RPC:", error);
       return;
     }
 
-    const grouped: Record<string, DailyProfit> = {};
-
-    rows.forEach((item: any) => {
-      const date = item.sales.sale_date;
-      const quantity = item.quantity;
-      const unitPrice = item.unit_price;
-      const purchasePrice = item.products.purchase_price;
-
-      const revenue = unitPrice * quantity;
-      const cost = purchasePrice * quantity;
-      const profit = revenue - cost;
-
-      if (!grouped[date]) {
-        grouped[date] = { date, revenue: 0, cost: 0, profit: 0 };
-      }
-
-      grouped[date].revenue += revenue;
-      grouped[date].cost += cost;
-      grouped[date].profit += profit;
-    });
-
-    const result = Object.values(grouped).sort((a, b) =>
-      a.date > b.date ? 1 : -1
-    );
-
-    setData(result);
+    setData(data || []);
     setPage(1);
   };
 
