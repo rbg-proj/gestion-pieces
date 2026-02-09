@@ -119,8 +119,8 @@ const DailyProfitReport: React.FC = () => {
           </thead>
           <tbody>
             {paginatedData.map((row) => (
-              <tr key={row.date}>
-                <td>{row.date}</td>
+              <tr key={row.sale_date}>
+                <td>{row.sale_date}</td>
                 <td>{row.profit.toFixed(2)}</td>
               </tr>
             ))}
