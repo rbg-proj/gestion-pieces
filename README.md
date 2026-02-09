@@ -68,4 +68,6 @@ Version 38
 Correction impression facture sur 2 lignes
 Offline activé
 
+Version 55
+Ajout du fichier Dashboard des bénéfices (avec filtres jours)
 
