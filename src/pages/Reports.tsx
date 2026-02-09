@@ -4,7 +4,7 @@ import {
   TrendingUp,
   Users,
   Package,
-  Plus
+  Eye
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { format, subDays, startOfDay, endOfDay, startOfWeek, startOfMonth, startOfYear } from 'date-fns';
@@ -278,7 +278,7 @@ const Reports: React.FC = () => {
           onClick={() => navigate("/dailyProfitReport")}
           className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition flex items-center"
         >
-          <Plus className="w-4 h-4 mr-1" /> Bénéfices
+          <Eye className="w-4 h-4 mr-1" /> Bénéfices
         </button>
         </div>
       </div>
