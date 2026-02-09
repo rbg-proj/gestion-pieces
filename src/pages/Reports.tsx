@@ -3,7 +3,8 @@ import {
   FileSpreadsheet,
   TrendingUp,
   Users,
-  Package
+  Package,
+  Plus
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { format, subDays, startOfDay, endOfDay, startOfWeek, startOfMonth, startOfYear } from 'date-fns';
