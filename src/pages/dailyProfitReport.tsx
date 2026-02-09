@@ -54,8 +54,6 @@ const DailyProfitReport: React.FC = () => {
   // Totaux généraux
   const totals = data.reduce(
     (acc, row) => {
-      acc.revenue += row.revenue;
-      acc.cost += row.cost;
       acc.profit += row.profit;
       return acc;
     },
