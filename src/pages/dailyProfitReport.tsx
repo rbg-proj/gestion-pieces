@@ -110,7 +110,7 @@ const DailyProfitReport: React.FC = () => {
           <thead style={{ background: "#f3f3f3" }}>
             <tr>
               <th>Date</th>
-              <th>Bénéfice</th>
+              <th>Bénéfice($)</th>
             </tr>
           </thead>
           <tbody>
