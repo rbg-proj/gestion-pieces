@@ -35,6 +35,7 @@ interface CustomerStat {
 const COLORS = ['#0066FF', '#7C3AED', '#06B6D4', '#10B981', '#F59E0B'];
 const ITEMS_PER_PAGE = 10;
 const MAX_PIE_CHART_ITEMS = 10;
+const navigate = useNavigate();
 
 
 
