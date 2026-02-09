@@ -114,25 +114,14 @@ const DailyProfitReport: React.FC = () => {
           <thead style={{ background: "#f3f3f3" }}>
             <tr>
               <th>Date</th>
-              <th>Chiffre d'affaires</th>
-              <th>Coût d'achat</th>
               <th>Bénéfice</th>
-              <th>Marge (%)</th>
             </tr>
           </thead>
           <tbody>
             {paginatedData.map((row) => (
               <tr key={row.date}>
                 <td>{row.date}</td>
-                <td>{row.revenue.toFixed(2)}</td>
-                <td>{row.cost.toFixed(2)}</td>
                 <td>{row.profit.toFixed(2)}</td>
-                <td>
-                  {row.revenue > 0
-                    ? ((row.profit / row.revenue) * 100).toFixed(1)
-                    : 0}
-                  %
-                </td>
               </tr>
             ))}
 
