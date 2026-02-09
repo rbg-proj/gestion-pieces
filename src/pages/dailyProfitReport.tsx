@@ -106,7 +106,7 @@ const DailyProfitReport: React.FC = () => {
       {loading ? (
         <p>Chargement...</p>
       ) : (
-        <table border={1} cellPadding={8} cellSpacing={0} width="100%">
+        <table border={1} cellPadding={8} cellSpacing={0} width="50%">
           <thead style={{ background: "#f3f3f3" }}>
             <tr>
               <th>Date</th>
