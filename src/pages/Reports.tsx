@@ -275,7 +275,7 @@ const Reports: React.FC = () => {
           </button>
 
           <button
-          onClick={() => navigate("/dailyProfitReport")}
+          onClick={() => navigate("/dailyprofitreport")}
           className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition flex items-center"
         >
           <Eye className="w-4 h-4 mr-1" /> Bénéfices
