@@ -93,6 +93,7 @@ const Reports: React.FC = () => {
   const [topCustomers, setTopCustomers] = useState<CustomerStat[]>([]);
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState<'revenue' | 'sales'>('revenue');
+  const navigate = useNavigate();
   
   // 6️⃣ États de pagination
   const [productPage, setProductPage] = useState(1);
