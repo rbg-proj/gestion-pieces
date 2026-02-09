@@ -12,8 +12,6 @@ import {
 
 interface DailyProfit {
   date: string;
-  revenue: number;
-  cost: number;
   profit: number;
 }
 
