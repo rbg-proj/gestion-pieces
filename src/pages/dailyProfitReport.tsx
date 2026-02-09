@@ -129,8 +129,6 @@ const DailyProfitReport: React.FC = () => {
             {data.length > 0 && (
               <tr style={{ fontWeight: "bold", background: "#fafafa" }}>
                 <td>TOTAL</td>
-                <td>{totals.revenue.toFixed(2)}</td>
-                <td>{totals.cost.toFixed(2)}</td>
                 <td>{totals.profit.toFixed(2)}</td>
                 <td>
                   {totals.revenue > 0
