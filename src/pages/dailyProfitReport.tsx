@@ -130,12 +130,6 @@ const DailyProfitReport: React.FC = () => {
               <tr style={{ fontWeight: "bold", background: "#fafafa" }}>
                 <td>TOTAL</td>
                 <td>{totals.profit.toFixed(2)}</td>
-                <td>
-                  {totals.revenue > 0
-                    ? ((totals.profit / totals.revenue) * 100).toFixed(1)
-                    : 0}
-                  %
-                </td>
               </tr>
             )}
           </tbody>
