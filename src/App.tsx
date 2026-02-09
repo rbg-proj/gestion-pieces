@@ -22,6 +22,7 @@ import Cashledger from './pages/Cashledger';
 import AddCashEntry from './pages/addCashEntry';
 import StockMovement from './pages/StockMovement';
 import StockMovementHistory from './pages/StockMovementHistory';
+import DailyProfitReport from './pages/dailyProfitReport';
 
 const InactivityWarning = () => {
   const { showWarning } = useAuth();
@@ -59,6 +60,7 @@ function App() {
             <Route path="/addcashentry" element={<AddCashEntry />} />
             <Route path="/addcashentry/:id" element={<AddCashEntry />} />
             <Route path="/profiles" element={<ProfilesPage />} />
+            <Route path="/dailyProfitReport" element={<DailyProfitReport />} />
           </Route>
         </Routes>
 
