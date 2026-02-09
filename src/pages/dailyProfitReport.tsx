@@ -11,7 +11,7 @@ import {
 } from "recharts";
 
 interface DailyProfit {
-  date: string;
+  sale_date: string;
   profit: number;
 }
 
@@ -33,10 +33,11 @@ const DailyProfitReport: React.FC = () => {
       start_date: startDate,
       end_date: endDate,
     });
+
     setLoading(false);
 
     if (error) {
-      console.error("Erreur RPC:", error);
+      console.error(error);
       return;
     }
 
@@ -44,114 +45,191 @@ const DailyProfitReport: React.FC = () => {
     setPage(1);
   };
 
-  // Pagination
   const totalPages = Math.ceil(data.length / ITEMS_PER_PAGE);
   const paginatedData = data.slice(
     (page - 1) * ITEMS_PER_PAGE,
     page * ITEMS_PER_PAGE
   );
 
-  // Totaux généraux
-  const totals = data.reduce(
-    (acc, row) => {
-      acc.profit += row.profit;
-      return acc;
-    },
-    { profit: 0 }
-  );
+  const totalProfit = data.reduce((sum, row) => sum + Number(row.profit), 0);
+
+  const formatMoney = (value: number) =>
+    new Intl.NumberFormat("fr-FR", {
+      style: "currency",
+      currency: "USD",
+    }).format(value);
 
   return (
-    <div style={{ padding: 20 }}>
-      <h2>Rapport des bénéfices journaliers</h2>
+    <div style={{ padding: 30, maxWidth: 1000, margin: "auto" }}>
+      <h2 style={{ marginBottom: 20 }}>📊 Rapport des bénéfices journaliers</h2>
 
       {/* 🔎 Filtres */}
-      <div style={{ marginBottom: 20, display: "flex", gap: 10 }}>
+      <div
+        style={{
+          display: "flex",
+          gap: 15,
+          flexWrap: "wrap",
+          marginBottom: 25,
+          alignItems: "flex-end",
+        }}
+      >
         <div>
-          <label>Du :</label>
+          <label>Du</label>
           <input
             type="date"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
+            style={inputStyle}
           />
         </div>
 
         <div>
-          <label>Au :</label>
+          <label>Au</label>
           <input
             type="date"
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
+            style={inputStyle}
           />
         </div>
 
-        <button onClick={fetchProfit}>Filtrer</button>
+        <button onClick={fetchProfit} style={buttonStyle}>
+          {loading ? "Chargement..." : "Filtrer"}
+        </button>
       </div>
-      
- {/* 📈 Graphique */}
+
+      {/* 💰 Carte Résumé */}
       {data.length > 0 && (
-        <div style={{ width: "100%", height: 300, marginBottom: 30 }}>
-          <ResponsiveContainer>
+        <div style={cardStyle}>
+          <div>
+            <div style={{ fontSize: 14, color: "#666" }}>Bénéfice total</div>
+            <div style={{ fontSize: 26, fontWeight: "bold" }}>
+              {formatMoney(totalProfit)}
+            </div>
+          </div>
+          <div style={{ fontSize: 14, color: "#666" }}>
+            Période : {startDate} → {endDate}
+          </div>
+        </div>
+      )}
+
+      {/* 📈 Graphique */}
+      {data.length > 0 && (
+        <div style={chartCardStyle}>
+          <ResponsiveContainer width="100%" height={300}>
             <LineChart data={data}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="sale_date" />
               <YAxis />
-              <Tooltip />
-              <Line type="monotone" dataKey="profit" strokeWidth={3} />
+              <Tooltip formatter={(v: number) => formatMoney(v)} />
+              <Line
+                type="monotone"
+                dataKey="profit"
+                stroke="#4f46e5"
+                strokeWidth={3}
+              />
             </LineChart>
           </ResponsiveContainer>
         </div>
       )}
+
       {/* 📊 Tableau */}
-      {loading ? (
-        <p>Chargement...</p>
-      ) : (
-        <table border={1} cellPadding={8} cellSpacing={0} width="40%">
-          <thead style={{ background: "#f3f3f3" }}>
-            <tr>
-              <th>Date</th>
-              <th>Bénéfice($)</th>
-            </tr>
-          </thead>
-          <tbody>
-            {paginatedData.map((row) => (
-              <tr key={row.sale_date}>
-                <td>{row.sale_date}</td>
-                <td>{row.profit.toFixed(2)}</td>
+      {data.length > 0 && (
+        <div style={tableCardStyle}>
+          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <thead>
+              <tr style={{ background: "#f9fafb", textAlign: "left" }}>
+                <th style={thStyle}>Date</th>
+                <th style={thStyle}>Bénéfice</th>
               </tr>
-            ))}
-
-      
-
-            {/* 🔢 Total général */}
-            {data.length > 0 && (
-              <tr style={{ fontWeight: "bold", background: "#fafafa" }}>
-                <td>TOTAL</td>
-                <td>{totals.profit.toFixed(2)}</td>
+            </thead>
+            <tbody>
+              {paginatedData.map((row) => (
+                <tr key={row.sale_date} style={{ borderTop: "1px solid #eee" }}>
+                  <td style={tdStyle}>{row.sale_date}</td>
+                  <td style={{ ...tdStyle, fontWeight: 500 }}>
+                    {formatMoney(row.profit)}
+                  </td>
+                </tr>
+              ))}
+              <tr style={{ borderTop: "2px solid #ddd", fontWeight: "bold" }}>
+                <td style={tdStyle}>TOTAL</td>
+                <td style={tdStyle}>{formatMoney(totalProfit)}</td>
               </tr>
-            )}
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
       )}
 
       {/* 📄 Pagination */}
       {totalPages > 1 && (
-        <div style={{ marginTop: 15, display: "flex", gap: 10 }}>
-          <button disabled={page === 1} onClick={() => setPage(page - 1)}>
-            ← Précédent
+        <div style={{ marginTop: 20, display: "flex", gap: 10 }}>
+          <button disabled={page === 1} onClick={() => setPage(page - 1)} style={buttonStyle}>
+            ←
           </button>
-          <span>
+          <span style={{ alignSelf: "center" }}>
             Page {page} / {totalPages}
           </span>
-          <button
-            disabled={page === totalPages}
-            onClick={() => setPage(page + 1)}
-          >
-            Suivant →
+          <button disabled={page === totalPages} onClick={() => setPage(page + 1)} style={buttonStyle}>
+            →
           </button>
         </div>
       )}
     </div>
   );
+};
+
+const inputStyle: React.CSSProperties = {
+  padding: "8px 10px",
+  borderRadius: 6,
+  border: "1px solid #ccc",
+  display: "block",
+};
+
+const buttonStyle: React.CSSProperties = {
+  padding: "9px 16px",
+  borderRadius: 6,
+  border: "none",
+  background: "#4f46e5",
+  color: "white",
+  cursor: "pointer",
+  fontWeight: 500,
+};
+
+const cardStyle: React.CSSProperties = {
+  background: "white",
+  padding: 20,
+  borderRadius: 10,
+  boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+  marginBottom: 25,
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+};
+
+const chartCardStyle: React.CSSProperties = {
+  background: "white",
+  padding: 20,
+  borderRadius: 10,
+  boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+  marginBottom: 25,
+};
+
+const tableCardStyle: React.CSSProperties = {
+  background: "white",
+  padding: 20,
+  borderRadius: 10,
+  boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+};
+
+const thStyle: React.CSSProperties = {
+  padding: 10,
+  fontSize: 14,
+  color: "#555",
+};
+
+const tdStyle: React.CSSProperties = {
+  padding: 10,
 };
 
 export default DailyProfitReport;
