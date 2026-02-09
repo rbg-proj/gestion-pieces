@@ -10,6 +10,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { format, subDays, startOfDay, endOfDay, startOfWeek, startOfMonth, startOfYear } from 'date-fns';
 import * as XLSX from 'xlsx';
 import { supabase } from '../lib/supabase';
+import { useNavigate } from "react-router-dom";
 import { formatCurrency } from "@/utils/formatCurrency";
 
 // 2️⃣ Interfaces TypeScript
