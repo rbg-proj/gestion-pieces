@@ -1,5 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { supabase } from "../lib/supabase";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 
 interface DailyProfit {
   date: string;
@@ -40,7 +49,6 @@ const DailyProfitReport: React.FC = () => {
       return;
     }
 
-    // 🧠 Grouper par date
     const grouped: Record<string, DailyProfit> = {};
 
     rows.forEach((item: any) => {
@@ -63,7 +71,7 @@ const DailyProfitReport: React.FC = () => {
     });
 
     const result = Object.values(grouped).sort((a, b) =>
-      a.date < b.date ? 1 : -1
+      a.date > b.date ? 1 : -1
     );
 
     setData(result);
@@ -75,6 +83,17 @@ const DailyProfitReport: React.FC = () => {
   const paginatedData = data.slice(
     (page - 1) * ITEMS_PER_PAGE,
     page * ITEMS_PER_PAGE
+  );
+
+  // Totaux généraux
+  const totals = data.reduce(
+    (acc, row) => {
+      acc.revenue += row.revenue;
+      acc.cost += row.cost;
+      acc.profit += row.profit;
+      return acc;
+    },
+    { revenue: 0, cost: 0, profit: 0 }
   );
 
   return (
@@ -103,6 +122,21 @@ const DailyProfitReport: React.FC = () => {
 
         <button onClick={fetchProfit}>Filtrer</button>
       </div>
+
+      {/* 📈 Graphique */}
+      {data.length > 0 && (
+        <div style={{ width: "100%", height: 300, marginBottom: 30 }}>
+          <ResponsiveContainer>
+            <LineChart data={data}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="date" />
+              <YAxis />
+              <Tooltip />
+              <Line type="monotone" dataKey="profit" strokeWidth={3} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      )}
 
       {/* 📊 Tableau */}
       {loading ? (
@@ -133,6 +167,22 @@ const DailyProfitReport: React.FC = () => {
                 </td>
               </tr>
             ))}
+
+            {/* 🔢 Total général */}
+            {data.length > 0 && (
+              <tr style={{ fontWeight: "bold", background: "#fafafa" }}>
+                <td>TOTAL</td>
+                <td>{totals.revenue.toFixed(2)}</td>
+                <td>{totals.cost.toFixed(2)}</td>
+                <td>{totals.profit.toFixed(2)}</td>
+                <td>
+                  {totals.revenue > 0
+                    ? ((totals.profit / totals.revenue) * 100).toFixed(1)
+                    : 0}
+                  %
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       )}
