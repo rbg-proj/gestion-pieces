@@ -87,21 +87,6 @@ const DailyProfitReport: React.FC = () => {
         <button onClick={fetchProfit}>Filtrer</button>
       </div>
 
-      {/* 📈 Graphique */}
-      {data.length > 0 && (
-        <div style={{ width: "100%", height: 300, marginBottom: 30 }}>
-          <ResponsiveContainer>
-            <LineChart data={data}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="sale_date" />
-              <YAxis />
-              <Tooltip />
-              <Line type="monotone" dataKey="profit" strokeWidth={3} />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      )}
-
       {/* 📊 Tableau */}
       {loading ? (
         <p>Chargement...</p>
@@ -120,6 +105,21 @@ const DailyProfitReport: React.FC = () => {
                 <td>{row.profit.toFixed(2)}</td>
               </tr>
             ))}
+
+       {/* 📈 Graphique */}
+      {data.length > 0 && (
+        <div style={{ width: "100%", height: 300, marginBottom: 30 }}>
+          <ResponsiveContainer>
+            <LineChart data={data}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="sale_date" />
+              <YAxis />
+              <Tooltip />
+              <Line type="monotone" dataKey="profit" strokeWidth={3} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      )}
 
             {/* 🔢 Total général */}
             {data.length > 0 && (
