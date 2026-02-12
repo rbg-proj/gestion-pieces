@@ -10,6 +10,7 @@ import Reports from './pages/Reports';
 import Login from './pages/Login';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import { AuthProvider} from './contexts/AuthContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import StockHistory from './pages/StockHistory';
@@ -38,8 +39,9 @@ const InactivityWarning = () => {
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
+    <ThemeProvider>
+      <AuthProvider>
+        <Router>
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
@@ -67,7 +69,8 @@ function App() {
         {/* Ici notre composant d'avertissement global */}
         <InactivityWarning />
       </Router>
-    </AuthProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 
