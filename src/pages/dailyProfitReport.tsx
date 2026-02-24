@@ -160,6 +160,17 @@ const DailyProfitReport: React.FC = () => {
               <tr style={{ borderTop: "2px solid #ddd", fontWeight: "bold" }}>
                 <td style={tdStyle}>TOTAL</td>
                 <td style={tdStyle}>{formatMoney(totalProfit)}</td>
+                <td style={{ ...tdStyle, fontWeight: 400 }}>
+                {formatMoney((row.profit ?? 0) * 0.32)}</td>
+                <td style={{ ...tdStyle, fontWeight: 400 }}>
+                {formatMoney((row.profit ?? 0) * 0.30)}</td>
+                <td style={{ ...tdStyle, fontWeight: 400 }}>
+                {formatMoney((row.profit ?? 0) * 0.20)}</td>
+                <td style={{ ...tdStyle, fontWeight: 400 }}>
+                {formatMoney((row.profit ?? 0) * 0.08)}</td>
+                <td style={{ ...tdStyle, fontWeight: 400 }}>
+                {formatMoney((row.profit ?? 0) * 0.1)}</td>
+                
               </tr>
             </tbody>
           </table>
