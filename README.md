@@ -73,4 +73,5 @@ Ajout du fichier Dashboard des bénéfices (avec filtres jours)
 
 Version 56 - 58
 Dashboard des bénéfices avec répartition des charges (Reinvest, Loyer, Famille ...)
+Responsive bouton "Voir les bénéfices" dans "Autres Rapports"
 

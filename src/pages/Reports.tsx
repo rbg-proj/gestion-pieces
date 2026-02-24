@@ -257,32 +257,39 @@ const Reports: React.FC = () => {
           <h1 className="text-2xl font-bold text-gray-900">Analyse des Ventes</h1>
           <p className="text-sm text-gray-500">Performances commerciales</p>
         </div>
-        <div className="flex space-x-2">
+
+        <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
           <select
             value={timeRange}
-            onChange={(e) => setTimeRange(e.target.value as 'day' | 'week' | 'month' | 'year')}
-            className="px-4 py-2 border border-gray-200 rounded-md bg-white text-gray-700 hover:bg-gray-50"
+            onChange={(e) =>
+              setTimeRange(e.target.value as 'day' | 'week' | 'month' | 'year')
+            }
+            className="w-full sm:w-auto px-4 py-2 border border-gray-200 rounded-md bg-white text-gray-700 hover:bg-gray-50"
           >
             <option value="day">Aujourd'hui</option>
             <option value="week">Cette Semaine</option>
             <option value="month">Ce Mois</option>
             <option value="year">Cette Année</option>
           </select>
+        
           <button
             onClick={() => exportToExcel(dailySales, productSales, topCustomers)}
-            className="inline-flex items-center px-4 py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600 transition-colors duration-150 ease-in-out"
+            className="w-full sm:w-auto inline-flex justify-center items-center px-4 py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600 transition-colors duration-150 ease-in-out"
           >
             <FileSpreadsheet size={16} className="mr-2" />
             Exporter Excel
           </button>
-
+        
           <button
-          onClick={() => navigate("/dailyprofitreport")}
-          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition flex items-center"
-        >
-          <Eye className="w-4 h-4 mr-1" /> Bénéfices
-        </button>
+            onClick={() => navigate("/dailyprofitreport")}
+            className="w-full sm:w-auto bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition flex justify-center items-center"
+          >
+            <Eye className="w-4 h-4 mr-1" />
+            Bénéfices
+          </button>
         </div>
+
+        
       </div>
 
       {/* Cards Section */}
