@@ -71,6 +71,6 @@ Offline activé
 Version 55
 Ajout du fichier Dashboard des bénéfices (avec filtres jours)
 
-Version 56 - 57
+Version 56 - 58
 Dashboard des bénéfices avec répartition des charges (Reinvest, Loyer, Famille ...)
 
