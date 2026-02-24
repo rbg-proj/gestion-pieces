@@ -152,7 +152,7 @@ const DailyProfitReport: React.FC = () => {
               {paginatedData.map((row) => (
                 <tr key={row.sale_date} style={{ borderTop: "1px solid #eee" }}>
                   <td style={tdStyle}>{row.sale_date}</td>
-                  <td style={{ ...tdStyle, fontWeight: 500 }}>
+                  <td style={{ ...tdStyle, fontWeight: 500, color: "green" }}>
                     {formatMoney(row.profit)}
                   </td>
                 </tr>
