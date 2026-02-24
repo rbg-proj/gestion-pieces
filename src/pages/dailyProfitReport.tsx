@@ -169,7 +169,7 @@ const DailyProfitReport: React.FC = () => {
               ))}
               <tr style={{ borderTop: "2px solid #ddd", fontWeight: "bold" }}>
                 <td style={tdStyle}>TOTAL</td>
-                <td style={tdStyle}>{formatMoney(totalProfit)}</td>               
+                <td style={{...tdStyle, color: "green"}}>{formatMoney(totalProfit)}</td>               
               </tr>
             </tbody>
           </table>
