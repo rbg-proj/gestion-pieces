@@ -52,6 +52,11 @@ const DailyProfitReport: React.FC = () => {
   );
 
   const totalProfit = data.reduce((sum, row) => sum + Number(row.profit), 0);
+  const totalReinvest = data.reduce((sum, row) => sum + Number(row.profit*0.32), 0);
+  const totalLoyer = data.reduce((sum, row) => sum + Number(row.profit*0.3), 0);
+  const totalDepFam = data.reduce((sum, row) => sum + Number(row.profit*0.2), 0);
+  const totalTransport = data.reduce((sum, row) => sum + Number(row.profit*0.08), 0);
+  const totalImprevu = data.reduce((sum, row) => sum + Number(row.profit*0.1), 0);
 
   const formatMoney = (value: number) =>
     new Intl.NumberFormat("fr-FR", {
