@@ -302,7 +302,7 @@ const Products: React.FC = () => {
     const fileName = `${Date.now()}.${fileExt}`;
     const filePath = `products/${fileName}`;
 
-    const { error } = await supabase.storage.from('product-images').upload(filePath, file);
+    const { error } = await supabase.storage.from('images-articles').upload(filePath, file);
     if (error) {
       console.error('Erreur upload :', error.message);
       toast.error("Échec de l’upload de l’image !");
