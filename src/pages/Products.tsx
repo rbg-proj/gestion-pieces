@@ -740,7 +740,7 @@ return (
                   <label>Prix d’achat</label>
                   <input
                       type="number"
-                      Placeholder="Prix en dollars US"
+                      placeholder="Prix en dollars US"
                       value={formData.purchase_price}
                       onChange={(e) => {
                         const val = e.target.value;
@@ -757,7 +757,7 @@ return (
                   <label>Prix de vente</label>
                   <input
                     type="number"
-                    Placeholder="Prix en dollars US"
+                    placeholder="Prix en dollars US"
                     value={formData.selling_price}
                     onChange={(e) => {const val = e.target.value;
                         setFormData({...formData, selling_price: val === '' ? '' :                                   Number(val) });
@@ -771,7 +771,7 @@ return (
                 <label>Stock</label>
                 <input
                   type="number"
-                  Placeholder="Quantité stock de l'article"
+                  placeholder="Quantité stock de l'article"
                   value={formData.stock}
                   onChange={(e) => {const val = e.target.value;
                         setFormData({...formData, stock: val === '' ? '' :                                   Number(val) });
