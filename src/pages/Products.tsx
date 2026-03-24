@@ -309,7 +309,7 @@ const Products: React.FC = () => {
       return;
     }
 
-    const { data } = supabase.storage.from('product-images').getPublicUrl(filePath);
+    const { data } = supabase.storage.from('images-articles').getPublicUrl(filePath);
     if (data?.publicUrl) {
       setFormData((prev) => ({ ...prev, image_url: data.publicUrl }));
       toast.success("Image uploadée avec succès !");
