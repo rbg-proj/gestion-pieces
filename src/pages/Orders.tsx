@@ -553,7 +553,7 @@ export default function OrdersPage() {
         <p className="text-sm font-medium">Montant Total des ventes : {formatCurrency(totalVente,"USD")} </p>
       </div>
 
-      {/* Orders Table */}
+      {/* Sales Table */}
       <Card>
         <CardContent className="p-4">
           <Table>
