@@ -308,7 +308,7 @@ export default function OrdersPage() {
  // const currentOrders = filteredOrders; 
   const totalPages = Math.max(1, Math.ceil(totalOrders / rowsPerPage));
     
-{/* //  const totalVente = filteredOrders.reduce((sum, order) => sum + Number(order.total || 0), 0);
+/* //  const totalVente = filteredOrders.reduce((sum, order) => sum + Number(order.total || 0), 0);
    const ventesParClient = filteredOrders.reduce((acc, order) => {
     acc[order.customer] = (acc[order.customer] || 0) + Number(order.total || 0);
     return acc;
