@@ -207,12 +207,12 @@ export default function OrdersPage() {
     );
     setTotalSalesAmount(totalAmount);
 
-    const { data, error } = await supabase.rpc("get_sales_total");
+   /* const { data, error } = await supabase.rpc("get_sales_total");
       if (error) {
         console.error(error);
       } else {
         setTotalSalesAmount(Number(data || 0));
-      }
+      } */
 
   } catch (err) {
     console.error("Erreur fetchOrders:", err);
