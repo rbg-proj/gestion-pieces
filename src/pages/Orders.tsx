@@ -39,6 +39,7 @@ export default function OrdersPage() {
 
   // Orders
   const [orders, setOrders] = useState<any[]>([]);
+  const [totalOrders, setTotalOrders] = useState(0);
   const [loading, setLoading] = useState(false);
   const [sortByDateAsc, setSortByDateAsc] = useState(false);
 
@@ -119,6 +120,68 @@ export default function OrdersPage() {
     }
   }, []);
 
+  const fetchOrders = useCallback(async () => {
+  setLoading(true);
+
+  try {
+    const from = (currentPage - 1) * rowsPerPage;
+    const to = from + rowsPerPage - 1;
+
+    const { data, error, count } = await supabase
+      .from("sales")
+      .select(
+        `
+        id,
+        sale_date,
+        total_amount,
+        payment_method,
+        customers(full_name),
+        sale_items(id),
+        exchange_rate,
+        profiles:user_id(name)
+      `,
+        { count: "exact" }
+      )
+      .order("sale_date", { ascending: false })
+      .range(from, to);
+
+    if (error) {
+      console.error("Erreur lors du chargement des ventes :", error.message);
+      setOrders([]);
+    } else {
+      const formattedOrders = (data || []).map((sale: any) => ({
+        id: `VTE-${sale.id}`,
+        rawId: sale.id,
+        customer: sale.customers?.full_name || "Introuvable",
+        date: sale.sale_date
+          ? new Date(sale.sale_date)
+          : new Date(),
+        total: Number(sale.total_amount || 0),
+        items: sale.sale_items?.length || 0,
+        paymentMethod: sale.payment_method || "Inconnu",
+        exchange_rate: sale.exchange_rate ?? 1,
+        agent: sale.profiles?.name || "Non trouvé",
+        status:
+          sale.payment_method === "cash" ||
+          sale.payment_method === "mobile_money"
+            ? "Payé"
+            : "A checker",
+      }));
+
+      setOrders(formattedOrders);
+
+      // nombre total réel
+      setTotalOrders(count || 0);
+          }
+        } catch (err) {
+          console.error("Erreur fetchOrders:", err);
+          setOrders([]);
+        } finally {
+          setLoading(false);
+        }
+      }, [currentPage]);
+
+  
   useEffect(() => {
     fetchOrders();
   }, [fetchOrders]);
@@ -214,7 +277,7 @@ export default function OrdersPage() {
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
   const currentOrders = filteredOrders.slice(indexOfFirstRow, indexOfLastRow);
-  const totalPages = Math.max(1, Math.ceil(filteredOrders.length / rowsPerPage));
+  const totalPages = Math.max(1, Math.ceil(totalOrders / rowsPerPage));
     
   const totalVente = filteredOrders.reduce((sum, order) => sum + Number(order.total || 0), 0);
   const ventesParClient = filteredOrders.reduce((acc, order) => {
