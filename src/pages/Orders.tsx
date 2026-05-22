@@ -199,13 +199,13 @@ export default function OrdersPage() {
         `%${clientFilter.trim()}%`
       );
     }
-   /* const { data: totalsData } = await totalQuery;
+    const { data: totalsData } = await totalQuery;
     const totalAmount = (totalsData || []).reduce(
       (sum, row: any) =>
         sum + Number(row.total_amount || 0),
       0
     );
-    setTotalSalesAmount(totalAmount);*/
+    setTotalSalesAmount(totalAmount);
 
     const { data, error } = await supabase.rpc("get_sales_total");
       if (error) {
