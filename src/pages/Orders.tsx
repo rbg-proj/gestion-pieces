@@ -32,7 +32,6 @@ export default function OrdersPage() {
   const { user } = useAuth();
 
   // Filters
-  const [search, setSearch] = useState("");
   const [clientFilter, setClientFilter] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
