@@ -41,7 +41,6 @@ export default function OrdersPage() {
   const [orders, setOrders] = useState<any[]>([]);
   const [totalOrders, setTotalOrders] = useState(0);
   const [totalSalesAmount, setTotalSalesAmount] = useState(0);
-  const [totalOrders, setTotalOrders] = useState(0);
   const [loading, setLoading] = useState(false);
   const [sortByDateAsc, setSortByDateAsc] = useState(false);
 
