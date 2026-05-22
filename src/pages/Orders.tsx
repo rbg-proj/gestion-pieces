@@ -241,6 +241,11 @@ export default function OrdersPage() {
     loadData();
   }, []);
 
+  // Pagination lors d'un filtre
+  useEffect(() => {
+  setCurrentPage(1);
+}, [clientFilter, startDate, endDate]);
+
   const fetchSaleDetails = async (saleId: number) => {
     try {
       const { data, error } = await supabase
