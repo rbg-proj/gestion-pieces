@@ -209,11 +209,6 @@ export default function OrdersPage() {
       const matchesSearch = order.customer.toLowerCase().includes(searchTerm) || order.id.toLowerCase().includes(searchTerm);
 
       return inDateRange && matchesClient && matchesSearch;
-    })
-    .sort((a, b) => {
-      const aDate = new Date(a.date).getTime();
-      const bDate = new Date(b.date).getTime();
-      return sortByDateAsc ? aDate - bDate : bDate - aDate;
     });
 
   const indexOfLastRow = currentPage * rowsPerPage;
