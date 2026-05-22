@@ -621,7 +621,7 @@ export default function OrdersPage() {
         <Input placeholder="Filtrer par client" value={clientFilter} onChange={(e) => setClientFilter(e.target.value)} className="w-64" />
       </div>
 
-      {/* Pie chart */}
+      {/* Pie chart 
       <div className="h-64">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
@@ -635,6 +635,7 @@ export default function OrdersPage() {
         </ResponsiveContainer>
         {ventesData.length > 5 && <p className="text-xs text-gray-500 mt-1">Affichage des 5 premiers clients seulement</p>}
       </div>
+      */}
 
       {/* Stats */}
       <div className="space-y-2">
