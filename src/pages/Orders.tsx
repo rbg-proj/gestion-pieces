@@ -577,7 +577,7 @@ export default function OrdersPage() {
 
   // Export Excel
   const exportToExcel = () => {
-    const exportData = filteredOrders.map((order) => ({
+    const exportData = currentOrders.map((order) => ({
       "N° Vente": order.id,
       Date: order.date instanceof Date ? order.date.toLocaleDateString("fr-FR") : new Date(order.date).toLocaleDateString("fr-FR"),
       Client: order.customer,
