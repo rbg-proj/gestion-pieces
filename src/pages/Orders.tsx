@@ -187,6 +187,12 @@ export default function OrdersPage() {
       .from("sales")
       .select("total_amount, customers(full_name)");
 
+    // CONTRAINTE AFFICHAGE VENTE DU JOUR SEULEMENT POUR OPERATOR
+    if (user?.role !== "admin" && user?.role !== "manager") {
+        totalQuery = totalQuery
+          .gte("sale_date", todayISO)
+          .lte("sale_date", todayISO + "T23:59:59");
+      }
     // Reprendre les mêmes filtres
 
     if (startDate) {
