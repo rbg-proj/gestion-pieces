@@ -281,7 +281,7 @@ export default function OrdersPage() {
   };
 
   // Filter & sort orders
-  {/* const filteredOrders = orders
+  /* const filteredOrders = orders
     .filter((order) => {
       const orderDateString = order.date instanceof Date ? order.date.toLocaleDateString("fr-CA") : new Date(order.date).toLocaleDateString("fr-CA");
 
@@ -302,7 +302,7 @@ export default function OrdersPage() {
       const matchesSearch = order.customer.toLowerCase().includes(searchTerm) || order.id.toLowerCase().includes(searchTerm);
 
       return inDateRange && matchesClient && matchesSearch;
-    }); */}
+    }); */
   const currentOrders = orders;
 
  // const currentOrders = filteredOrders; 
