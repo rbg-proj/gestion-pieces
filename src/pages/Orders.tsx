@@ -305,7 +305,7 @@ export default function OrdersPage() {
     }); */}
   const currentOrders = orders;
 
-  const currentOrders = filteredOrders; 
+ // const currentOrders = filteredOrders; 
   const totalPages = Math.max(1, Math.ceil(totalOrders / rowsPerPage));
     
   const totalVente = filteredOrders.reduce((sum, order) => sum + Number(order.total || 0), 0);
