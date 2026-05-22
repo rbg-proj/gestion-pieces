@@ -104,6 +104,12 @@ export default function OrdersPage() {
         { count: "exact" }
       );
 
+    if (user?.role !== "admin" && user?.role !== "manager") {
+      query = query
+        .gte("sale_date", todayISO)
+        .lte("sale_date", todayISO + "T23:59:59");
+    }
+    
     // =========================
     // FILTRE DATE
     // =========================
