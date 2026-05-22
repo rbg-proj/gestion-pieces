@@ -75,3 +75,5 @@ Version 56 - 58
 Dashboard des bénéfices avec répartition des charges (Reinvest, Loyer, Famille ...)
 Responsive bouton "Voir les bénéfices" dans "Autres Rapports"
 
+Version 61 :
+- Amélioration sur le rapport de ventes (Orders.tsx) : optimisation requete recupération de plus de 1000 lignes de vente sur Supabase
