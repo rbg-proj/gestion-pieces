@@ -133,7 +133,8 @@ export default function OrdersPage() {
     // =========================
 
     const { data, error, count } = await query
-      .order("sale_date", { ascending: false })
+   //   .order("sale_date", { ascending: false })
+      .order("sale_date", { ascending: sortByDateAsc })
       .range(from, to);
 
     if (error) {
