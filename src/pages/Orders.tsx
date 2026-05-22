@@ -193,7 +193,7 @@ export default function OrdersPage() {
         endDate + "T23:59:59"
       );
     }
-
+   
     const { data: totalsData } = await totalQuery;
 
     const totalAmount = (totalsData || []).reduce(
