@@ -274,9 +274,7 @@ export default function OrdersPage() {
       return inDateRange && matchesClient && matchesSearch;
     });
 
-  const indexOfLastRow = currentPage * rowsPerPage;
-  const indexOfFirstRow = indexOfLastRow - rowsPerPage;
-  const currentOrders = filteredOrders.slice(indexOfFirstRow, indexOfLastRow);
+  
   const totalPages = Math.max(1, Math.ceil(totalOrders / rowsPerPage));
     
   const totalVente = filteredOrders.reduce((sum, order) => sum + Number(order.total || 0), 0);
