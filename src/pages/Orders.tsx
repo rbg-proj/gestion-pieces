@@ -303,6 +303,7 @@ export default function OrdersPage() {
 
       return inDateRange && matchesClient && matchesSearch;
     }); */}
+  const currentOrders = orders;
 
   const currentOrders = filteredOrders; 
   const totalPages = Math.max(1, Math.ceil(totalOrders / rowsPerPage));
