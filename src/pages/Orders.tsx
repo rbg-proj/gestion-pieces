@@ -76,49 +76,7 @@ export default function OrdersPage() {
   const [addingProductIdChecking, setAddingProductIdChecking] = useState<number | null>(null);
 
   // --- Fetch orders (declarée ici pour la réutiliser) ---
-  const fetchOrders = useCallback(async () => {
-    setLoading(true);
-    try {
-      const { data, error } = await supabase
-        .from("sales")
-        .select(`
-          id,
-          sale_date,
-          total_amount,
-          payment_method,
-          customers(full_name),
-          sale_items(id),
-          exchange_rate,
-          profiles:user_id(name)
-        `)
-         .order("sale_date", { ascending: false }) // plus récent d'abord
-        .limit(1000); // limite aux 999 dernières ventes
-
-      if (error) {
-        console.error("Erreur lors du chargement des ventes :", error.message);
-        setOrders([]);
-      } else {
-        const formattedOrders = (data || []).map((sale: any) => ({
-          id: `VTE-${sale.id}`,
-          rawId: sale.id,
-          customer: sale.customers?.full_name || "Introuvable",
-          date: sale.sale_date ? new Date(sale.sale_date) : new Date(),
-          total: Number(sale.total_amount || 0),
-          items: sale.sale_items?.length || 0,
-          paymentMethod: sale.payment_method || "Inconnu",
-          exchange_rate: sale.exchange_rate ?? 1,
-          agent: sale.profiles?.name || "Non trouvé",
-          status: sale.payment_method === "cash" || sale.payment_method === "mobile_money" ? "Payé" : "A checker",
-        }));
-        setOrders(formattedOrders);
-      }
-    } catch (err) {
-      console.error("Erreur fetchOrders:", err);
-      setOrders([]);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  
 
   const fetchOrders = useCallback(async () => {
   setLoading(true);
@@ -629,7 +587,8 @@ export default function OrdersPage() {
             <TableBody>
               {loading ? (
                 <TableRow><TableCell colSpan={columnsCount}>Chargement des ventes ...</TableCell></TableRow>
-              ) : currentOrders.length > 0 ? (
+              ) : const currentOrders = filteredOrders; 
+                currentOrders.length > 0 ? (
                 currentOrders.map((order) => (
                   <TableRow key={order.rawId} className={`cursor-pointer hover:bg-muted/50`} onClick={() => {
                     setSelectedOrderId(order.rawId);
