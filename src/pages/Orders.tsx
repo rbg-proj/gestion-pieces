@@ -638,7 +638,7 @@ export default function OrdersPage() {
 
       {/* Stats */}
       <div className="space-y-2">
-        <p className="text-sm font-medium">Nombre Total de ventes : {filteredOrders.length}</p>
+        <p className="text-sm font-medium">Nombre Total de ventes : {totalOrders}</p>
         <p className="text-sm font-medium">Montant Total des ventes : {formatCurrency(totalVente,"USD")} </p>
       </div>
 
