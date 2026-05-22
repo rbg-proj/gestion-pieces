@@ -176,7 +176,7 @@ export default function OrdersPage() {
     // =========================
     // SOMME TOTALE DES VENTES
     // =========================
-    const { data } = await supabase.rpc("get_sales_total");
+   // const { data } = await supabase.rpc("get_sales_total");
     let totalQuery = supabase
       .from("sales")
       .select("total_amount");
