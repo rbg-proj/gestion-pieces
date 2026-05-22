@@ -193,7 +193,12 @@ export default function OrdersPage() {
         endDate + "T23:59:59"
       );
     }
-   
+   if (clientFilter.trim()) {
+      totalQuery = totalQuery.ilike(
+        "customers.full_name",
+        `%${clientFilter.trim()}%`
+      );
+    }
     const { data: totalsData } = await totalQuery;
 
     const totalAmount = (totalsData || []).reduce(
