@@ -211,7 +211,7 @@ export default function OrdersPage() {
   } finally {
     setLoading(false);
   }
-}, [currentPage, startDate, endDate, clientFilter]);
+}, [currentPage, startDate, endDate, clientFilter, sortByDateAsc]);
   
   useEffect(() => {
     fetchOrders();
