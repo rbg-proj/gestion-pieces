@@ -587,8 +587,7 @@ export default function OrdersPage() {
             <TableBody>
               {loading ? (
                 <TableRow><TableCell colSpan={columnsCount}>Chargement des ventes ...</TableCell></TableRow>
-              ) : const currentOrders = filteredOrders; 
-                currentOrders.length > 0 ? (
+              ) : currentOrders.length > 0 ? (
                 currentOrders.map((order) => (
                   <TableRow key={order.rawId} className={`cursor-pointer hover:bg-muted/50`} onClick={() => {
                     setSelectedOrderId(order.rawId);
