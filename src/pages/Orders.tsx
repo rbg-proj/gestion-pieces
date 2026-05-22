@@ -89,7 +89,9 @@ export default function OrdersPage() {
           sale_items(id),
           exchange_rate,
           profiles:user_id(name)
-        `);
+        `)
+         .order("sale_date", { ascending: false }) // plus récent d'abord
+        .limit(999); // limite aux 999 dernières ventes
 
       if (error) {
         console.error("Erreur lors du chargement des ventes :", error.message);
