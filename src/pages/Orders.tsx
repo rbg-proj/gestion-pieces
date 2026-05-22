@@ -40,6 +40,8 @@ export default function OrdersPage() {
   // Orders
   const [orders, setOrders] = useState<any[]>([]);
   const [totalOrders, setTotalOrders] = useState(0);
+  const [totalSalesAmount, setTotalSalesAmount] = useState(0);
+  const [totalOrders, setTotalOrders] = useState(0);
   const [loading, setLoading] = useState(false);
   const [sortByDateAsc, setSortByDateAsc] = useState(false);
 
@@ -76,7 +78,6 @@ export default function OrdersPage() {
   const [addingProductIdChecking, setAddingProductIdChecking] = useState<number | null>(null);
 
   // --- Fetch orders (declarée ici pour la réutiliser) ---
-  
 
   const fetchOrders = useCallback(async () => {
   setLoading(true);
@@ -85,7 +86,11 @@ export default function OrdersPage() {
     const from = (currentPage - 1) * rowsPerPage;
     const to = from + rowsPerPage - 1;
 
-    const { data, error, count } = await supabase
+    // =========================
+    // REQUÊTE PRINCIPALE
+    // =========================
+
+    let query = supabase
       .from("sales")
       .select(
         `
@@ -99,46 +104,114 @@ export default function OrdersPage() {
         profiles:user_id(name)
       `,
         { count: "exact" }
-      )
+      );
+
+    // =========================
+    // FILTRE DATE
+    // =========================
+
+    if (startDate) {
+      query = query.gte("sale_date", startDate);
+    }
+
+    if (endDate) {
+      query = query.lte("sale_date", endDate + "T23:59:59");
+    }
+
+    // =========================
+    // FILTRE CLIENT
+    // =========================
+
+    if (clientFilter.trim()) {
+      query = query.ilike(
+        "customers.full_name",
+        `%${clientFilter.trim()}%`
+      );
+    }
+
+    // =========================
+    // PAGINATION + TRI
+    // =========================
+
+    const { data, error, count } = await query
       .order("sale_date", { ascending: false })
       .range(from, to);
 
     if (error) {
-      console.error("Erreur lors du chargement des ventes :", error.message);
+      console.error("Erreur chargement ventes :", error.message);
       setOrders([]);
-    } else {
-      const formattedOrders = (data || []).map((sale: any) => ({
-        id: `VTE-${sale.id}`,
-        rawId: sale.id,
-        customer: sale.customers?.full_name || "Introuvable",
-        date: sale.sale_date
-          ? new Date(sale.sale_date)
-          : new Date(),
-        total: Number(sale.total_amount || 0),
-        items: sale.sale_items?.length || 0,
-        paymentMethod: sale.payment_method || "Inconnu",
-        exchange_rate: sale.exchange_rate ?? 1,
-        agent: sale.profiles?.name || "Non trouvé",
-        status:
-          sale.payment_method === "cash" ||
-          sale.payment_method === "mobile_money"
-            ? "Payé"
-            : "A checker",
-      }));
+      return;
+    }
 
-      setOrders(formattedOrders);
+    // =========================
+    // FORMATAGE
+    // =========================
 
-      // nombre total réel
-      setTotalOrders(count || 0);
-          }
-        } catch (err) {
-          console.error("Erreur fetchOrders:", err);
-          setOrders([]);
-        } finally {
-          setLoading(false);
-        }
-      }, [currentPage]);
+    const formattedOrders = (data || []).map((sale: any) => ({
+      id: `VTE-${sale.id}`,
+      rawId: sale.id,
+      customer: sale.customers?.full_name || "Introuvable",
+      date: sale.sale_date
+        ? new Date(sale.sale_date)
+        : new Date(),
+      total: Number(sale.total_amount || 0),
+      items: sale.sale_items?.length || 0,
+      paymentMethod: sale.payment_method || "Inconnu",
+      exchange_rate: sale.exchange_rate ?? 1,
+      agent: sale.profiles?.name || "Non trouvé",
+      status:
+        sale.payment_method === "cash" ||
+        sale.payment_method === "mobile_money"
+          ? "Payé"
+          : "A checker",
+    }));
 
+    setOrders(formattedOrders);
+
+    // =========================
+    // TOTAL LIGNES
+    // =========================
+
+    setTotalOrders(count || 0);
+
+    // =========================
+    // SOMME TOTALE DES VENTES
+    // =========================
+
+    let totalQuery = supabase
+      .from("sales")
+      .select("total_amount");
+
+    // Reprendre les mêmes filtres
+
+    if (startDate) {
+      totalQuery = totalQuery.gte("sale_date", startDate);
+    }
+
+    if (endDate) {
+      totalQuery = totalQuery.lte(
+        "sale_date",
+        endDate + "T23:59:59"
+      );
+    }
+
+    const { data: totalsData } = await totalQuery;
+
+    const totalAmount = (totalsData || []).reduce(
+      (sum, row: any) =>
+        sum + Number(row.total_amount || 0),
+      0
+    );
+
+    setTotalSalesAmount(totalAmount);
+
+  } catch (err) {
+    console.error("Erreur fetchOrders:", err);
+    setOrders([]);
+  } finally {
+    setLoading(false);
+  }
+}, [currentPage, startDate, endDate, clientFilter]);
   
   useEffect(() => {
     fetchOrders();
